@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.env
+data/buzon/
+data/postgres/
+data/recursos/
+clamav_data/
+__pycache__/
+*.py[cod]
+*$py.class

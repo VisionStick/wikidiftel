@@ -1,0 +1,40 @@
+<nav class="topbar" aria-label="Navegación principal">
+    <div class="topbar-inner">
+        <a href="{% url 'landing' %}" class="brand" aria-label="DIFTEL SJ, volver al inicio">
+            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+            <span class="brand-copy"><strong>DIFTEL</strong><small>San Joaquín</small></span>
+        </a>
+        <div class="desktop-nav">
+            <a href="{% url 'landing' %}" class="nav-link {% if request.path == '/' %}is-active{% endif %}">Inicio</a>
+            <a href="{% url 'curriculum' %}" class="nav-link {% if '/malla/' in request.path %}is-active{% endif %}">Malla</a>
+            <a href="{% url 'initial_projects' %}" class="nav-link {% if '/proyectos' in request.path %}is-active{% endif %}">Proyectos</a>
+            <a href="{% url 'workshops' %}" class="nav-link {% if '/talleres' in request.path %}is-active{% endif %}">Talleres</a>
+            <a href="{% url 'community' %}" class="nav-link {% if '/comunidad' in request.path %}is-active{% endif %}">Comunidad</a>
+            <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="nav-link">Wiki ↗</a>
+        </div>
+        <div class="topbar-actions">
+            <form action="{% url 'global_search' %}" method="get" class="mini-search desktop-search" role="search" data-global-search-form>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar en DIFTEL…" aria-label="Buscar en DIFTEL" data-global-search-input>
+            </form>
+            <div class="theme-picker" data-theme-picker>
+                <button class="theme-trigger" type="button" aria-label="Cambiar tema" aria-expanded="false" data-theme-trigger><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.5A6.7 6.7 0 0 1 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+                <div class="theme-menu" data-theme-menu>
+                    <button type="button" data-set-theme="warm"><span class="theme-dot dot-warm"></span><span>Cálido</span></button>
+                    <button type="button" data-set-theme="light"><span class="theme-dot dot-light"></span><span>Blanco</span></button>
+                    <button type="button" data-set-theme="dark"><span class="theme-dot dot-dark"></span><span>Oscuro</span></button>
+                </div>
+            </div>
+            <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+        <form action="{% url 'global_search' %}" method="get" class="mini-search mobile-search" role="search" data-global-search-form>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="search" name="q" placeholder="Buscar ramos, proyectos, talleres…" aria-label="Buscar en DIFTEL" data-global-search-input>
+        </form>
+        <a href="{% url 'landing' %}">Inicio</a><a href="{% url 'curriculum' %}">Malla y Ramos</a><a href="{% url 'initial_projects' %}">Proyectos</a><a href="{% url 'workshops' %}">Talleres</a><a href="{% url 'community' %}">Comunidad</a>
+        <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki / Apuntes ↗</a>
+        <a href="/buzon/" class="mobile-upload">Aportar material</a>
+    </div>
+</nav>
