@@ -1,0 +1,142 @@
+import json
+import os
+import re
+import time
+from collections import defaultdict
+from datetime import datetime, timedelta
+from random import randrange
+
+from decouple import config
+from django.contrib import messages
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.db.models import Avg, Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.timezone import now
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+from .models import (
+    COMMUNITY_CATEGORY_CHOICES,
+    COURSE_RESOURCE_CHOICES,
+    EVENT_TYPE_CHOICES,
+    PROJECT_ORIGIN_CHOICES,
+    STUDENT_PROJECT_TYPE_CHOICES,
+    CommunityEvent,
+    CommunityMember,
+    Course,
+    CourseResource,
+    CourseReview,
+    InitialProject,
+    Workshop,
+)
+
+
+def _is_htmx(request):
+    return (
+        bool(getattr(request, 'htmx', False))
+        or request.headers.get('HX-Request') == 'true'
+        or request.GET.get('partial') in ('1', 'true', 'True')
+    )
+
+
+def buzon_page_view(request):
+    """Serve the buzón UI when running Django directly in local development."""
+    return render(request, 'dashboard/buzon.html')
+
+
+def landing_view(request):
+    latest_projects = InitialProject.objects.prefetch_related('images').all()[:3]
+    latest_workshops = Workshop.objects.prefetch_related('images').all()[:3]
+    latest_community = CommunityEvent.objects.prefetch_related('media').all()[:4]
+    context = {
+        'latest_projects': latest_projects,
+        'latest_workshops': latest_workshops,
+        'latest_community': latest_community,
+        'project_count': InitialProject.objects.count(),
+        'workshop_count': Workshop.objects.count(),
+        'course_count': Course.objects.count(),
+        'community_count': CommunityEvent.objects.count(),
+    }
+    return render(request, 'dashboard/landing.html', context)
+
+
+def initial_projects_view(request):
+    generations = InitialProject.objects.values_list('generation', flat=True).distinct().order_by('-generation')
+    selected_generation = _parse_year_param(request.GET.get('generation'))
+    selected_origin = request.GET.get('origin') or ''
+    selected_type = request.GET.get('type') or ''
+    search_query = (request.GET.get('q') or '').strip()
+
+    projects = InitialProject.objects.prefetch_related('images', 'videos').all()
+    if selected_generation:
+        projects = projects.filter(generation=selected_generation)
+    if selected_origin in dict(PROJECT_ORIGIN_CHOICES):
+        projects = projects.filter(origin=selected_origin)
+    else:
+        selected_origin = ''
+    if selected_type in dict(STUDENT_PROJECT_TYPE_CHOICES) and selected_origin != 'diftel':
+        projects = projects.filter(student_project_type=selected_type, origin='student')
+        selected_origin = 'student'
+    else:
+        selected_type = ''
+    if search_query:
+        projects = projects.filter(
+            Q(title__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(members__icontains=search_query)
+            | Q(course_code__icontains=search_query)
+            | Q(course_name__icontains=search_query)
+            | Q(technologies__icontains=search_query)
+        )
+
+    context = {
+        'projects': projects,
+        'generations': generations,
+        'selected_generation': selected_generation,
+        'selected_origin': selected_origin,
+        'selected_type': selected_type,
+        'search_query': search_query,
+        'project_origins': PROJECT_ORIGIN_CHOICES,
+        'student_project_types': STUDENT_PROJECT_TYPE_CHOICES,
+        'diftel_count': InitialProject.objects.filter(origin='diftel').count(),
+        'student_count': InitialProject.objects.filter(origin='student').count(),
+    }
+    return render(request, 'dashboard/initial_projects.html', context)
+
+
+def initial_projects_list_view(request, generation):
+    projects = InitialProject.objects.filter(generation=generation).prefetch_related('images', 'videos')
+    return render(request, 'dashboard/partials/initial_projects_list.html', {
+        'projects': projects,
+        'generation': generation,
+    })
+
+
+def project_detail_view(request, pk):
+    project = get_object_or_404(InitialProject.objects.prefetch_related('images', 'videos'), pk=pk)
+    related = InitialProject.objects.exclude(pk=project.pk).filter(origin=project.origin).prefetch_related('images')[:3]
+    return render(request, 'dashboard/project_detail.html', {'project': project, 'related_projects': related})
+
+
+def _parse_year_param(year_val):
+    if not year_val:
+        return None
+    val_str = str(year_val).strip().lower()
+    if val_str in ('all', 'todos', ''):
+        return None
+    try:
+        val = int(val_str)
+        return val if val > 0 else None
+    except (ValueError, TypeError):
+        return None
+
+
+def workshops_view(request, year=None):
+    year_param = year if year is not None else request.GET.get('year')
+    selected_year = _parse_year_param(year_param)
+    event_type = request.GET.get('event_type') or request.GET.get('type')
+    search_query = (request.GET.get('q') or '').strip()
+
+    workshops = Workshop.objects.all().prefetch_related('images', 'videos').order_by('-featured', '-year', '-created_at', '-id')
