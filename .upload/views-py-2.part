@@ -1,0 +1,142 @@
+        selected_plan = available_plans[0] if available_plans else 2025
+    courses = Course.objects.filter(plan_year=selected_plan).order_by('semester', 'id')
+    search_query = (request.GET.get('q') or '').strip()
+    if search_query:
+        courses = courses.filter(Q(code__icontains=search_query) | Q(name__icontains=search_query) | Q(area__icontains=search_query))
+    semester_groups = []
+    for semester in sorted(set(courses.values_list('semester', flat=True))):
+        semester_groups.append({'semester': semester, 'courses': list(courses.filter(semester=semester))})
+    return render(request, 'dashboard/curriculum.html', {
+        'semester_groups': semester_groups,
+        'available_plans': available_plans,
+        'selected_plan': selected_plan,
+        'search_query': search_query,
+        'course_count': courses.count(),
+    })
+
+
+def _group_course_resources(resources):
+    type_labels = dict(COURSE_RESOURCE_CHOICES)
+    grouped = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    for resource in resources:
+        grouped[resource.resource_type][resource.year][resource.academic_semester].append(resource)
+    sections = []
+    for resource_type, label in COURSE_RESOURCE_CHOICES:
+        years = []
+        for year in sorted(grouped[resource_type].keys(), reverse=True):
+            semesters = []
+            for semester in (1, 2):
+                items = grouped[resource_type][year].get(semester, [])
+                if items:
+                    semesters.append({'number': semester, 'label': 'Primer semestre' if semester == 1 else 'Segundo semestre', 'items': items})
+            if semesters:
+                years.append({'year': year, 'semesters': semesters})
+        sections.append({'key': resource_type, 'label': type_labels[resource_type], 'years': years})
+    return sections
+
+
+def course_detail_view(request, slug):
+    course = get_object_or_404(Course, slug=slug)
+    previous_relations = course.progression_in.select_related('from_course').all()
+    next_relations = course.progression_out.select_related('to_course').all()
+    resources = course.resources.all()
+    reviews = course.reviews.filter(approved=True)
+    averages = reviews.aggregate(
+        difficulty=Avg('difficulty'),
+        workload=Avg('workload'),
+        usefulness=Avg('usefulness'),
+        weekly_hours=Avg('weekly_hours'),
+    )
+    rating_percentages = {
+        key: round((averages.get(key) or 0) * 20, 1)
+        for key in ('difficulty', 'workload', 'usefulness')
+    }
+    return render(request, 'dashboard/course_detail.html', {
+        'course': course,
+        'previous_relations': previous_relations,
+        'next_relations': next_relations,
+        'resource_sections': _group_course_resources(resources),
+        'reviews': reviews,
+        'review_count': reviews.count(),
+        'averages': averages,
+        'rating_percentages': rating_percentages,
+        'review_submitted': request.GET.get('opinion') == 'enviada',
+    })
+
+
+@require_POST
+def submit_course_review(request, slug):
+    course = get_object_or_404(Course, slug=slug)
+    try:
+        year_taken = int(request.POST.get('year_taken', ''))
+        difficulty = int(request.POST.get('difficulty', ''))
+        workload = int(request.POST.get('workload', ''))
+        usefulness = int(request.POST.get('usefulness', ''))
+        weekly_raw = (request.POST.get('weekly_hours') or '').strip()
+        weekly_hours = float(weekly_raw) if weekly_raw else None
+        if not (1990 <= year_taken <= 2100):
+            raise ValueError
+        if not all(1 <= value <= 5 for value in (difficulty, workload, usefulness)):
+            raise ValueError
+        if weekly_hours is not None and not (0 <= weekly_hours <= 80):
+            raise ValueError
+    except (TypeError, ValueError):
+        messages.error(request, 'Revisa el año, las horas y las valoraciones antes de enviar.')
+        return redirect('course_detail', slug=course.slug)
+
+    experience = (request.POST.get('experience') or '').strip()
+    if not experience:
+        messages.error(request, 'Cuéntanos al menos brevemente cómo fue tu experiencia con el ramo.')
+        return redirect('course_detail', slug=course.slug)
+
+    CourseReview.objects.create(
+        course=course,
+        display_name=(request.POST.get('display_name') or '').strip()[:100],
+        anonymous=request.POST.get('anonymous') == 'on',
+        year_taken=year_taken,
+        professor=(request.POST.get('professor') or '').strip()[:160],
+        difficulty=difficulty,
+        workload=workload,
+        usefulness=usefulness,
+        weekly_hours=weekly_hours,
+        difficult_topics=(request.POST.get('difficult_topics') or '').strip(),
+        advice=(request.POST.get('advice') or '').strip(),
+        professor_experience=(request.POST.get('professor_experience') or '').strip(),
+        prior_knowledge=(request.POST.get('prior_knowledge') or '').strip(),
+        experience=experience,
+        approved=False,
+    )
+    return redirect(f"/malla/ramo/{course.slug}/?opinion=enviada#opiniones")
+
+
+def global_search_view(request):
+    query = (request.GET.get('q') or '').strip()
+    results = {'courses': [], 'projects': [], 'workshops': [], 'community': [], 'members': []}
+    if query:
+        results['courses'] = Course.objects.filter(Q(code__icontains=query) | Q(name__icontains=query) | Q(summary__icontains=query))[:8]
+        results['projects'] = InitialProject.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(technologies__icontains=query)).prefetch_related('images')[:8]
+        results['workshops'] = Workshop.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(organizations__icontains=query)).prefetch_related('images')[:8]
+        results['community'] = CommunityEvent.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)).prefetch_related('media')[:8]
+        results['members'] = CommunityMember.objects.filter(Q(name__icontains=query) | Q(bio__icontains=query) | Q(current_role__icontains=query) | Q(interests__icontains=query))[:8]
+    total = sum(len(items) for items in results.values())
+    return render(request, 'dashboard/search.html', {'query': query, 'results': results, 'total': total})
+LOWER_PIN_BOUND = 100000
+UPPER_PIN_BOUND = 999999
+
+EXPIRATION_SPAN_MINUTES = 15
+
+MAX_SIZE_BYTES = 2e9 # 2 Gigabytes
+
+TMP_DIR = "/data/buzon/tmp"
+
+@csrf_exempt
+@require_POST
+def request_pin(request):
+    if request.content_type != "application/json":
+        return JsonResponse({"detail": "Faltan parámetros requeridos"}, status=400)
+
+    try:
+        data = json.loads(request.body)
+
+        if not isinstance(data,dict):
+            return JsonResponse({"detail": "Json inválido."}, status=400)
