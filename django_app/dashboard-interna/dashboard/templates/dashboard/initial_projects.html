@@ -1,0 +1,9 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}Proyectos · DIFTEL{% endblock %}
+{% block content %}
+<section class="page-hero section-shell reveal"><p class="eyebrow">Proyectos</p><h1>Proyectos DIFTEL y de estudiantes</h1><p>Explora iniciativas de DIFTEL, proyectos de ramos y trabajos de mechones.</p></section>
+<section class="section-shell filters reveal"><form method="get"><input name="q" value="{{ search_query }}" placeholder="Buscar proyecto, integrante, tecnología…"><select name="origin"><option value="">Todos</option>{% for key,label in project_origins %}<option value="{{ key }}" {% if selected_origin == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><select name="type"><option value="">Tipo estudiantil</option>{% for key,label in student_project_types %}<option value="{{ key }}" {% if selected_type == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="btn primary">Filtrar</button></form></section>
+<section class="section-shell card-grid reveal">
+{% for project in projects %}<a class="archive-card" data-preview-card href="{% url 'project_detail' project.pk %}"><span>{{ project.get_origin_display }}</span><h2>{{ project.title }}</h2><p>{{ project.tagline|default:project.description|truncatewords:24 }}</p><small>{{ project.generation }}{% if project.course_code %} · {{ project.course_code }}{% endif %}</small></a>{% empty %}<p class="empty">No hay proyectos con esos filtros.</p>{% endfor %}
+</section>
+{% endblock %}
