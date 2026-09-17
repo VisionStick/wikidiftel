@@ -1,0 +1,9 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}Malla y ramos · DIFTEL{% endblock %}
+{% block content %}
+<section class="page-hero section-shell reveal"><p class="eyebrow">Malla</p><h1>Ramos de Telemática</h1><p>Cada ramo puede tener resumen, apuntes, certámenes, controles, material y opiniones.</p></section>
+<section class="section-shell filters reveal"><form method="get"><input name="q" value="{{ search_query }}" placeholder="Buscar sigla, ramo o área…"><select name="plan">{% for plan in available_plans %}<option value="{{ plan }}" {% if selected_plan == plan %}selected{% endif %}>Plan {{ plan }}</option>{% endfor %}</select><button class="btn primary">Filtrar</button></form></section>
+<section class="section-shell curriculum-board reveal">
+{% for group in semester_groups %}<div class="semester-column"><h2>Semestre {{ group.semester }}</h2>{% for course in group.courses %}<a class="course-card" href="{% url 'course_detail' course.slug %}"><strong>{{ course.code|default:'Ramo' }}</strong><span>{{ course.name }}</span><small>{{ course.area }}</small></a>{% endfor %}</div>{% empty %}<p class="empty">No hay ramos para esos filtros.</p>{% endfor %}
+</section>
+{% endblock %}
