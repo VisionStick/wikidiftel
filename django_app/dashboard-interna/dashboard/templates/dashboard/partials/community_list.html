@@ -1,0 +1,1 @@
+{% for member in members %}<article class="archive-card"><h3>{{ member.name }}</h3><p>{{ member.bio|truncatewords:20 }}</p><small>{{ member.generation }}</small></article>{% empty %}<p class="empty">No hay integrantes.</p>{% endfor %}
