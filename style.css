@@ -1,0 +1,178 @@
+/* ======================================================================
+   Variables CSS Globales
+   ====================================================================== */
+:root {
+    --color-usm-blue: #004B87;
+    --color-usm-dark: #00335c;
+    --color-diftel-yellow: #FFB81C;
+    --color-diftel-cyan: #00B5E2;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-soft: 0 10px 40px -10px rgba(0, 75, 135, 0.1);
+    --shadow-hover: 0 20px 40px -10px rgba(0, 181, 226, 0.2);
+}
+
+/* ======================================================================
+   Base y Reseteos Adicionales
+   ====================================================================== */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    background-color: #f8fafc;
+}
+
+::selection {
+    background-color: var(--color-diftel-cyan);
+    color: white;
+}
+
+/* ======================================================================
+   Glassmorphism y Superficies Premium
+   ====================================================================== */
+.glass-nav {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+}
+
+.premium-card {
+    background: white;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.premium-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ======================================================================
+   Utilidades de Texto
+   ====================================================================== */
+.gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(135deg, var(--color-usm-blue), var(--color-diftel-cyan));
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
+}
+
+/* ======================================================================
+   Animaciones (Keyframes)
+   ====================================================================== */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Retrasos para la animación de entrada secuencial */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* ======================================================================
+   Formularios y UI Personalizada
+   ====================================================================== */
+.input-premium {
+    background: #ffffff;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.input-premium:focus {
+    border-color: var(--color-usm-blue);
+    box-shadow: 0 0 0 4px rgba(0, 75, 135, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-premium {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-premium::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+}
+
+.btn-premium:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Decoraciones de Fondo */
+.bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.4;
+    animation: float 10s ease-in-out infinite alternate;
+}
+.bg-blob-1 {
+    background: var(--color-diftel-cyan);
+    width: 40vw;
+    height: 40vw;
+    min-width: 300px;
+    min-height: 300px;
+    top: -100px;
+    left: -100px;
+}
+.bg-blob-2 {
+    background: var(--color-usm-blue);
+    width: 30vw;
+    height: 30vw;
+    min-width: 250px;
+    min-height: 250px;
+    bottom: 20%;
+    right: -50px;
+    animation-delay: 2s;
+}
