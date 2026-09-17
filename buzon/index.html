@@ -1,20 +1,175 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="warm">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buzón de Aportes · DIFTEL SJ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css">
-  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{usm:{blue:'#004B87',dark:'#00335c'},diftel:{yellow:'#FFB81C',cyan:'#00B5E2'}}}}}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Aportar material · DIFTEL SJ</title>
+    <meta name="description" content="Buzón seguro de DIFTEL SJ para aportar apuntes, certámenes, controles y material útil para estudiantes de Telemática USM.">
+    <script>
+        (function(){
+            const saved = localStorage.getItem('diftel-theme');
+            document.documentElement.setAttribute('data-theme', ['warm','light','dark'].includes(saved) ? saved : 'warm');
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/landing.css">
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/buzon.js" defer></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans text-gray-800 relative">
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0"><div class="bg-blob bg-blob-1"></div><div class="bg-blob bg-blob-2"></div></div>
-  <nav class="glass-nav fixed w-full z-50 top-0"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex justify-between h-16 items-center"><div class="flex items-center gap-3"><div class="bg-usm-blue p-2 rounded-lg shadow-lg shadow-usm-blue/30"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><a href="../" class="font-extrabold text-xl tracking-tight text-usm-blue uppercase">DIFTEL <span class="text-diftel-yellow">SJ</span></a></div><div class="hidden md:flex space-x-8"><a href="../" class="text-gray-600 font-medium hover:text-usm-blue">Inicio</a><a target="_blank" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="text-gray-600 font-medium hover:text-usm-blue">Apuntes</a><a href="../proyectos-iniciales/" class="text-gray-600 font-medium hover:text-usm-blue">Proyectos</a><a href="../talleres/" class="text-gray-600 font-medium hover:text-usm-blue">Talleres</a><a href="../comunidad/" class="text-gray-600 font-medium hover:text-usm-blue">Comunidad</a><a href="./" class="text-usm-blue font-semibold">Subir Material</a></div></div></div></nav>
-  <main class="relative z-10 flex-grow pt-28 pb-16">
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-gray-100 text-usm-blue font-bold text-sm mb-6"><span class="w-2 h-2 rounded-full bg-diftel-cyan"></span>Aportes de la comunidad</div><h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-usm-dark mb-5">Buzón de Aportes</h1><p class="max-w-3xl text-lg md:text-xl text-gray-600 font-medium leading-relaxed">Comparte apuntes, certámenes, controles, guías o material útil para estudiantes de Telemática. En la versión Django local el flujo usa correo USM, PIN y subida segura.</p></section>
-    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"><div class="premium-card rounded-3xl p-8 md:p-10 border-t-4 border-usm-blue"><h2 class="text-2xl font-bold text-usm-dark mb-4">Versión estática de GitHub Pages</h2><p class="text-gray-600 leading-relaxed mb-6">GitHub Pages muestra la interfaz, pero no ejecuta backend. Para usar el envío real de archivos, ejecuta la app Django local o despliega el contenedor con `docker compose up -d --build`.</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="p-4 rounded-2xl bg-blue-50"><strong class="text-usm-blue">1. Correo USM</strong><p class="text-sm text-gray-600 mt-1">Validación institucional.</p></div><div class="p-4 rounded-2xl bg-cyan-50"><strong class="text-usm-blue">2. PIN</strong><p class="text-sm text-gray-600 mt-1">Confirmación segura.</p></div><div class="p-4 rounded-2xl bg-yellow-50"><strong class="text-usm-blue">3. Archivo</strong><p class="text-sm text-gray-600 mt-1">Subida y revisión.</p></div></div><a href="../" class="inline-flex mt-8 items-center gap-2 px-5 py-3 rounded-full bg-usm-blue text-white font-bold shadow-lg shadow-usm-blue/20">Volver al inicio →</a></div></section>
-  </main>
-  <footer class="bg-usm-dark text-white border-t-4 border-diftel-yellow mt-auto"><div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"><span class="font-bold text-xl tracking-wide">DIFTEL SJ</span><p class="text-gray-300 text-sm mt-2">Organización de Estudiantes de Ingeniería Civil Telemática</p></div></footer>
+<body class="site-body">
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <div class="ambient-bg" aria-hidden="true">
+        <span class="ambient-orb ambient-orb-a"></span>
+        <span class="ambient-orb ambient-orb-b"></span>
+        <span class="ambient-grid"></span>
+    </div>
+
+    <nav class="topbar" aria-label="Navegación principal">
+        <div class="topbar-inner">
+            <a href="../" class="brand" aria-label="DIFTEL SJ, volver al inicio">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="brand-copy"><strong>DIFTEL</strong><small>San Joaquín</small></span>
+            </a>
+
+            <div class="desktop-nav">
+                <a href="../" class="nav-link">Inicio</a>
+                <a href="../malla/" class="nav-link">Malla</a>
+                <a href="../proyectos/" class="nav-link">Proyectos</a>
+                <a href="../talleres/" class="nav-link">Talleres</a>
+                <a href="../comunidad/" class="nav-link">Comunidad</a>
+                <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="nav-link">Wiki ↗</a>
+            </div>
+
+            <div class="topbar-actions">
+                <form action="../buscar/" method="get" class="mini-search desktop-search" role="search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <input type="search" name="q" placeholder="Buscar en DIFTEL…" aria-label="Buscar en DIFTEL">
+                </form>
+                <div class="theme-picker" data-theme-picker>
+                    <button class="theme-trigger" type="button" aria-label="Cambiar tema" aria-expanded="false" data-theme-trigger>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.5A6.7 6.7 0 0 1 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                    </button>
+                    <div class="theme-menu" data-theme-menu>
+                        <button type="button" data-set-theme="warm"><span class="theme-dot dot-warm"></span><span>Cálido</span></button>
+                        <button type="button" data-set-theme="light"><span class="theme-dot dot-light"></span><span>Blanco</span></button>
+                        <button type="button" data-set-theme="dark"><span class="theme-dot dot-dark"></span><span>Oscuro</span></button>
+                    </div>
+                </div>
+                <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobile-menu" hidden>
+            <form action="../buscar/" method="get" class="mini-search mobile-search" role="search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input type="search" name="q" placeholder="Buscar ramos, proyectos, talleres…" aria-label="Buscar en DIFTEL">
+            </form>
+            <a href="../">Inicio</a><a href="../malla/">Malla y Ramos</a><a href="../proyectos/">Proyectos</a><a href="../talleres/">Talleres</a><a href="../comunidad/">Comunidad</a>
+            <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki / Apuntes ↗</a>
+            <a href="../buzon/" class="mobile-upload">Aportar material</a>
+        </div>
+    </nav>
+
+    <main id="contenido" class="site-main buzon-page">
+        <section class="section-shell buzon-layout">
+            <div class="buzon-intro reveal">
+                <span class="eyebrow"><span class="status-dot"></span> Un repositorio construido entre todos</span>
+                <h1>Si te sirvió,<br><span class="gradient-ink">compártelo.</span></h1>
+                <p>Un apunte, un control antiguo o esa guía que te salvó una tarde puede ayudarle muchísimo a la persona que viene después. El buzón permite aportarlo de forma simple y segura.</p>
+
+                <div class="buzon-note">
+                    <span aria-hidden="true">✎</span>
+                    <p><strong>No necesitas ordenar todo perfecto.</strong> Nosotros revisamos el aporte antes de incorporarlo al repositorio. Lo importante es que el material pueda ser útil para la comunidad.</p>
+                </div>
+
+                <div class="buzon-safety-list" aria-label="Cómo funciona el buzón">
+                    <div><span>1</span><p><strong>Valida tu correo USM</strong><small>Te enviamos un PIN que dura 15 minutos.</small></p></div>
+                    <div><span>2</span><p><strong>Sube tu archivo</strong><small>Hasta 2 GB por aporte.</small></p></div>
+                    <div><span>3</span><p><strong>Revisión segura</strong><small>El archivo pasa por el flujo de escaneo antes de publicarse.</small></p></div>
+                </div>
+            </div>
+
+            <section class="buzon-card reveal delay-1" aria-labelledby="buzon-title">
+                <div class="buzon-card-head">
+                    <div>
+                        <span class="eyebrow">Buzón DIFTEL</span>
+                        <h2 id="buzon-title">Aportar material</h2>
+                    </div>
+                    <span class="buzon-lock" title="Validación por correo USM" aria-label="Validación por correo USM">⌁</span>
+                </div>
+
+                <div class="buzon-progress" aria-label="Progreso del aporte">
+                    <span class="active" data-step-dot="1">1</span><i></i><span data-step-dot="2">2</span><i></i><span data-step-dot="3">✓</span>
+                </div>
+
+                <div id="alert-box" class="buzon-alert" hidden role="alert" aria-live="polite"></div>
+
+                <div id="step-1" class="buzon-step active">
+                    <div class="step-copy"><strong>Primero, confirmemos que eres parte de la comunidad.</strong><p>Usa tu correo institucional. Solo lo ocupamos para validar este aporte.</p></div>
+                    <form id="form-step-1" class="buzon-form">
+                        <label for="email">Correo USM</label>
+                        <div class="input-with-icon"><span>@</span><input type="email" id="email" autocomplete="email" placeholder="nombre@usm.cl" required></div>
+                        <button type="submit" id="btn-step-1" class="button button-primary full"><span id="text-step-1">Enviar código</span><span id="loader-step-1" class="buzon-spinner" hidden></span></button>
+                    </form>
+                    <p class="privacy-note">No usamos tu correo para perfiles públicos ni publicidad.</p>
+                </div>
+
+                <div id="step-2" class="buzon-step" hidden>
+                    <div class="step-copy"><strong>Revisa tu correo ✉</strong><p>Mandamos un código a <b id="display-email"></b>. Escríbelo y selecciona el material que quieres compartir.</p></div>
+                    <form id="form-step-2" class="buzon-form">
+                        <label for="pin">Código de 6 dígitos</label>
+                        <input class="pin-input" type="text" inputmode="numeric" pattern="[0-9]*" id="pin" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+
+                        <label for="file">Archivo</label>
+                        <label class="drop-zone" for="file" id="drop-zone">
+                            <input id="file" name="file" type="file" required hidden>
+                            <span class="drop-icon" aria-hidden="true">↥</span>
+                            <strong>Haz clic o arrastra un archivo aquí</strong>
+                            <small id="file-name-display">PDF, imágenes, ZIP, documentos y otros archivos · máximo 2 GB</small>
+                        </label>
+                        <div class="selected-file" id="selected-file" hidden><span>✓</span><div><strong id="selected-file-name"></strong><small id="selected-file-size"></small></div></div>
+
+                        <button type="submit" id="btn-step-2" class="button button-primary full"><span id="text-step-2">Enviar al buzón</span><span id="loader-step-2" class="buzon-spinner" hidden></span></button>
+                        <button type="button" id="btn-back" class="buzon-back">← Cambiar correo</button>
+                    </form>
+                </div>
+
+                <div id="step-success" class="buzon-step buzon-success" hidden>
+                    <div class="success-mark" aria-hidden="true">✓</div>
+                    <span class="eyebrow">Aporte recibido</span>
+                    <h3>Gracias por dejar algo para quienes vienen después.</h3>
+                    <p>El archivo quedó en el flujo de revisión de DIFTEL. Si pasa el escaneo y corresponde al repositorio, podrá incorporarse al material de la comunidad.</p>
+                    <button type="button" id="btn-restart" class="button button-soft full">Aportar otro archivo</button>
+                    <a href="../" class="text-link">Volver al inicio →</a>
+                </div>
+            </section>
+        </section>
+
+        <section class="section-shell buzon-examples reveal">
+            <span class="eyebrow">¿Qué sirve aportar?</span>
+            <h2>No tiene que ser “el apunte perfecto”.</h2>
+            <div class="buzon-example-grid">
+                <article><span>⌁</span><strong>Certámenes y controles</strong><p>Evaluaciones antiguas que ayuden a practicar y entender el formato del ramo.</p></article>
+                <article><span>✎</span><strong>Apuntes propios</strong><p>Resúmenes, formularios, mapas conceptuales o explicaciones que te hayan servido.</p></article>
+                <article><span>□</span><strong>Guías y material</strong><p>Ejercicios, laboratorios y recursos complementarios que valga la pena conservar.</p></article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand"><span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8"/></svg></span><div><strong>DIFTEL San Joaquín</strong><p>Hecho por estudiantes de Ingeniería Civil Telemática USM.</p></div></div>
+            <div class="footer-links">
+                <div><span>Explorar</span><a href="../malla/">Malla y Ramos</a><a href="../proyectos/">Proyectos</a><a href="../talleres/">Talleres</a></div>
+                <div><span>Comunidad</span><a href="../comunidad/">Archivo y personas</a><a href="../buzon/">Aportar material</a><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki ↗</a></div>
+                <div><span>Redes</span><a target="_blank" rel="noopener" href="https://instagram.com/telematicausm">@telematicausm</a><a target="_blank" rel="noopener" href="https://instagram.com/diftelusm">@diftelusm</a><a target="_blank" rel="noopener" href="https://instagram.com/ceetel.sj">@ceetel.sj</a></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><span>DIFTEL SJ · Telemática USM</span><span>Una página hecha con cariño para la comunidad.</span></div>
+    </footer>
 </body>
 </html>
