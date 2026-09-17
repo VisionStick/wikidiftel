@@ -27,43 +27,24 @@
   transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
 }
 .malla-filter-form.v4 select:hover,
-.sort-box-v4 select:hover{
-  background-color:#123147;
-  border-color:#56d6ff;
-}
+.sort-box-v4 select:hover{background-color:#123147;border-color:#56d6ff}
 .malla-filter-form.v4 select:focus,
-.sort-box-v4 select:focus{
-  outline:none;
-  border-color:#71deff;
-  box-shadow:0 0 0 4px rgba(59,197,255,.18), 0 12px 26px rgba(0,0,0,.18);
-}
+.sort-box-v4 select:focus{outline:none;border-color:#71deff;box-shadow:0 0 0 4px rgba(59,197,255,.18),0 12px 26px rgba(0,0,0,.18)}
 .malla-filter-form.v4 select option,
-.sort-box-v4 select option{
-  background:#102739;
-  color:#eef8ff;
-}
-.malla-filter-form.v4{align-items:end;}
-.malla-filter-form.v4 .button,
-.malla-filter-form.v4 .clear-filter{min-height:48px}
+.sort-box-v4 select option{background:#102739;color:#eef8ff}
+.malla-filter-form.v4{align-items:end}.malla-filter-form.v4 .button,.malla-filter-form.v4 .clear-filter{min-height:48px}
 
-.malla-board-v4{gap:16px;padding-bottom:20px}
-.semester-v4{display:flex;flex-direction:column}
-.semester-cards-v4{gap:12px}
+.malla-board-v4{gap:16px;padding-bottom:20px}.semester-v4{display:flex;flex-direction:column}.semester-cards-v4{gap:12px}
 .course-card-v4{
   display:flex;
   flex-direction:column;
   align-items:stretch;
   gap:8px;
-  height:192px;
-  min-height:192px;
-  padding:14px 14px 13px;
+  height:214px;
+  min-height:214px;
+  padding:15px 14px 13px;
 }
-.course-card-v4-top{
-  min-height:18px;
-  margin-bottom:2px;
-}
-.course-code-v4,
-.course-sct-v4{line-height:1.1}
+.course-card-v4-top{min-height:18px;margin-bottom:2px}.course-code-v4,.course-sct-v4{line-height:1.1}
 .course-card-v4 h2{
   margin:0;
   min-height:50px;
@@ -75,78 +56,28 @@
   line-clamp:3;
 }
 .course-card-v4 p{
-  min-height:31px;
-  max-height:31px;
+  min-height:44px;
+  max-height:44px;
+  margin:0;
+  color:color-mix(in srgb,var(--muted) 88%,var(--area) 12%);
+  font-size:11px;
+  line-height:1.35;
+  font-weight:850;
   overflow:hidden;
   display:-webkit-box;
   -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  line-clamp:2;
+  -webkit-line-clamp:3;
+  line-clamp:3;
 }
-.course-card-v4 .open{
-  margin-top:auto;
-  padding-top:8px;
-  align-self:flex-start;
-}
+.course-card-v4 .open{margin-top:auto;padding-top:8px;align-self:flex-start}
 .malla-board-v4.semester-only .semester-cards-v4{gap:16px}
-.malla-board-v4.semester-only .course-card-v4{
-  height:214px;
-  min-height:214px;
-  padding:18px;
-}
-.malla-board-v4.semester-only .course-card-v4 h2{
-  min-height:66px;
-  max-height:66px;
-  font-size:18px;
-}
-.malla-board-v4.semester-only .course-card-v4 p{
-  min-height:36px;
-  max-height:36px;
-}
+.malla-board-v4.semester-only .course-card-v4{height:236px;min-height:236px;padding:18px}
+.malla-board-v4.semester-only .course-card-v4 h2{min-height:66px;max-height:66px;font-size:18px}
+.malla-board-v4.semester-only .course-card-v4 p{min-height:50px;max-height:50px;font-size:12px}
 
-.experience-head-v4{
-  align-items:end;
-  gap:26px;
-  margin-bottom:6px;
-}
-.sort-box-v4{
-  min-width:250px;
-  max-width:290px;
-  font-size:14px;
-  font-weight:1000;
-  color:var(--text-strong);
-}
-.sort-box-v4 label,
-.sort-box-v4 span,
-.sort-box-v4 strong{
-  color:var(--text-strong);
-  font-size:14px;
-  font-weight:1000;
-  letter-spacing:.01em;
-}
-.sort-box-v4 select{
-  margin-top:8px;
-  min-height:50px;
-  font-size:14px;
-}
-.stats-grid-v4{margin-top:22px;gap:14px}
-.stat-v4{padding:18px 16px}
-.stat-v4 strong{font-size:25px}
-.no-review-v4{margin-top:18px;padding:46px 24px}
+.experience-head-v4{align-items:end;gap:26px;margin-bottom:6px}.sort-box-v4{min-width:250px;max-width:290px;font-size:14px;font-weight:1000;color:var(--text-strong)}
+.sort-box-v4 label,.sort-box-v4 span,.sort-box-v4 strong{color:var(--text-strong);font-size:14px;font-weight:1000;letter-spacing:.01em}.sort-box-v4 select{margin-top:8px;min-height:50px;font-size:14px}.stats-grid-v4{margin-top:22px;gap:14px}.stat-v4{padding:18px 16px}.stat-v4 strong{font-size:25px}.no-review-v4{margin-top:18px;padding:46px 24px}
 
-@media(max-width:1100px){
-  .course-card-v4{height:186px;min-height:186px}
-  .course-card-v4 h2{min-height:48px;max-height:48px}
-}
-@media(max-width:850px){
-  .experience-head-v4{align-items:start}
-  .sort-box-v4{max-width:none;width:100%}
-  .malla-board-v4.semester-only .course-card-v4{height:204px;min-height:204px}
-}
-@media(max-width:620px){
-  .course-card-v4{height:180px;min-height:180px}
-  .course-card-v4 h2{min-height:46px;max-height:46px;font-size:13px}
-  .course-card-v4 p{min-height:29px;max-height:29px}
-  .sort-box-v4 select,
-  .malla-filter-form.v4 select{font-size:13px}
-}
+@media(max-width:1100px){.course-card-v4{height:208px;min-height:208px}.course-card-v4 h2{min-height:48px;max-height:48px}.course-card-v4 p{min-height:42px;max-height:42px}}
+@media(max-width:850px){.experience-head-v4{align-items:start}.sort-box-v4{max-width:none;width:100%}.malla-board-v4.semester-only .course-card-v4{height:226px;min-height:226px}}
+@media(max-width:620px){.course-card-v4{height:202px;min-height:202px}.course-card-v4 h2{min-height:46px;max-height:46px;font-size:13px}.course-card-v4 p{min-height:40px;max-height:40px}.sort-box-v4 select,.malla-filter-form.v4 select{font-size:13px}}
