@@ -1,0 +1,35 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}DIFTEL SJ · Portal de Telemática{% endblock %}
+{% block content %}
+<section class="hero section-shell reveal">
+  <div class="hero-copy">
+    <p class="eyebrow">Wiki DIFTEL · Telemática USM SJ</p>
+    <h1>Un lugar para entender la carrera, guardar la memoria y mostrar lo que hacemos.</h1>
+    <p class="hero-text">Proyectos, talleres, malla, opiniones de ramos y vida de comunidad en una página cálida, ordenada y fácil de mantener.</p>
+    <div class="hero-actions"><a class="btn primary" href="{% url 'curriculum' %}">Explorar malla</a><a class="btn ghost" href="/buzon/">Aportar material</a></div>
+  </div>
+  <aside class="hero-card">
+    <span>Archivo vivo</span>
+    <strong>{{ course_count }}</strong><small>ramos cargados</small>
+    <div class="mini-stats"><b>{{ project_count }}</b><span>proyectos</span><b>{{ workshop_count }}</b><span>talleres</span><b>{{ community_count }}</b><span>recuerdos</span></div>
+  </aside>
+</section>
+<section class="section-shell feature-grid reveal">
+  <a class="feature-card" href="{% url 'initial_projects' %}"><span>01</span><h2>Proyectos</h2><p>DIFTEL, ramos y mechones ordenados por origen, año y tipo.</p></a>
+  <a class="feature-card" href="{% url 'workshops' %}"><span>02</span><h2>Talleres</h2><p>Archivo tipo carpeta con resumen, material, fotos y videos.</p></a>
+  <a class="feature-card" href="{% url 'community' %}"><span>03</span><h2>Comunidad</h2><p>Fotos, actividades, integrantes y recuerdos de la carrera.</p></a>
+  <a class="feature-card" href="{% url 'curriculum' %}"><span>04</span><h2>Ramos</h2><p>Opiniones, material por año/semestre y ruta previo-siguiente.</p></a>
+</section>
+<section class="section-shell split-section reveal">
+  <div><p class="eyebrow">Últimos proyectos</p><h2>Lo que la comunidad está construyendo</h2></div>
+  <div class="card-grid">
+    {% for project in latest_projects %}<a class="archive-card" href="{% url 'project_detail' project.pk %}"><h3>{{ project.title }}</h3><p>{{ project.tagline|default:project.description|truncatewords:22 }}</p><span>{{ project.get_origin_display }} · {{ project.generation }}</span></a>{% empty %}<p class="empty">Aún no hay proyectos cargados.</p>{% endfor %}
+  </div>
+</section>
+<section class="section-shell split-section reveal">
+  <div><p class="eyebrow">Talleres y recuerdos</p><h2>Material que no se pierde</h2></div>
+  <div class="card-grid">
+    {% for workshop in latest_workshops %}<a class="archive-card" href="{% url 'workshop_detail' workshop.pk %}"><h3>{{ workshop.title }}</h3><p>{{ workshop.tagline|default:workshop.description|truncatewords:22 }}</p><span>{{ workshop.year }}</span></a>{% empty %}<p class="empty">Aún no hay talleres cargados.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}
