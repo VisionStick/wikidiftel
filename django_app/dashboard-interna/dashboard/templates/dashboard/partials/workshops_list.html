@@ -1,0 +1,1 @@
+{% for workshop in workshops %}<a class="folder-card" href="{% url 'workshop_detail' workshop.pk %}"><h3>{{ workshop.title }}</h3><p>{{ workshop.description|truncatewords:20 }}</p><small>{{ workshop.year }}</small></a>{% empty %}<p class="empty">No hay talleres.</p>{% endfor %}
