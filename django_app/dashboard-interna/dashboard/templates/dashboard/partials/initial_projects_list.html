@@ -1,0 +1,1 @@
+{% for project in projects %}<a class="archive-card" href="{% url 'project_detail' project.pk %}"><h3>{{ project.title }}</h3><p>{{ project.description|truncatewords:20 }}</p><small>{{ project.generation }}</small></a>{% empty %}<p class="empty">No hay proyectos.</p>{% endfor %}
