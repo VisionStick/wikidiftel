@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es" data-theme="warm">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>DIFTEL SJ · Portal de Telemática</title>
+  <meta name="description" content="Wiki visual estudiantil de DIFTEL San Joaquín: malla, proyectos, talleres, comunidad y material de Ingeniería Civil Telemática USM.">
+  <script>
+    (function(){
+      const saved = localStorage.getItem('diftel-theme');
+      const theme = ['warm','light','dark'].includes(saved) ? saved : 'warm';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Nunito Sans','Inter','sans-serif'] } } } };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="django_app/dashboard-interna/dashboard/static/css/landing.css?v=wikidiftel-root-1">
+  <style>
+    .static-note{margin:18px auto 0;max-width:760px;border:1px dashed var(--line);background:color-mix(in srgb,var(--surface) 88%,transparent);border-radius:22px;padding:14px 18px;color:var(--muted);font-weight:700}.static-note strong{color:var(--text)}
+    .static-section{padding:52px 0}.mini-resource-list{display:grid;gap:12px;margin-top:18px}.mini-resource-list a,.mini-resource-list div{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow)}.mini-resource-list span{color:var(--muted);font-size:.94rem}.mini-resource-list strong{font-weight:900}.mini-resource-list em{font-style:normal;color:var(--accent);font-weight:900}.wiki-pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.wiki-pill-row span{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px;font-weight:900;color:var(--muted)}
+  </style>
+</head>
+<body class="site-body">
+  <a href="#contenido" class="skip-link">Saltar al contenido</a>
+  <div class="ambient-bg" aria-hidden="true"><span class="ambient-orb ambient-orb-a"></span><span class="ambient-orb ambient-orb-b"></span><span class="ambient-grid"></span></div>
+
+  <nav class="topbar" aria-label="Navegación principal">
+    <div class="topbar-inner">
+      <a href="./" class="brand" aria-label="DIFTEL SJ, volver al inicio">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg></span>
+        <span class="brand-copy"><strong>DIFTEL</strong><small>San Joaquín</small></span>
+      </a>
+      <div class="desktop-nav">
+        <a href="#inicio" class="nav-link is-active">Inicio</a>
+        <a href="#malla" class="nav-link">Malla</a>
+        <a href="#proyectos" class="nav-link">Proyectos</a>
+        <a href="#talleres" class="nav-link">Talleres</a>
+        <a href="#comunidad" class="nav-link">Comunidad</a>
+        <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="nav-link">Wiki ↗</a>
+      </div>
+      <div class="topbar-actions">
+        <form action="#secciones" class="mini-search desktop-search" role="search" data-global-search-form>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          <input type="search" placeholder="Buscar en DIFTEL…" aria-label="Buscar en DIFTEL" data-global-search-input>
+        </form>
+        <div class="theme-picker" data-theme-picker>
+          <button class="theme-trigger" type="button" aria-label="Cambiar tema" aria-expanded="false" data-theme-trigger><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.5A6.7 6.7 0 0 1 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg></button>
+          <div class="theme-menu" data-theme-menu>
+            <button type="button" data-set-theme="warm"><span class="theme-dot dot-warm"></span><span>Cálido</span></button>
+            <button type="button" data-set-theme="light"><span class="theme-dot dot-light"></span><span>Blanco</span></button>
+            <button type="button" data-set-theme="dark"><span class="theme-dot dot-dark"></span><span>Oscuro</span></button>
+          </div>
+        </div>
+        <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <a href="#inicio">Inicio</a><a href="#malla">Malla y Ramos</a><a href="#proyectos">Proyectos</a><a href="#talleres">Talleres</a><a href="#comunidad">Comunidad</a><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki / Apuntes ↗</a>
+    </div>
+  </nav>
+
+  <main id="contenido" class="site-main">
+    <section id="inicio" class="hero section-shell">
+      <div class="hero-copy reveal">
+        <span class="eyebrow"><span class="status-dot"></span> Ingeniería Civil Telemática · USM San Joaquín</span>
+        <h1>Todo lo que hace grande a <span class="gradient-ink">Telemática</span>, en un solo lugar.</h1>
+        <p class="hero-lead">Una biblioteca viva de ramos, proyectos, talleres y recuerdos. Construida con aportes de la comunidad para que conocer la carrera —y vivirla— sea un poco más fácil.</p>
+        <div class="hero-actions"><a href="#malla" class="button button-primary">Explorar la malla <span>→</span></a><a href="#proyectos" class="button button-soft">Ver qué construimos</a></div>
+        <div class="human-note"><span>✦</span><p><strong>No somos una web institucional.</strong> Somos estudiantes ordenando y compartiendo lo que nos habría gustado encontrar al entrar a la carrera.</p></div>
+      </div>
+      <div class="hero-board reveal delay-1" aria-label="Resumen del portal">
+        <div class="board-paper paper-main"><div class="paper-pin"></div><span class="paper-kicker">DIFTEL / SJ</span><h2>¿Qué vas a encontrar?</h2><ul class="hand-list"><li><span>01</span>Malla explicada por estudiantes</li><li><span>02</span>Proyectos que sí se hicieron</li><li><span>03</span>Talleres, fotos y material</li><li><span>04</span>Recuerdos de nuestra comunidad</li></ul></div>
+        <div class="board-sticker sticker-yellow">hecho con cariño ♥</div><div class="board-sticker sticker-cyan">SJ · Telemática</div>
+      </div>
+    </section>
+
+    <section class="stats-strip section-shell reveal" aria-label="Contenido disponible"><div><strong>10</strong><span>semestres de malla</span></div><div><strong>2</strong><span>familias de proyectos</span></div><div><strong>3</strong><span>temas visuales</span></div><div><strong>1</strong><span>wiki viva</span></div></section>
+
+    <section id="secciones" class="section-shell portal-section">
+      <div class="section-heading centered reveal"><span class="eyebrow">Tu punto de partida</span><h2>No necesitas saber dónde buscar.</h2><p>Elige lo que necesitas y te llevamos al lugar correcto.</p></div>
+      <div class="portal-grid reveal delay-1">
+        <a href="#malla" class="portal-card portal-card-wide"><div class="portal-icon blue">▦</div><div><span class="portal-label">Malla + Ramos</span><h3>Entiende qué viene antes, qué sigue y cómo se vive cada ramo.</h3><p>Material por año y semestre, certámenes, controles, apuntes y opiniones reales.</p></div><span class="portal-arrow">→</span></a>
+        <a href="#proyectos" class="portal-card"><div class="portal-icon cyan">⚙</div><span class="portal-label">Proyectos</span><h3>DIFTEL + estudiantes</h3><p>De proyectos de ramo a ideas de mechones y actividades propias de DIFTEL.</p><span class="portal-arrow">→</span></a>
+        <a href="#talleres" class="portal-card"><div class="portal-icon yellow">✎</div><span class="portal-label">Talleres</span><h3>Aprender haciendo</h3><p>Una galería ordenada con fotos, videos, material y quienes hicieron posible cada taller.</p><span class="portal-arrow">→</span></a>
+        <a href="#comunidad" class="portal-card"><div class="portal-icon coral">◉</div><span class="portal-label">Comunidad</span><h3>Nuestra memoria colectiva</h3><p>Ferias, proyectos, bienvenidas, vida estudiantil y personas de distintas generaciones.</p><span class="portal-arrow">→</span></a>
+        <a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="portal-card"><div class="portal-icon green">☰</div><span class="portal-label">Wiki DIFTEL</span><h3>Apuntes sin vueltas</h3><p>Guías, laboratorios y recursos compartidos por la comunidad.</p><span class="portal-arrow">↗</span></a>
+      </div>
+    </section>
+
+    <section class="section-shell intro-grid static-section">
+      <div class="section-heading reveal"><span class="eyebrow">Para quien recién llega</span><h2>¿Qué es Ingeniería Civil Telemática?</h2><p>Es una carrera que cruza redes, telecomunicaciones, software, datos y seguridad para construir sistemas que conectan personas y servicios. Acá no queremos explicártela con un folleto: queremos mostrártela a través de lo que sus estudiantes hacen.</p><a class="text-link" target="_blank" rel="noopener" href="https://telematica.usm.cl/">Conocer el sitio oficial de la carrera ↗</a></div>
+      <div class="identity-cards reveal delay-1"><article class="identity-card"><span class="identity-icon">⌁</span><h3>Conectar</h3><p>Redes, telecomunicaciones e infraestructura para que los sistemas hablen entre sí.</p></article><article class="identity-card"><span class="identity-icon">{ }</span><h3>Construir</h3><p>Software, servicios y soluciones digitales que resuelven problemas reales.</p></article><article class="identity-card"><span class="identity-icon">⌾</span><h3>Proteger</h3><p>Seguridad, disponibilidad y confiabilidad como parte del diseño.</p></article></div>
+    </section>
+
+    <section id="malla" class="section-shell static-section">
+      <div class="section-heading reveal"><span class="eyebrow">Malla y ramos</span><h2>La malla como guía, no como laberinto.</h2><p>La versión dinámica en Django incluye relación de ramo previo/siguiente, recursos por año y semestre, opiniones estudiantiles, profesores y carga estimada.</p></div>
+      <div class="mini-resource-list reveal delay-1"><div><span><strong>MAT070</strong><br>Relación editorial de avance</span><em>FIS100 → MAT070 → IWG400</em></div><div><span><strong>Recursos</strong><br>Apuntes, controles, certámenes y material de estudio</span><em>ordenados</em></div><div><span><strong>Opiniones</strong><br>Dificultad, carga, utilidad, profe y consejos</span><em>por ramo</em></div></div>
+    </section>
+
+    <section id="proyectos" class="section-shell static-section">
+      <div class="section-heading reveal"><span class="eyebrow">Proyectos</span><h2>Lo que construye DIFTEL y lo que construyen estudiantes.</h2><p>La wiki separa proyectos realizados por DIFTEL de proyectos estudiantiles; estos últimos pueden clasificarse como proyectos de ramo o de mechones.</p><div class="wiki-pill-row"><span>DIFTEL</span><span>Ramos</span><span>Mechones</span><span>Fotos</span><span>Videos</span><span>Participantes</span></div></div>
+    </section>
+
+    <section id="talleres" class="section-shell static-section">
+      <div class="section-heading reveal"><span class="eyebrow">Talleres DIFTEL</span><h2>Una galería tipo Drive, pero más humana.</h2><p>Cada taller puede tener slogan, fecha, responsables, fotos, videos y material. En escritorio se previsualiza al pasar el mouse; en móvil, al mantener presionado.</p><div class="wiki-pill-row"><span>Redes</span><span>Linux</span><span>Git</span><span>Programación</span><span>Charlas</span><span>Material</span></div></div>
+    </section>
+
+    <section id="comunidad" class="section-shell static-section">
+      <div class="section-heading reveal"><span class="eyebrow">Comunidad</span><h2>La memoria colectiva de Telemática.</h2><p>Ferias, bienvenidas, actividades, generaciones, talleres y recuerdos no quedan tirados en una galería infinita: se organizan por categoría y fecha.</p></div>
+    </section>
+
+    <section class="section-shell contribution-banner reveal"><div><span class="eyebrow light">Esto crece con ustedes</span><h2>¿Tienes un apunte, un certamen o una foto que no debería perderse?</h2><p>Compártelo. El valor de DIFTEL está en que cada generación deja algo útil para la siguiente.</p></div><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="button button-light">Abrir Wiki DIFTEL <span>↗</span></a></section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-grid section-shell"><div><strong>DIFTEL SJ</strong><p>Portal estudiantil de Telemática USM San Joaquín. Hecho para ordenar lo que aprendemos, construimos y recordamos.</p></div><div class="footer-links"><a href="#malla">Malla</a><a href="#proyectos">Proyectos</a><a href="#talleres">Talleres</a><a href="#comunidad">Comunidad</a></div></div></footer>
+  <script src="django_app/dashboard-interna/dashboard/static/js/site.js?v=wikidiftel-root-1" defer></script>
+</body>
+</html>
