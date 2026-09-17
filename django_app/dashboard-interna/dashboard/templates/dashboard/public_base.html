@@ -1,0 +1,28 @@
+{% load static %}
+<!doctype html>
+<html lang="es" data-theme="warm">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}DIFTEL SJ · Portal de Telemática{% endblock %}</title>
+  <meta name="description" content="Portal estudiantil de DIFTEL San Joaquín: malla, proyectos, talleres, comunidad y apuntes.">
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% include 'dashboard/includes/navbar.html' %}
+  <main id="contenido">
+    {% if messages %}
+      <section class="section-shell messages">
+        {% for message in messages %}<div class="notice {{ message.tags }}">{{ message }}</div>{% endfor %}
+      </section>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include 'dashboard/includes/footer.html' %}
+  {% include 'dashboard/includes/lightbox.html' %}
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/site.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
