@@ -1,0 +1,9 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}Talleres · DIFTEL{% endblock %}
+{% block content %}
+<section class="page-hero section-shell reveal"><p class="eyebrow">Talleres</p><h1>Archivo de talleres DIFTEL</h1><p>Un espacio tipo carpeta para guardar talleres, charlas, hackathones, material, fotos y videos.</p></section>
+<section class="section-shell filters reveal"><form method="get"><input name="q" value="{{ search_query }}" placeholder="Buscar taller o tema…"><select name="type"><option value="">Todos los tipos</option>{% for key,label in event_types %}<option value="{{ key }}" {% if selected_type == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><select name="year"><option value="">Todos los años</option>{% for year in years %}<option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>{{ year }}</option>{% endfor %}</select><button class="btn primary">Filtrar</button></form></section>
+<section class="section-shell folder-grid reveal">
+{% for workshop in workshops %}<a class="folder-card" data-preview-card href="{% url 'workshop_detail' workshop.pk %}"><span class="folder-icon">▰</span><h2>{{ workshop.title }}</h2><p>{{ workshop.tagline|default:workshop.description|truncatewords:22 }}</p><small>{{ workshop.get_event_type_display }} · {{ workshop.year }}</small></a>{% empty %}<p class="empty">Aún no hay talleres cargados.</p>{% endfor %}
+</section>
+{% endblock %}
