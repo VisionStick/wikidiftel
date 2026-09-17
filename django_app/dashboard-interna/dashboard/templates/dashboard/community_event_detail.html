@@ -1,0 +1,6 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}{{ event.title }} · Comunidad DIFTEL{% endblock %}
+{% block content %}
+<section class="page-hero section-shell reveal"><p class="eyebrow">{{ event.get_category_display }}</p><h1>{{ event.title }}</h1><p>{{ event.description }}</p></section>
+<section class="section-shell detail-layout reveal"><article class="panel"><h2>Detalle</h2><p>{{ event.description|linebreaks }}</p><dl class="meta-list">{% if event.event_date %}<dt>Fecha</dt><dd>{{ event.event_date }}</dd>{% endif %}{% if event.location %}<dt>Lugar</dt><dd>{{ event.location }}</dd>{% endif %}{% if event.people %}<dt>Personas</dt><dd>{{ event.people|linebreaksbr }}</dd>{% endif %}</dl></article><aside class="panel"><h2>Fotos y videos</h2>{% for item in event.media.all %}{% if item.image %}<button class="media-thumb" data-lightbox-src="{{ item.image.url }}" data-lightbox-caption="{{ item.caption }}"><img src="{{ item.image.url }}" alt="{{ item.caption|default:event.title }}"></button>{% endif %}{% if item.video_url %}<a href="{{ item.video_url }}" target="_blank" rel="noopener">{{ item.caption|default:'Video' }}</a>{% endif %}{% empty %}<p class="empty">Aún no hay archivos visuales.</p>{% endfor %}</aside></section>
+{% endblock %}
