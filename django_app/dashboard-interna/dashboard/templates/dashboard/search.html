@@ -1,0 +1,8 @@
+{% extends 'dashboard/public_base.html' %}
+{% block title %}Buscar · DIFTEL{% endblock %}
+{% block content %}
+<section class="page-hero section-shell reveal"><p class="eyebrow">Búsqueda</p><h1>Resultados para “{{ query }}”</h1><p>{{ total }} resultado(s) encontrado(s) en ramos, proyectos, talleres y comunidad.</p></section>
+<section class="section-shell search-results reveal">
+{% for label, items in results.items %}<div class="panel"><h2>{{ label|title }}</h2><div class="card-grid">{% for item in items %}<article class="archive-card"><h3>{{ item.code|default:item.title|default:item.name }}</h3><p>{{ item.summary|default:item.description|default:item.bio|truncatewords:22 }}</p></article>{% empty %}<p class="empty">Sin resultados.</p>{% endfor %}</div></div>{% endfor %}
+</section>
+{% endblock %}
