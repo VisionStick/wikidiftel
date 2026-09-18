@@ -7,32 +7,49 @@
   }
   function norm(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
   function courseUrlByCode(code){return getRootPath()+'ramo/?c='+encodeURIComponent(String(code||'').trim());}
+  function isSideCard(card){
+    const label=norm(card?.querySelector('small')?.textContent||'');
+    return label.includes('previo')||label.includes('siguiente')||label.includes('anterior');
+  }
+  function cardCode(card){
+    return (card?.querySelector('span')?.textContent||'').trim();
+  }
   function enhanceProgression(){
     const strip=document.querySelector('.progression-v4');
     if(!strip) return false;
     [...strip.querySelectorAll('.progress-card-v4')].forEach((card)=>{
-      const label=norm(card.querySelector('small')?.textContent||'');
-      const isSide=label.includes('previo')||label.includes('siguiente')||label.includes('anterior');
-      if(!isSide) return;
-      if(card.matches('a')) return;
-      const code=(card.querySelector('span')?.textContent||'').trim();
+      if(!isSideCard(card)) return;
+      const code=cardCode(card);
       if(!code || code==='—') return;
-      const link=document.createElement('a');
-      link.className=card.className+' is-clickable-progression';
-      link.href=courseUrlByCode(code);
-      link.setAttribute('aria-label',`Abrir ficha de ${code}`);
-      link.style.textDecoration='none';
-      link.style.cursor='pointer';
-      link.innerHTML=card.innerHTML;
-      card.replaceWith(link);
+      card.classList.add('is-clickable-progression');
+      card.setAttribute('role','link');
+      card.setAttribute('tabindex','0');
+      card.setAttribute('aria-label',`Abrir ficha de ${code}`);
+      card.dataset.href=courseUrlByCode(code);
+      card.style.cursor='pointer';
+      card.style.textDecoration='none';
+      if(card.matches('a')) card.href=courseUrlByCode(code);
     });
     return true;
   }
+  document.addEventListener('click',(event)=>{
+    const card=event.target.closest('.progress-card-v4.is-clickable-progression');
+    if(!card || !isSideCard(card)) return;
+    const href=card.dataset.href || (card.matches('a')?card.href:'');
+    if(href){ event.preventDefault(); location.href=href; }
+  });
+  document.addEventListener('keydown',(event)=>{
+    if(event.key!=='Enter' && event.key!==' ') return;
+    const card=event.target.closest('.progress-card-v4.is-clickable-progression');
+    if(!card) return;
+    const href=card.dataset.href || (card.matches('a')?card.href:'');
+    if(href){ event.preventDefault(); location.href=href; }
+  });
   let attempts=0;
   function tick(){
     enhanceProgression();
     attempts+=1;
-    if(attempts<50) setTimeout(tick,120);
+    if(attempts<80) setTimeout(tick,100);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
 })();
