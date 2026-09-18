@@ -1,0 +1,64 @@
+name: Apply favicon and cleanup hotfix
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'Aplica hotfix favicon inicio progresion') }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch static pages
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          def rel(path: Path):
+              depth=len(path.parent.parts)
+              return '../'*depth if depth else ''
+          for path in Path('.').rglob('*.html'):
+              if '.git' in path.parts or '.github' in path.parts:
+                  continue
+              text=path.read_text(encoding='utf-8')
+              base=rel(path)
+              changed=False
+              if '<link rel="icon"' not in text and '</head>' in text:
+                  text=text.replace('</head>', f'  <link rel="icon" type="image/png" href="{base}assets/favicon.png">\n  <link rel="apple-touch-icon" href="{base}assets/favicon.png">\n</head>', 1)
+                  changed=True
+              cleanup=f'<script src="{base}assets/site-cleanup.js" defer></script>'
+              if 'assets/site.js' in text and 'assets/site-cleanup.js' not in text:
+                  text=text.replace('</body>', f'{cleanup}</body>', 1)
+                  changed=True
+              replacements={
+                  'Aportar material':'Opinar en ramos',
+                  'Subir material':'Opinar en ramos',
+                  'Compartir material':'Compartir experiencia',
+                  '¿Tienes un apunte, un certamen o una foto que no debería perderse?':'Cuéntale a la siguiente generación cómo se vive cada ramo.',
+                  'El espacio ya está listo para recibir proyectos de DIFTEL y de estudiantes.':'El espacio ya está listo para registrar proyectos de DIFTEL y de estudiantes.'
+              }
+              for a,b in replacements.items():
+                  if a in text:
+                      text=text.replace(a,b); changed=True
+              if changed:
+                  path.write_text(text, encoding='utf-8')
+          # self remove workflow
+          wf=Path('.github/workflows/apply-hotfix-favicon-cleanup.yml')
+          if wf.exists():
+              wf.unlink()
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Aplica hotfix favicon inicio progresion"
+            git push
+          fi
