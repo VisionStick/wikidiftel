@@ -1,5 +1,5 @@
 {% extends 'dashboard/public_base.html' %}
-{% block title %}Aportar material · DIFTEL{% endblock %}
+{% block title %}Opinar en ramos · DIFTEL{% endblock %}
 {% block content %}
 <section class="page-hero section-shell reveal"><p class="eyebrow">Buzón seguro</p><h1>Aporta material a la Wiki DIFTEL</h1><p>Sube apuntes, certámenes, controles, fotos o material útil. Primero se valida el correo USM y luego el equipo revisa el archivo antes de publicarlo.</p></section>
 <section class="section-shell detail-layout reveal"><article class="panel"><h2>Cómo funciona</h2><p>1. Pide un PIN con tu correo institucional. 2. Revisa tu correo. 3. Ingresa el PIN y sube el archivo. El material queda pendiente de revisión.</p><p class="muted">Acepta correos @usm.cl y @sansano.usm.cl.</p></article><aside class="panel"><h2>Enviar aporte</h2><form class="review-form" id="buzon-form"><input type="email" id="email" name="email" placeholder="tu.correo@usm.cl" required><button class="btn ghost" type="button" id="request-pin">Solicitar PIN</button><input type="text" id="pin" name="pin" placeholder="PIN recibido"><input type="file" id="file" name="file"><button class="btn primary" type="submit">Subir archivo</button><p class="muted" id="buzon-status"></p></form></aside></section>
