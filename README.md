@@ -1,58 +1,63 @@
 # DIFTEL SJ · Portal de Telemática
 
-Portal estudiantil para **Ingeniería Civil Telemática USM, Campus San Joaquín**. La idea no es ser una web corporativa: es reunir en un mismo lugar lo que la comunidad construye, aprende y recuerda, con una interfaz cálida, simple y administrable.
+Portal estudiantil para **Ingeniería Civil Telemática USM, Campus San Joaquín**. La idea no es ser una web corporativa: es reunir en un mismo lugar información útil para recorrer la carrera, mirar la malla, entrar a bibliotecas externas por ramo, conocer proyectos/talleres y leer experiencias de estudiantes.
 
-Esta versión amplía la antigua Biblioteca DIFTEL sin romper su infraestructura: mantiene Django, PostgreSQL, Nginx, Docmost, el Buzón Seguro y ClamAV, pero convierte la portada y las secciones públicas en un portal completo.
+## Estado actual
 
-## Qué incluye esta versión
+Esta versión pública está pensada para funcionar en **GitHub Pages** como sitio estático.
 
-- **Tres temas globales:** Cálido, Blanco y Oscuro. La preferencia queda guardada en el navegador y también funciona en el Buzón.
-- **Inicio editorial:** explica rápidamente qué es Telemática, qué hace DIFTEL y enlaza a la actividad más reciente.
-- **Malla y Ramos:** malla de 10 semestres, buscador, fichas individuales, relaciones explícitas de progresión, material por año/semestre y opiniones moderables.
-- **Proyectos:** separación entre proyectos de DIFTEL y proyectos de estudiantes; estos últimos se clasifican como proyecto de ramo o de mechones/primer año.
-- **Talleres DIFTEL:** explorador visual inspirado en carpetas/Drive, vista previa al pasar el mouse o mantener presionado, ficha completa, fotos, videos y material.
-- **Comunidad:** archivo visual por actividades/categorías/fecha más un directorio de estudiantes y egresados.
-- **Buscador global:** busca simultáneamente ramos, proyectos, talleres, recuerdos y personas.
-- **Navegación rápida:** atajos dentro de cada ramo y búsqueda global con `Ctrl/⌘ + K` o `/`.
-- **Buzón Seguro:** mantiene el flujo correo USM → PIN → subida → escaneo, pero integrado al lenguaje visual del portal.
-- **Panel Django ampliado:** el contenido nuevo se puede mantener desde `/admin/` sin editar HTML.
+La página actualmente separa claramente dos funciones:
 
-## Malla curricular
+- **Biblioteca del ramo:** acceso a carpetas externas de material mediante enlaces por código de asignatura.
+- **Experiencia Estudiantil:** opiniones, comentarios, valoraciones y consejos sobre cada ramo.
 
-La migración `0009_seed_curriculum.py` carga una base editorial de **10 semestres** tomando como referencia el plan publicado por el Departamento de Electrónica USM para Ingeniería Civil Telemática.
+Los usuarios **no suben archivos directamente a la página**. La participación estudiantil dentro del sitio se enfoca en opiniones y experiencias por ramo.
 
-Las relaciones “ramo previo / ramo siguiente” son **relaciones editoriales administradas por DIFTEL**. Sirven para que la navegación tenga lógica, pero no deben presentarse como reemplazo de los prerrequisitos oficiales. Se pueden cambiar desde el admin en **Relaciones entre ramos**.
+## Secciones públicas
 
-## Administrar contenido
+- `/` — Inicio.
+- `/malla/` — Malla curricular y acceso a fichas de ramos.
+- `/ramo/` — Ficha individual de ramo, biblioteca externa y experiencia estudiantil.
+- `/proyectos/` — Archivo de proyectos de DIFTEL y estudiantes.
+- `/talleres/` — Talleres, charlas y actividades.
+- `/comunidad/` — Archivo comunitario y directorio.
+- `/buscar/` — Página de búsqueda estática.
+- `/buzon/` — Página informativa sobre el nuevo flujo de participación.
 
-En `/admin/` se pueden gestionar proyectos, talleres, archivo de comunidad, directorio, malla, recursos y opiniones de ramos.
+## Malla y ramos
 
-Consulta `GUIA_CONTENIDOS.md` para el flujo editorial recomendado.
+La malla está organizada por 10 semestres e incluye códigos, nombres, áreas de formación y SCT. Las fichas de ramo muestran información base, navegación entre ramos, biblioteca externa cuando existe enlace disponible y sección de experiencia estudiantil.
 
-## Despliegue
+Las relaciones “ramo previo / ramo siguiente” son una navegación editorial para orientar el recorrido. No reemplazan los prerrequisitos oficiales de la universidad.
 
-```bash
-cp env.example .env
-./deploy.sh
+## Bibliotecas externas
+
+Los enlaces de bibliotecas están centralizados en:
+
+```text
+assets/ramo-biblioteca-externa.js
 ```
 
-O manualmente:
+Para agregar una biblioteca nueva, se debe sumar el código de ramo y su URL externa en ese archivo.
 
-```bash
-docker compose up -d --build
-```
+## Participación estudiantil
 
-## Rutas públicas principales
-
-- `/` — Inicio
-- `/malla/` — Malla y Ramos
-- `/proyectos/` — Proyectos
-- `/talleres/` — Talleres DIFTEL
-- `/comunidad/` — Archivo y directorio
-- `/buscar/` — Buscador global
-- `/buzon/` — Aportar material
-- `/admin/` — Administración
+La participación dentro de la página se realiza mediante comentarios/opiniones de cada ramo. En la versión estática actual, las opiniones pueden almacenarse en el navegador del usuario; para hacerlas compartidas entre toda la comunidad se recomienda conectar una base de datos externa como Firebase Firestore o Supabase.
 
 ## Criterio visual
 
-La interfaz evita un estilo excesivamente corporativo: usa tipografía amable, superficies tipo papel, pequeños detalles editoriales, fotografías y contenido de la comunidad como protagonistas. Las animaciones son discretas y respetan `prefers-reduced-motion`; los controles tienen estados de foco y la navegación móvil comparte las mismas rutas del escritorio.
+La interfaz busca sentirse estudiantil, cálida y clara: tonos azul oscuro/cyan, tarjetas simples, navegación directa, buen contraste, responsive y detalles visuales sin sobrecargar.
+
+## Archivos principales
+
+- `index.html` — Inicio.
+- `assets/site.js` — Interacciones generales, malla y fichas de ramo.
+- `assets/site-cleanup.js` — Correcciones globales de visibilidad, favicon y limpieza de enlaces antiguos.
+- `assets/malla-cursos-v4.js` — Render y comportamiento de malla.
+- `assets/ramo-biblioteca-externa.js` — Mapa código de ramo → biblioteca externa.
+- `assets/ramo-progression-links.js` — Navegación clickeable entre ramo previo y siguiente.
+- `assets/*.css` — Estilos visuales del portal.
+
+## Nota de auditoría
+
+El repositorio conserva algunos archivos de infraestructura heredada para despliegue alternativo/local, pero la versión publicada en GitHub Pages funciona principalmente con los archivos estáticos de la raíz, carpetas públicas y `assets/`.
