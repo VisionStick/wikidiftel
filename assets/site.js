@@ -1,19 +1,172 @@
-(()=>{
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],root=document.documentElement,themes=['warm','light','dark'];
-function setTheme(t){if(!themes.includes(t))return;root.dataset.theme=t;localStorage.setItem('diftel-theme',t);$$('[data-set-theme]').forEach(b=>b.classList.toggle('active',b.dataset.setTheme===t))}setTheme(root.dataset.theme||localStorage.getItem('diftel-theme')||'warm');
-$$('[data-theme-picker]').forEach(p=>{const tr=$('[data-theme-trigger]',p);tr?.addEventListener('click',e=>{e.stopPropagation();p.classList.toggle('open');tr.setAttribute('aria-expanded',p.classList.contains('open'))});$$('[data-set-theme]',p).forEach(b=>b.addEventListener('click',()=>{setTheme(b.dataset.setTheme);p.classList.remove('open')}))});document.addEventListener('click',()=>$$('[data-theme-picker].open').forEach(p=>p.classList.remove('open')));
-const mb=$('#mobile-menu-button'),mm=$('#mobile-menu');mb&&mm&&mb.addEventListener('click',()=>{const o=mm.hasAttribute('hidden');o?mm.removeAttribute('hidden'):mm.setAttribute('hidden','');mb.setAttribute('aria-expanded',o)});mm?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mm.setAttribute('hidden','');mb?.setAttribute('aria-expanded','false')}));
-const red=matchMedia('(prefers-reduced-motion: reduce)').matches,rev=$$('.reveal');if(red||!('IntersectionObserver'in window))rev.forEach(e=>e.classList.add('is-visible'));else{const ob=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('is-visible');ob.unobserve(x.target)}}),{threshold:.08,rootMargin:'0px 0px -25px'});rev.forEach(e=>ob.observe(e))}
-const script=document.currentScript?.src||'';if(script&&!$('link[data-diftel-fixes]')){const l=document.createElement('link');l.rel='stylesheet';l.href=new URL('fixes.css',script).href;l.dataset.diftelFixes='1';document.head.append(l)}
-const bits=location.pathname.split('/').filter(Boolean),ri=bits.indexOf('wikidiftel'),depth=ri>=0?Math.max(0,bits.length-ri-1):bits.length,base=depth?'../'.repeat(depth):'./';
-function footer(){const f=$('.site-footer');if(!f)return;f.innerHTML=`<div class="section-shell footer-main"><div class="footer-brand-block"><a href="${base}" class="footer-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span><strong>DIFTEL SJ</strong><small>San Joaquín</small></span></a><p>Hecho por estudiantes, para estudiantes. Una biblioteca viva de ramos, proyectos, talleres y recuerdos de Telemática.</p></div><div class="footer-column"><strong>Explorar</strong><a href="${base}malla/">Malla</a><a href="${base}proyectos/">Proyectos</a><a href="${base}talleres/">Talleres</a><a href="${base}comunidad/">Comunidad</a></div><div class="footer-column"><strong>Aportar</strong><a href="${base}buzon/">Subir material</a><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki DIFTEL ↗</a></div><div class="footer-column"><strong>Redes</strong><a target="_blank" rel="noopener" href="https://www.instagram.com/diftelusm/">@diftelusm</a><a target="_blank" rel="noopener" href="https://instagram.com/telematicausm">@telematicausm</a><a target="_blank" rel="noopener" href="https://www.instagram.com/ceetel.sj/">@ceetel.sj</a></div></div><div class="section-shell footer-bottom"><span>© 2026 DIFTEL · Ingeniería Civil Telemática USM, Campus San Joaquín</span><span>Contenido comunitario · verifica siempre información académica oficial.</span></div>`}footer();
-const AC={'Comunicación & Humanidades':'#d8e31f','Ciencias Sociales & Económicas':'#9bc540','Ciencias Básicas':'#c7353d','Ciencias de la Ingeniería':'#d5ad30','Especialidad':'#6384c0','Competencias Transversales Sello':'#cc98c4','Electivos':'#8756a5'};
-const C=`1|HXW006|Comunicación Efectiva en Español / Inglés I|Comunicación & Humanidades;1|EFI200|Educación Física I|Competencias Transversales Sello;1|IWG400|Proyecto Inicial|Competencias Transversales Sello;1|FIS100|Introducción a la Física|Ciencias Básicas;1|MAT070|Introducción al Cálculo|Ciencias Básicas;1|MAT060|Álgebra y Geometría|Ciencias Básicas;2|HXW007|Comunicación Efectiva en Español / Inglés II|Comunicación & Humanidades;2|EFI201|Educación Física II|Competencias Transversales Sello;2|INF129|Introducción a la Programación|Competencias Transversales Sello;2||Física General Mecánica|Ciencias Básicas;2|MAT071|Cálculo en una Variable|Ciencias Básicas;2|MAT061|Álgebra Lineal|Ciencias Básicas;3||Análisis Crítico de Texto|Comunicación & Humanidades;3||Redes de Computadores|Especialidad;3||Seminario de Programación|Especialidad;3||Electricidad y Magnetismo|Ciencias Básicas;3||Cálculo en Varias Variables|Ciencias Básicas;3||Ecuaciones Diferenciales Elementales|Ciencias Básicas;4||Comunicación Efectiva en Español / Inglés III|Comunicación & Humanidades;4||Electrónica Digital|Especialidad;4||Algorítmica y Complejidad|Especialidad;4||Laboratorio de Redes de Computadores|Especialidad;4||Laboratorio de Electrónica Digital|Especialidad;4||Calor y Ondas|Ciencias Básicas;5||Práctica en Acción Comunitaria|Competencias Transversales Sello;5||Administración y Sostenibilidad Organizacional|Ciencias Sociales & Económicas;5||Administración de Redes|Especialidad;5||Sistemas Digitales y Estructura de Computadores|Especialidad;5||Bases de Datos|Ciencias de la Ingeniería;5||Fundamentos de Transmisión de Señales|Especialidad;6||Comunicación Efectiva en Español / Inglés IV|Comunicación & Humanidades;6||Ingeniería Económica|Ciencias Sociales & Económicas;6||Análisis y Diseño de Software|Ciencias de la Ingeniería;6||Sistemas Operativos para la Infraestructura Telemática|Especialidad;6||Estadística Computacional|Ciencias de la Ingeniería;6||Principios de Comunicaciones|Ciencias de la Ingeniería;7||Inglés Disciplinar|Comunicación & Humanidades;7||Disponibilidad y Rendimiento de Sistemas TIC|Especialidad;7||Ingeniería de Software|Especialidad;7||Laboratorio de Comunicaciones|Especialidad;7||Optimización|Ciencias de la Ingeniería;7||Ciencia de Datos|Ciencias de la Ingeniería;8||Electivo|Electivos;8||Pensamiento de Diseño en Ingeniería (*)|Especialidad;8||Ingeniería en Ciberseguridad|Especialidad;8||Planificación de Infraestructura Telemática|Especialidad;8||Aplicaciones Web y Móviles|Especialidad;8||Procesamiento Digital de Imágenes|Especialidad;9||Electivo|Electivos;9||Gestión de la Innovación|Competencias Transversales Sello;9||Electivo Disciplinar|Especialidad;9||Electivo Disciplinar|Especialidad;9||Electivo Disciplinar|Especialidad;9||Taller de Memoria I (**)|Especialidad;10||Electivo Disciplinar|Especialidad;10||Gestión del Emprendimiento|Competencias Transversales Sello;10||Electivo Disciplinar|Especialidad;10||Electivo Disciplinar|Especialidad;10||Taller de Memoria II (**)|Especialidad`.split(';').map((r,i)=>{let[a,b,c,d]=r.split('|');let s=(b?b+' ':'')+c+' s'+a+' '+i;let slug=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase();return{sem:a,code:b,name:c,area:d,color:AC[d],slug}});
-const bySlug=Object.fromEntries(C.map(x=>[x.slug,x])),byName=Object.fromEntries(C.map(x=>[x.code||x.name,x]));[['FIS100','MAT070','IWG400'],['HXW006','HXW007','Comunicación Efectiva en Español / Inglés III','Comunicación Efectiva en Español / Inglés IV','Inglés Disciplinar'],['EFI200','EFI201'],['MAT060','MAT061','Cálculo en Varias Variables','Ecuaciones Diferenciales Elementales','Estadística Computacional','Optimización'],['FIS100','Física General Mecánica','Electricidad y Magnetismo','Calor y Ondas','Fundamentos de Transmisión de Señales','Principios de Comunicaciones','Laboratorio de Comunicaciones'],['INF129','Seminario de Programación','Algorítmica y Complejidad','Bases de Datos','Análisis y Diseño de Software','Ingeniería de Software','Aplicaciones Web y Móviles'],['Redes de Computadores','Laboratorio de Redes de Computadores','Administración de Redes','Disponibilidad y Rendimiento de Sistemas TIC','Planificación de Infraestructura Telemática','Ingeniería en Ciberseguridad'],['Electrónica Digital','Laboratorio de Electrónica Digital','Sistemas Digitales y Estructura de Computadores'],['Administración y Sostenibilidad Organizacional','Ingeniería Económica','Gestión de la Innovación','Gestión del Emprendimiento'],['Taller de Memoria I (**)','Taller de Memoria II (**)']].forEach(ch=>ch.map(k=>byName[k]).filter(Boolean).forEach((x,i,a)=>{if(a[i-1])x.prev=a[i-1].slug;if(a[i+1])x.next=a[i+1].slug}));
-function renderMalla(){const board=$('[data-malla-board]')||$('.malla-board');if(!board||!location.pathname.includes('/malla/'))return;const form=$('.curriculum-toolbar .filters-form');if(form){form.classList.add('malla-filter-form');form.setAttribute('data-malla-filter','');if(!$('[data-semester-select]',form))form.insertAdjacentHTML('beforeend',`<select name="semestre" aria-label="Filtrar por semestre" data-semester-select><option value="all">Todos los semestres</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}">Semestre ${n}</option>`).join('')}</select><button class="clear-filter" type="reset">Limpiar</button>`);$('[type=search]',form)?.setAttribute('data-malla-search','')}const leg=$('.malla-legend');if(leg)leg.innerHTML=Object.entries(AC).map(([a,c])=>`<span><i class="legend-dot" style="--area-color:${c}"></i>${a}</span>`).join('');board.innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<section class="semester-column" data-semester-column="${n}"><header><span>${String(n).padStart(2,'0')}</span><div><small>SEMESTRE</small><strong>${n}°</strong></div></header><div class="semester-courses">${C.filter(c=>c.sem==n).map(c=>`<a href="../ramo/?c=${c.slug}" class="course-tile" data-course-card data-semester="${n}" data-area="${c.area}" data-search="${(c.code+' '+c.name+' '+c.area+' semestre '+n).toLowerCase()}" style="--area-color:${c.color}"><div class="course-tile-top"><span>${c.code||'Sin sigla'}</span><small>${c.area}</small></div><h2>${c.name}</h2><p>Semestre ${n}</p><span class="course-open">Ver ficha →</span></a>`).join('')}</div></section>`).join('');if(!$('.practice-row'))board.insertAdjacentHTML('afterend',`<div class="practice-row"><div class="practice-pill" style="--area-color:${AC.Especialidad}"><span>Práctica I</span><small>Actividad práctica de 2 meses</small></div><div class="practice-pill" style="--area-color:${AC.Especialidad}"><span>Práctica II</span><small>Actividad práctica de 2 meses</small></div></div>`);const apply=()=>{let q=($('[data-malla-search]')?.value||'').toLowerCase().trim(),s=$('[data-semester-select]')?.value||'all',focus=s!=='all',vis=0;board.classList.toggle('semester-focus',focus);$$('[data-semester-column]',board).forEach(col=>{let shown=0,okSem=s==='all'||col.dataset.semesterColumn===s;$$('[data-course-card]',col).forEach(card=>{let ok=okSem&&(!q||(card.dataset.search||'').includes(q));card.hidden=!ok;if(ok)shown++});let ok=okSem&&shown;col.classList.toggle('is-hidden',!ok);col.classList.toggle('is-focused',focus&&ok);if(ok)vis++});let e=$('[data-malla-empty]');if(!e){e=document.createElement('div');e.className='course-no-results';e.dataset.mallaEmpty='1';e.textContent='No encontramos ramos con esos filtros.';board.after(e)}e.hidden=vis>0;let h=$('[data-malla-hint]')||$('.malla-scroll-hint');if(h)h.textContent=focus?'Vista filtrada: se muestra solo el semestre seleccionado.':'← Desliza horizontalmente para recorrer los semestres →'};form?.addEventListener('submit',e=>{e.preventDefault();apply()});form?.addEventListener('input',apply);form?.addEventListener('change',apply);form?.addEventListener('reset',()=>setTimeout(apply));apply()}renderMalla();
-$$('[data-resource-tabs]').forEach(g=>{const bs=$$('[data-resource-tab]',g),ps=$$('[data-resource-panel]',g);bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.classList.toggle('active',x===b));ps.forEach(p=>{let on=p.dataset.resourcePanel===b.dataset.resourceTab;p.classList.toggle('active',on);p.hidden=!on})}))});
-function e(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}function j(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch{return f}}function w(k,v){localStorage.setItem(k,JSON.stringify(v))}function avg(a,f){let v=a.map(x=>+x[f]).filter(Boolean);return v.length?v.reduce((p,c)=>p+c,0)/v.length:null}function stars(v){return[1,2,3,4,5].map(i=>i<=Math.round(+v||0)?'★':'☆').join('')}
-function coursePage(){if(!document.body.matches('[data-course-page]'))return;let slug=new URLSearchParams(location.search).get('c')||'mat070-introduccion-al-calculo-s1-4',c=bySlug[slug]||C.find(x=>x.code&&x.code.toLowerCase()===slug.toLowerCase())||C[3];document.body.dataset.courseSlug=c.slug;document.title=c.name+' · DIFTEL SJ';let sum=`Ficha colaborativa de ${c.name}. DIFTEL puede centralizar aquí apuntes, evaluaciones históricas, material de estudio y experiencias de estudiantes.`;[['[data-course-code]',c.code||'Sin sigla oficial cargada'],['[data-course-code-card]',c.code||'—'],['[data-course-name]',c.name],['[data-course-summary]',sum],['[data-course-semester]','Semestre '+c.sem],['[data-course-area]',c.area],['[data-course-mini]',c.area+' · semestre '+c.sem],['[data-current-code]',c.code||'—'],['[data-current-name]',c.name],['[data-course-detail]',sum]].forEach(([s,t])=>{let x=$(s);if(x)x.textContent=t});$('.course-quick-card')?.style.setProperty('--area-color',c.color);let area=$('[data-course-area]');if(area){area.style.borderColor=c.color;area.style.color=c.color}let link=x=>`<a href="../ramo/?c=${x.slug}"><span>←</span><div><strong>${x.code||'Sin sigla'}</strong><p>${x.name}</p></div><span>→</span></a>`;let p=c.prev&&bySlug[c.prev],n=c.next&&bySlug[c.next];let pe=$('[data-prev-course]'),ne=$('[data-next-course]');if(pe)pe.outerHTML=p?link(p).replace('<span>→</span>','<span></span>'):'<div data-prev-course class="missing-link"><strong>Ramos previos</strong><p>No hay una relación previa cargada.</p></div>';if(ne)ne.outerHTML=n?link(n).replace('<span>←</span>','<span></span>'):'<div data-next-course class="missing-link"><strong>Ramo siguiente</strong><p>No hay una relación siguiente cargada.</p></div>';reviews(c.slug)}
-function reviews(slug){let form=$('[data-opinion-form]'),list=$('[data-reviews-list]'),empty=$('[data-reviews-empty]'),sort=$('[data-review-sort]');if(!list||!empty)return;const rk='diftel-course-reviews:'+slug,lk='diftel-course-likes:'+slug;function stats(r){['difficulty','workload','usefulness'].forEach(k=>{let v=avg(r,k),el=$(`[data-stat="${k}"]`);if(el)el.textContent=v?v.toFixed(1):'—';let bar=el?.parentElement?.querySelector('.stat-bar i');if(bar)bar.style.width=v?Math.max(0,Math.min(100,v*20))+'%':'0%'});let h=$('[data-stat="hours"]'),v=avg(r,'hours');if(h)h.textContent=v?v.toFixed(1)+' h':'—';let ct=$('[data-stat="count"]');if(ct)ct.textContent=r.length+' opinión'+(r.length==1?'':'es')+' publicada'+(r.length==1?'':'s')}function render(){let r=j(rk,[]),l=j(lk,{}),mode=sort?.value||'recent';r=[...r].sort((a,b)=>mode==='oldest'?new Date(a.date)-new Date(b.date):mode==='likes'?(b.likes||0)-(a.likes||0):new Date(b.date)-new Date(a.date));stats(r);empty.hidden=r.length>0;list.innerHTML=r.map(x=>`<article class="review-card"><div class="review-top"><div class="review-author"><strong>${e(x.anonymous?'Estudiante anónimo':x.author||'Estudiante')}</strong><span>${new Date(x.date).toLocaleDateString('es-CL')} · ${e(x.year||'sin año')}</span></div><div class="review-rating">${stars(x.rating)}</div></div><p class="review-body">${e(x.comment)}</p><div class="review-meta"><span>${x.professor?'Profesor/a: '+e(x.professor)+' · ':''}Dificultad ${e(x.difficulty||'—')} · Carga ${e(x.workload||'—')} · Utilidad ${e(x.usefulness||'—')} · Estudio ${e(x.hours||'—')} h/semana</span></div><div class="review-extra">${x.difficult?`<p><strong>Contenido más difícil:</strong> ${e(x.difficult)}</p>`:''}${x.advice?`<p><strong>Consejo:</strong> ${e(x.advice)}</p>`:''}</div><div class="review-actions"><button class="like-button ${l[x.id]?'is-liked':''}" data-like="${x.id}" type="button">♥ Me gusta · ${x.likes||0}</button><span class="review-meta">Guardada en este navegador</span></div></article>`).join('');$$('[data-like]',list).forEach(b=>b.onclick=()=>{let id=b.dataset.like,rr=j(rk,[]),ll=j(lk,{}),it=rr.find(y=>y.id===id);if(!it)return;if(ll[id]){it.likes=Math.max(0,(it.likes||0)-1);delete ll[id]}else{it.likes=(it.likes||0)+1;ll[id]=1}w(rk,rr);w(lk,ll);render()})}sort?.addEventListener('change',render);form?.addEventListener('submit',ev=>{ev.preventDefault();let d=new FormData(form),comment=(d.get('comment')||'').trim();if(!comment)return $('[name="comment"]',form)?.focus();let r=j(rk,[]);r.push({id:'r'+Date.now(),author:d.get('author')||'',anonymous:d.get('anonymous')==='on',year:d.get('year')||'',professor:d.get('professor')||'',difficulty:d.get('difficulty')||'',workload:d.get('workload')||'',usefulness:d.get('usefulness')||'',rating:d.get('rating')||'',hours:d.get('hours')||'',comment,difficult:d.get('difficult')||'',advice:d.get('advice')||'',likes:0,date:new Date().toISOString()});w(rk,r);form.reset();render();$('#opiniones')?.scrollIntoView({behavior:'smooth'})});render()}coursePage();
-function otherFilters(){const yo='<option value="all">Todos los años</option>'+[2019,2020,2021,2022,2023,2024,2025,2026].map(y=>`<option>${y}</option>`).join('');function ff(scope,ph,types){return`<section class="section-shell filters-panel filters-panel-wide"><form class="filters-form enhanced-filters"><div class="filter-search"><input type="search" placeholder="${ph}"></div><select>${types}</select><select>${yo}</select><button class="button button-primary small">Filtrar</button><button class="clear-filter" type="reset">Limpiar</button></form></section>`}if(location.pathname.includes('/proyectos/')&&!$('[data-extra-filter]'))$('.category-switch')?.insertAdjacentHTML('afterend',ff('p','Buscar por nombre, ramo, palabra clave…','<option>Todos los proyectos</option><option>Proyectos de DIFTEL</option><option>Proyectos de Telemática</option><option>Proyectos por ramo</option><option>Proyectos de mechones</option>').replace('filters-panel-wide','filters-panel-wide" data-extra-filter="1'));if(location.pathname.includes('/talleres/')&&!$('[data-extra-filter]'))$('.workshop-browser')?.insertAdjacentHTML('beforebegin',ff('t','Buscar taller, organización o tema…','<option>Todos los tipos</option><option>Taller</option><option>Charla</option><option>Conferencia</option><option>Hackathon</option><option>Otro</option>').replace('filters-panel-wide','filters-panel-wide" data-extra-filter="1'))}otherFilters();
+(() => {
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const themes = ['warm', 'light', 'dark'];
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const repoIndex = pathParts.indexOf('wikidiftel');
+  const depth = repoIndex >= 0 ? Math.max(0, pathParts.length - repoIndex - 1) : pathParts.length;
+  const base = depth ? '../'.repeat(depth) : './';
+
+  function setTheme(theme) {
+    const safeTheme = themes.includes(theme) ? theme : 'warm';
+    document.documentElement.dataset.theme = safeTheme;
+    localStorage.setItem('diftel-theme', safeTheme);
+    $$('[data-set-theme]').forEach((button) => {
+      button.classList.toggle('active', button.dataset.setTheme === safeTheme);
+    });
+  }
+
+  setTheme(localStorage.getItem('diftel-theme') || document.documentElement.dataset.theme || 'warm');
+
+  $$('[data-theme-picker]').forEach((picker) => {
+    const trigger = $('[data-theme-trigger]', picker);
+    trigger?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      picker.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', String(picker.classList.contains('open')));
+    });
+    $$('[data-set-theme]', picker).forEach((button) => {
+      button.addEventListener('click', () => {
+        setTheme(button.dataset.setTheme);
+        picker.classList.remove('open');
+      });
+    });
+  });
+
+  document.addEventListener('click', () => {
+    $$('[data-theme-picker].open').forEach((picker) => picker.classList.remove('open'));
+  });
+
+  const menuButton = $('#mobile-menu-button');
+  const mobileMenu = $('#mobile-menu');
+  if (menuButton && mobileMenu) {
+    menuButton.addEventListener('click', () => {
+      const shouldOpen = mobileMenu.hasAttribute('hidden');
+      if (shouldOpen) mobileMenu.removeAttribute('hidden');
+      else mobileMenu.setAttribute('hidden', '');
+      menuButton.setAttribute('aria-expanded', String(shouldOpen));
+    });
+    $$('a', mobileMenu).forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu.setAttribute('hidden', '');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  function revealContent() {
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = $$('.reveal');
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      items.forEach((item) => item.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -25px' });
+    items.forEach((item) => observer.observe(item));
+  }
+
+  function ensureFixesCss() {
+    if ($('link[data-diftel-fixes]')) return;
+    const currentScript = document.currentScript?.src;
+    if (!currentScript) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = new URL('fixes.css', currentScript).href;
+    link.dataset.diftelFixes = '1';
+    document.head.append(link);
+  }
+
+  function ensureFavicon() {
+    const href = `${base}assets/telematica-usm-favicon.svg?v=13`;
+    $$('link[rel="icon"], link[rel="shortcut icon"]').forEach((link) => link.remove());
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.type = 'image/svg+xml';
+    icon.href = href;
+    document.head.append(icon);
+  }
+
+  function cleanObsoleteLinks(root = document) {
+    $$('a', root).forEach((link) => {
+      const text = (link.textContent || '').trim().toLowerCase();
+      const href = (link.getAttribute('href') || '').toLowerCase();
+      if (href.includes('wiki-diftel.josnic.cl') || text === 'wiki ↗' || text.includes('wiki / apuntes') || text.includes('wiki diftel')) {
+        link.remove();
+        return;
+      }
+      if (text.includes('subir material') || text.includes('aportar material') || text === 'aportar') {
+        link.textContent = 'Opinar en ramos';
+        link.href = `${base}malla/`;
+        link.removeAttribute('target');
+        link.removeAttribute('rel');
+      }
+    });
+  }
+
+  function renderFooter() {
+    const footer = $('.site-footer');
+    if (!footer) return;
+    footer.innerHTML = `
+      <div class="section-shell footer-main">
+        <div class="footer-brand-block">
+          <a href="${base}" class="footer-brand">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            <span><strong>DIFTEL SJ</strong><small>San Joaquín</small></span>
+          </a>
+          <p>Hecho por estudiantes, para estudiantes. Una biblioteca viva de ramos, proyectos, talleres y recuerdos de Telemática.</p>
+        </div>
+        <div class="footer-column">
+          <strong>Explorar</strong>
+          <a href="${base}malla/">Malla</a>
+          <a href="${base}proyectos/">Proyectos</a>
+          <a href="${base}talleres/">Talleres</a>
+          <a href="${base}comunidad/">Comunidad</a>
+        </div>
+        <div class="footer-column">
+          <strong>Participar</strong>
+          <a href="${base}malla/">Opinar en ramos</a>
+        </div>
+        <div class="footer-column">
+          <strong>Redes</strong>
+          <a target="_blank" rel="noopener" href="https://www.instagram.com/diftelusm/">@diftelusm</a>
+          <a target="_blank" rel="noopener" href="https://instagram.com/telematicausm">@telematicausm</a>
+          <a target="_blank" rel="noopener" href="https://www.instagram.com/ceetel.sj/">@ceetel.sj</a>
+        </div>
+      </div>
+      <div class="section-shell footer-bottom">
+        <span>© 2026 DIFTEL · Ingeniería Civil Telemática USM, Campus San Joaquín</span>
+        <span>Contenido comunitario · verifica siempre información académica oficial.</span>
+      </div>`;
+  }
+
+  function setupGlobalSearchShortcut() {
+    document.addEventListener('keydown', (event) => {
+      const target = event.target;
+      const isTyping = target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        $('input[type="search"]')?.focus();
+      }
+      if (!isTyping && event.key === '/') {
+        event.preventDefault();
+        $('input[type="search"]')?.focus();
+      }
+    });
+  }
+
+  ensureFixesCss();
+  ensureFavicon();
+  revealContent();
+  renderFooter();
+  cleanObsoleteLinks();
+  setupGlobalSearchShortcut();
 })();
