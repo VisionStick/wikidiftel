@@ -1781,7 +1781,8 @@ function guardar(){
     try{
         localStorage.setItem(CLAVE_GUARDADO, JSON.stringify({
             equipo:estado.equipo, restante:estado.restante,
-            completadas:estado.completadas, terminado:estado.terminado
+            completadas:estado.completadas, terminado:estado.terminado,
+            ts:Date.now()
         }));
     }catch(e){/* almacenamiento no disponible: el juego sigue igual */}
 }
@@ -3143,16 +3144,23 @@ window.addEventListener('load', ()=>{
         m.addEventListener('click', ev=>{ if(ev.target === m) cerrarModal(m.id); });
     });
 
-    // Partida guardada
-    const g = leerGuardado();
-    if(g && g.equipo && !g.terminado && g.restante > 0 && Object.keys(g.completadas||{}).length > 0){
+    // Partida guardada (se limpia si terminó, expiró el tiempo o es muy antigua)
+    let g = leerGuardado();
+    if(g && (g.terminado || !(g.restante > 0) || (g.ts && (Date.now() - g.ts) > 24*60*60*1000))){ borrarGuardado(); g = null; }
+    if(g && g.equipo && !g.terminado && g.restante > 0){
         document.getElementById('nombreEquipo').value = g.equipo;
+        const nRes = Object.keys(g.completadas||{}).length;
         const btn = document.createElement('button');
         btn.className = 'btn btn-fantasma';
-        btn.textContent = 'Continuar partida de ' + g.equipo;
+        btn.textContent = 'Continuar partida de ' + g.equipo + ' (' + nRes + ' de 6, ' + mmss(g.restante) + ' restantes)';
         btn.onclick = ()=>continuarPartida(g);
         document.querySelector('#pantallaInicio .inicio-continuar').appendChild(btn);
     }
+    // Guardar al ocultar/cerrar la pestaña o al pulsar Salir (navegación)
+    const guardarAlSalir = ()=>{ if(estado.jugando && !estado.terminado) guardar(); };
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden) guardarAlSalir(); });
+    window.addEventListener('pagehide', guardarAlSalir);
+    window.addEventListener('beforeunload', guardarAlSalir);
 });
 </script>
 </body>

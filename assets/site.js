@@ -84,11 +84,11 @@
   }
 
   function ensureFavicon() {
-    const href = `${base}assets/telematica-usm-favicon.svg?v=13`;
+    const href = `${base}icon.png`;
     $$('link[rel="icon"], link[rel="shortcut icon"]').forEach((link) => link.remove());
     const icon = document.createElement('link');
     icon.rel = 'icon';
-    icon.type = 'image/svg+xml';
+    icon.type = 'image/png';
     icon.href = href;
     document.head.append(icon);
   }
@@ -117,9 +117,7 @@
       <div class="section-shell footer-main">
         <div class="footer-brand-block">
           <a href="${base}" class="footer-brand">
-            <span class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-            </span>
+            <span class="brand-mark brand-mark-img" aria-hidden="true"><img src="${base}icon.png" alt="DIFTEL"></span>
             <span><strong>DIFTEL SJ</strong><small>San Joaquín</small></span>
           </a>
           <p>Hecho por estudiantes, para estudiantes. Una biblioteca viva de ramos, proyectos, talleres y recuerdos de Telemática.</p>

@@ -188,9 +188,8 @@ img { display: block; max-width: 100%; }
 .section-heading.centered { text-align: center; max-width: 800px; margin-inline: auto; }
 .section-heading.centered p { margin-inline: auto; }
 .section-heading.split { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
-.identity-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-.identity-card { min-height: 235px; padding: 25px 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
-.identity-card:nth-child(2) { transform: translateY(18px); }
+.identity-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; align-items: stretch; }
+.identity-card { min-height: 235px; padding: 25px 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); transform: none; }
 .identity-icon { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 14px; background: var(--surface-2); color: var(--blue); font-size: 20px; font-weight: 900; }
 .identity-card h3 { color: var(--text-strong); margin: 24px 0 8px; font-size: 20px; }
 .identity-card p { color: var(--muted); margin: 0; font-size: 14px; line-height: 1.6; }
@@ -783,3 +782,9 @@ img { display: block; max-width: 100%; }
 .progression-context > span { color: var(--yellow-deep); font-size: 14px; font-weight: 900; }
 .progression-context p { margin: 0; }
 .progression-context strong { color: var(--text-strong); }
+
+/* DIFTEL logo imagen - sin fondo + zoom leve */
+.brand-mark.brand-mark-img{width:auto;height:auto;max-width:none;overflow:visible;padding:0;background:none;border:none;box-shadow:none;border-radius:0;flex:0 0 auto;display:inline-flex;align-items:center;transform:none;}
+.brand-mark.brand-mark-img img{width:auto;height:52px;max-width:none;object-fit:contain;object-position:left center;transform:scale(1.15);transform-origin:left center;border-radius:0;display:block;background:none;}
+.footer-brand .brand-mark.brand-mark-img{width:42px;height:42px;border-radius:12px;}
+.footer-brand .brand-mark.brand-mark-img img{border-radius:0;}

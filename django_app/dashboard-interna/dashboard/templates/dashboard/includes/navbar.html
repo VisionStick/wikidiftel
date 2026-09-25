@@ -1,8 +1,8 @@
 <nav class="topbar" aria-label="Navegación principal">
     <div class="topbar-inner">
         <a href="{% url 'landing' %}" class="brand" aria-label="DIFTEL SJ, volver al inicio">
-            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.7 5.7 13h5.1l-.2 8.3L18.3 11h-5.1l.2-8.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-            <span class="brand-copy"><strong>DIFTEL</strong><small>San Joaquín</small></span>
+            <span class="brand-mark brand-mark-img" aria-hidden="true"><img src="{% static 'diftel-logo.png' %}" alt="DIFTEL"></span>
+            
         </a>
         <div class="desktop-nav">
             <a href="{% url 'landing' %}" class="nav-link {% if request.path == '/' %}is-active{% endif %}">Inicio</a>

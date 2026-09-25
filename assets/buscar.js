@@ -10,13 +10,15 @@
   document.querySelectorAll('input[type="search"][name="q"]').forEach((i) => { i.value = q; });
 
   function score(entry, terms) {
-    const hay = norm([entry.c, entry.n, entry.x, entry.t].join(' '));
+    const tags = Array.isArray(entry.g) ? entry.g.join(' ') : (entry.g || '');
+    const hay = norm([entry.c, entry.n, entry.x, entry.t, tags].join(' '));
     let s = 0;
     for (const t of terms) {
       if (!hay.includes(t)) return -1;
       if (norm(entry.c) === t) s += 6;
       else if (norm(entry.c).startsWith(t)) s += 4;
       else if (norm(entry.n).includes(t)) s += 2;
+      else if (tags && norm(tags).includes(t)) s += 1.5;
       else s += 1;
     }
     if (entry.t === 'Ramo') s += 0.5;
@@ -24,8 +26,10 @@
   }
 
   function card(e) {
+    const tags = Array.isArray(e.g) ? e.g.join(' ') : (e.g || '');
+    const tagHtml = tags ? `<small>🏷️ ${esc(tags)}</small>` : '';
     return `<a class="res-card" href="${esc(e.u)}"><span class="res-tag">${esc(e.t)}</span>`
-      + `<span class="res-body"><strong>${esc(e.c ? e.c + ' · ' + e.n : e.n)}</strong><small>${esc(e.x)}</small></span>`
+      + `<span class="res-body"><strong>${esc(e.c ? e.c + ' · ' + e.n : e.n)}</strong><small>${esc(e.x)}</small>${tagHtml}</span>`
       + `<span class="res-arrow">→</span></a>`;
   }
 

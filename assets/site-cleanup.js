@@ -24,12 +24,12 @@
     document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]').forEach(el=>el.remove());
     const svg=document.createElement('link');
     svg.rel='icon';
-    svg.type='image/svg+xml';
-    svg.href=base+'assets/telematica-usm-favicon.svg?v=12';
+    svg.type='image/png';
+    svg.href=base+'icon.png';
     document.head.append(svg);
     const apple=document.createElement('link');
     apple.rel='apple-touch-icon';
-    apple.href=base+'assets/favicon.png?v=12';
+    apple.href=base+'icon.png';
     document.head.append(apple);
   }
 
