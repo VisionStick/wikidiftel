@@ -1,0 +1,3159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTF Telemática — 6 estaciones</title>
+<style>
+    :root{
+        --azul-900:#0a2340;
+        --azul-700:#0f3460;
+        --azul-500:#1a3a52;
+        --naranja:#d9a441;
+        --dorado:#ffb703;
+        --panel:#ffffff;
+        --texto:#1f2d3d;
+        --gris:#6b7785;
+        --verde:#28a745;
+        --rojo:#dc3545;
+        --bronce:#c9a24a;
+        --bronce-claro:#e8cf8b;
+        --bronce-osc:#7a5f26;
+        --pergamino:#e6dcc0;
+        --radio:12px;
+        --sombra:0 10px 30px rgba(0,0,0,.25);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+        background:linear-gradient(135deg,#1a3a52 0%,#0f3460 100%);
+        background-attachment:fixed;
+        min-height:100vh;
+        font-family:'Segoe UI','Arial',sans-serif;
+        color:#fff;
+    }
+
+    /* ---------- Barra superior ---------- */
+    .barra{
+        position:sticky;top:0;z-index:500;
+        display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+        padding:.7rem 1.2rem;
+        background:linear-gradient(180deg,#123352 0%,#0a2340 100%);
+        border-bottom:2px solid var(--bronce-claro);
+        box-shadow:0 4px 20px rgba(0,0,0,.45), 0 1px 0 rgba(232,207,139,.35);
+    }
+    .barra[hidden]{display:none;}
+    .barra .marca{font-weight:bold;letter-spacing:.5px;display:flex;align-items:center;gap:.55rem;font-family:'Georgia','Cambria','Times New Roman',serif;color:#f0e2ae;font-size:1.05rem;}
+    .logo-punto{
+        width:12px;height:12px;border-radius:4px;display:inline-block;flex:none;
+        background:linear-gradient(135deg,var(--bronce-claro),var(--bronce-osc));
+        box-shadow:0 0 10px rgba(201,162,74,.5);
+    }
+    .barra .equipo{
+        background:rgba(255,255,255,.12);
+        padding:.25rem .7rem;border-radius:20px;font-size:.9rem;
+    }
+    .barra .espacio{flex:1;}
+    .reloj,.marcador{
+        font-variant-numeric:tabular-nums;
+        font-size:1.15rem;font-weight:bold;
+        padding:.3rem .8rem;border-radius:8px;
+        background:rgba(255,255,255,.1);
+    }
+    .reloj{color:var(--dorado);}
+    .reloj.alerta{color:#ff8a80;animation:latir 1s infinite;}
+    .marcador{color:var(--bronce-claro);}
+    .btn-entregar{
+        font-weight:700;font-size:.9rem;letter-spacing:.4px;
+        color:#f7e7b0;background:linear-gradient(180deg,#1d5d8e 0%,#12395e 55%,#0a2340 100%);
+        border:1px solid var(--bronce-claro);border-radius:10px;padding:.55rem 1.1rem;
+        box-shadow:0 6px 16px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18);
+        white-space:nowrap;
+    }
+    .btn-entregar:hover{color:#fff;border-color:#fff;transform:translateY(-1px);}
+    .btn-entregar.btn-primario{background:var(--naranja);color:#0a2340;border-color:var(--naranja);}
+    .barra .salir{color:#f0e2ae;background:rgba(255,255,255,.12);padding:.25rem .7rem;border-radius:20px;font-size:.9rem;text-decoration:none;white-space:nowrap;}
+    .barra .salir:hover{background:rgba(255,255,255,.22);color:#fff;}
+    .inicio-pie a{color:#b9cbe0;text-decoration:none;}
+    .inicio-pie a:hover{color:#fff;text-decoration:underline;}
+    @keyframes latir{50%{opacity:.45;}}
+
+    /* ---------- Pantallas ---------- */
+    .envoltura{max-width:1400px;margin:0 auto;padding:2rem 2rem 7rem;min-height:calc(100vh - 60px);}
+    .pantalla{display:none;}
+    .pantalla.activa{display:block;animation:entrar .3s ease;}
+    @keyframes entrar{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+    #pantallaInicio.activa ~ .envoltura{display:none;}
+
+    .tarjeta{
+        background:var(--panel);color:var(--texto);
+        border-radius:18px;padding:2rem;box-shadow:var(--sombra);
+    }
+
+    h1{font-size:1.9rem;line-height:1.2;margin-bottom:.6rem;color:var(--azul-700);}
+    h2{font-size:1.35rem;color:var(--azul-700);margin-bottom:.4rem;}
+    h3{font-size:1.05rem;color:var(--azul-700);}
+    p{line-height:1.55;}
+
+    .intro-lista{list-style:none;display:grid;gap:.85rem;margin:1.9rem 0 0;}
+    .intro-item{
+        display:flex;gap:1rem;align-items:flex-start;
+        background:linear-gradient(165deg,#11304f 0%,#0a2340 100%);
+        border:1px solid var(--bronce-osc);border-radius:14px;
+        padding:1rem 1.1rem;
+        box-shadow:0 10px 22px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .intro-item:hover{border-color:var(--bronce-claro);}
+    .intro-ico{
+        flex:none;width:46px;height:46px;border-radius:50%;
+        display:grid;place-items:center;color:var(--bronce-claro);
+        background:radial-gradient(circle at 35% 30%,#19436e,#0a2340 70%);
+        border:2px solid var(--bronce-osc);box-shadow:0 0 0 3px rgba(201,162,74,.12);
+    }
+    .intro-item b{display:block;color:var(--pergamino);margin-bottom:.2rem;font-size:.97rem;}
+    .intro-item p{color:#b9cbe0;font-size:.9rem;line-height:1.5;margin:0;}
+
+    .campo{
+        width:100%;padding:.85rem 1rem;font-size:1.05rem;
+        border:2px solid #cfd8e3;border-radius:10px;color:var(--texto);
+        background:#fff;font-family:inherit;
+    }
+    .campo:focus{outline:none;border-color:var(--naranja);box-shadow:0 0 0 3px rgba(201,162,74,.22);}
+
+    button{font-family:inherit;cursor:pointer;border:none;transition:background .3s,transform .15s,box-shadow .3s;}
+    button:focus-visible{outline:3px solid var(--dorado);outline-offset:2px;}
+    .btn{
+        background:var(--azul-700);color:#fff;
+        padding:.85rem 1.5rem;border-radius:10px;font-size:1rem;font-weight:600;
+    }
+    .btn:hover{background:var(--azul-900);}
+    .btn:active{transform:translateY(1px);}
+    .btn-primario{background:var(--naranja);color:#0a2340;}
+    .btn-primario:hover{background:#b8872c;}
+    .btn-ok{background:var(--verde);}
+    .btn-ok:hover{background:#218838;}
+    .btn-sec{background:#6c757d;}
+    .btn-sec:hover{background:#5a6268;}
+    .btn-fantasma{background:transparent;color:var(--azul-700);border:2px solid #cfd8e3;}
+    .btn-fantasma:hover{background:#f2f5f9;}
+    .fila-btn{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem;}
+    .fila-btn.centro{justify-content:center;}
+
+    /* ---------- Tablero steampunk ---------- */
+    #pantallaJuego{padding-top:.5rem;min-height:calc(100vh - 180px);display:none;}
+    #pantallaJuego.activa{display:block;}
+    .cabecera-tablero{text-align:center;margin-bottom:2rem;}
+    .cabecera-tablero h2{
+        font-family:'Georgia','Cambria','Times New Roman',serif;
+        font-size:2rem;letter-spacing:.5px;margin-bottom:.4rem;
+        color:#f0e2ae;
+    }
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+        .cabecera-tablero h2{
+            color:transparent;
+            background:linear-gradient(180deg,#f4e2a4 0%,#d9b45b 45%,#a8812f 75%,#8a6a26 100%);
+            -webkit-background-clip:text;background-clip:text;
+            filter:drop-shadow(0 2px 1px rgba(0,0,0,.45));
+        }
+    }
+    .cabecera-tablero p{color:#c6d4e3;font-size:.95rem;margin-top:.3rem;letter-spacing:.4px;text-transform:uppercase;font-size:.8rem;}
+
+    .tablero{
+        display:grid;gap:1.8rem;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    @media (max-width:1100px){
+        .tablero{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media (max-width:700px){
+        .tablero{grid-template-columns:minmax(0,1fr);}
+    }
+    .estacion{
+        position:relative;
+        background:
+            radial-gradient(24rem 14rem at 85% -15%, rgba(255,240,190,.7), transparent 55%),
+            linear-gradient(180deg,#f2dd9e 0%,#e6c26e 20%,#c9a24a 48%,#a97f2d 80%,#8a6420 100%);
+        border:1px solid rgba(232,207,139,.7);
+        border-radius:16px;
+        padding:2.4rem 2rem 2.2rem;text-align:left;color:#0a2340;
+        display:flex;flex-direction:column;gap:.7rem;min-height:310px;
+        box-shadow:0 18px 40px rgba(0,0,0,.45), 0 0 0 4px rgba(95,71,25,.3), 0 0 35px rgba(201,162,74,.14),
+            inset 0 2px 0 rgba(255,255,255,.35), inset 0 -14px 24px rgba(80,50,5,.3);
+    }
+    .estacion::before{
+        content:"";position:absolute;inset:8px;border:1px solid rgba(95,71,25,.35);border-radius:11px;pointer-events:none;
+    }
+    .estacion:hover:not(.resuelta){transform:translateY(-4px);box-shadow:0 24px 50px rgba(0,0,0,.5), 0 0 0 4px rgba(95,71,25,.3), 0 0 45px rgba(201,162,74,.28), inset 0 2px 0 rgba(255,255,255,.35);border-color:#fff;}
+    .estacion .icono{
+        width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+        color:var(--bronce-claro);background:radial-gradient(circle at 35% 30%,#1d4a7a,#0a2340 70%);
+        border:2px solid #5f4719;box-shadow:0 0 0 3px rgba(95,71,25,.25), 0 6px 14px rgba(0,0,0,.35), inset 0 0 0 2px rgba(232,207,139,.25);
+        margin-bottom:.3rem;position:relative;
+    }
+    .estacion .icono svg{width:30px;height:30px;display:block;}
+    .estacion .icono::after{
+        content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+        border:1px dashed rgba(95,71,25,.5);
+    }
+    .estacion .nombre{font-size:1.4rem;font-weight:700;font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;letter-spacing:.3px;}
+    .estacion .detalle{font-size:1rem;color:#4a3a15;flex:1;line-height:1.55;}
+    .estacion .valor{
+        align-self:flex-start;font-size:.9rem;font-weight:700;letter-spacing:.4px;
+        background:linear-gradient(180deg,#1d5d8e,#0a2340);color:#f7e7b0;
+        padding:.4rem .9rem;border-radius:20px;border:1px solid #5f4719;
+        box-shadow:0 4px 10px rgba(0,0,0,.3);
+    }
+    .estacion.resuelta{
+        background:
+            radial-gradient(24rem 14rem at 85% -15%, rgba(255,255,255,.65), transparent 55%),
+            linear-gradient(180deg,#e3f0e2 0%,#bcd9be 40%,#8fb893 75%,#6f9a75 100%);
+        border-color:#1e6b45;cursor:default;
+    }
+    .estacion.resuelta .icono{border-color:#1e6b45;}
+    .estacion.resuelta .valor{background:linear-gradient(180deg,#1e6b45,#14523a);color:#d8ffe6;border-color:#14523a;}
+
+    /* ---------- Modales ---------- */
+    .modal{
+        display:none;position:fixed;inset:0;z-index:1000;
+        background:rgba(6,20,38,.82);padding:1rem;
+        align-items:center;justify-content:center;
+    }
+    .modal.active{display:flex;}
+    .modal-box{
+        background:var(--panel);color:var(--texto);
+        border-radius:16px;padding:1.8rem;
+        width:100%;max-width:780px;max-height:92vh;overflow-y:auto;position:relative;
+        box-shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    .cerrar{
+        position:absolute;top:10px;right:14px;
+        font-size:1.9rem;line-height:1;color:#9aa7b5;background:none;border:none;
+    }
+    .cerrar:hover{color:var(--rojo);}
+    .modal-box h2{padding-right:2rem;}
+    .modal-titulo{display:flex;align-items:center;gap:.8rem;}
+    .modal-ico{
+        flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+        color:var(--bronce-claro);background:radial-gradient(circle at 35% 30%,#1d4a7a,#0a2340 70%);
+        border:2px solid var(--bronce-osc);box-shadow:0 0 0 3px rgba(201,162,74,.15), 0 4px 10px rgba(0,0,0,.25);
+    }
+    .modal-ico svg{width:24px;height:24px;display:block;}
+    .sub{color:var(--gris);font-size:.95rem;margin-bottom:1rem;}
+
+    .pista{
+        background:#fff5ef;border-left:4px solid var(--naranja);
+        padding:.8rem 1rem;border-radius:0 10px 10px 0;
+        font-size:.92rem;color:#7a3c1d;margin:1rem 0;
+    }
+    .pista strong{display:block;margin-bottom:.15rem;color:#b4410f;}
+
+    .panel{background:#f2f5f9;border-radius:var(--radio);padding:1rem;margin:1rem 0;}
+
+    .zona-respuesta{
+        display:flex;gap:.7rem;align-items:stretch;flex-wrap:wrap;margin-top:1rem;
+    }
+    .zona-respuesta .campo{flex:1;min-width:190px;text-transform:uppercase;font-weight:bold;letter-spacing:1px;}
+    .zona-respuesta .campo.num{text-transform:none;letter-spacing:0;}
+
+    .feedback{margin-top:1rem;padding:.9rem 1rem;border-radius:10px;text-align:center;font-weight:600;display:none;}
+    .feedback.correct{display:block;background:#d4edda;color:#155724;border:2px solid var(--verde);}
+    .feedback.incorrect{display:block;background:#f8d7da;color:#721c24;border:2px solid var(--rojo);animation:sacudir .35s;}
+    @keyframes sacudir{25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+    /* ---------- Pantalla de inicio: tablero de control steampunk ---------- */
+    .inicio{
+        position:relative;overflow:hidden;
+        min-height:100vh;
+        background:
+            radial-gradient(58rem 40rem at 82% -18%, rgba(201,162,74,.22), transparent 55%),
+            radial-gradient(50rem 36rem at -10% 118%, rgba(201,162,74,.16), transparent 55%),
+            repeating-linear-gradient(115deg, rgba(255,255,255,.028) 0 1px, transparent 1px 7px),
+            linear-gradient(135deg,#1d4566 0%,#0e2d4f 45%,#081c33 100%);
+    }
+    .inicio-marco{
+        position:relative;z-index:1;
+        max-width:1100px;margin:0 auto;
+        padding:1.5rem 1rem 3rem;
+        min-height:100vh;
+        display:flex;flex-direction:column;justify-content:center;
+    }
+    .inicio-motor{position:absolute;inset:0;pointer-events:none;color:var(--bronce);}
+    .inicio-motor .engranaje{position:absolute;opacity:.22;}
+    .inicio-motor .engranaje.e1{width:300px;height:300px;top:-70px;right:-60px;animation:girar 80s linear infinite;}
+    .inicio-motor .engranaje.e2{width:230px;height:230px;bottom:-50px;left:-40px;animation:girar 65s linear infinite reverse;}
+    @keyframes girar{to{transform:rotate(360deg);}}
+    .inicio > *{position:relative;z-index:1;}
+
+    .inicio-topbar{
+        display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+        padding:.3rem 0 .95rem;border-bottom:1px solid var(--bronce-osc);
+    }
+    .inicio-marca{display:flex;align-items:center;gap:.7rem;font-size:1.05rem;font-weight:700;letter-spacing:.5px;color:#fff;font-family:'Georgia','Cambria','Times New Roman',serif;}
+    .inicio-marca b{color:var(--bronce-claro);}
+    .inicio-marca-engranaje{width:20px;height:20px;color:var(--bronce-claro);display:inline-flex;flex:none;}
+    .inicio-marca-engranaje svg{width:100%;height:100%;}
+    .inicio-chips{display:flex;gap:.55rem;flex-wrap:wrap;}
+    .chip{
+        font-size:.76rem;font-weight:600;color:#d7c69c;letter-spacing:.6px;text-transform:uppercase;
+        border:1px solid var(--bronce-osc);background:linear-gradient(180deg,#123352,#0a2340);
+        padding:.36rem .85rem;border-radius:999px;
+    }
+    .chip b{color:var(--bronce-claro);font-variant-numeric:tabular-nums;}
+    .volver{display:inline-flex;align-items:center;gap:.4rem;color:#b9cbe0;font-size:.82rem;letter-spacing:.4px;text-decoration:none;margin-bottom:.9rem;}
+    .volver:hover{color:#fff;text-decoration:underline;}
+
+    .inicio-hero{
+        display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:2.8rem;align-items:center;
+        padding:2.6rem 0 1.2rem;flex:1;
+    }
+    .inicio-eyebrow{
+        display:flex;align-items:center;gap:.7rem;
+        text-transform:uppercase;letter-spacing:2.5px;font-size:.7rem;font-weight:700;
+        color:var(--bronce-claro);margin-bottom:1.1rem;
+    }
+    .inicio-eyebrow .raya{flex:none;width:42px;height:1px;background:linear-gradient(90deg,var(--bronce-claro),transparent);}
+    .inicio-eyebrow .raya:last-child{background:linear-gradient(90deg,transparent,var(--bronce-claro));}
+    .inicio h1{
+        font-family:'Georgia','Cambria','Times New Roman',serif;
+        color:#f0e2ae;
+        font-size:clamp(2.2rem,4.4vw,3.4rem);line-height:1.05;margin-bottom:1.15rem;
+        letter-spacing:.5px;font-weight:700;
+    }
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+        .inicio h1{
+            color:transparent;
+            background:linear-gradient(180deg,#f4e2a4 0%,#d9b45b 45%,#a8812f 75%,#8a6a26 100%);
+            -webkit-background-clip:text;background-clip:text;
+            filter:drop-shadow(0 2px 1px rgba(0,0,0,.45));
+        }
+    }
+    .inicio h1 span{color:var(--pergamino);}
+    .inicio-sub{
+        color:#c9d7e8;font-size:1.05rem;line-height:1.6;max-width:54ch;margin:0;
+    }
+
+    .inicio-panel{
+        position:relative;
+        background:
+            radial-gradient(30rem 20rem at 85% -15%, rgba(255,240,190,.7), transparent 55%),
+            linear-gradient(180deg,#f2dd9e 0%,#e6c26e 20%,#c9a24a 48%,#a97f2d 80%,#8a6420 100%);
+        border:1px solid rgba(232,207,139,.7);border-radius:18px;
+        padding:1.8rem 1.9rem 1.7rem;
+        box-shadow:0 30px 60px rgba(0,0,0,.55), 0 0 0 4px rgba(95,71,25,.35), 0 0 45px rgba(201,162,74,.18),
+            inset 0 3px 0 rgba(255,255,255,.35), inset 0 -18px 30px rgba(80,50,5,.35);
+    }
+    .inicio-panel::before{
+        content:"";position:absolute;inset:8px;border:1px solid rgba(95,71,25,.35);border-radius:13px;pointer-events:none;
+    }
+    .inicio-panel::after{
+        content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;z-index:0;
+        background:
+            radial-gradient(circle 5px at 12px 12px,#ead08c,#7d6026 70%,transparent 72%),
+            radial-gradient(circle 5px at calc(100% - 12px) 12px,#ead08c,#7d6026 70%,transparent 72%),
+            radial-gradient(circle 5px at 12px calc(100% - 12px),#ead08c,#7d6026 70%,transparent 72%),
+            radial-gradient(circle 5px at calc(100% - 12px) calc(100% - 12px),#ead08c,#7d6026 70%,transparent 72%);
+        background-repeat:no-repeat;
+    }
+    .inicio-panel > *:not(.inicio-engranaje){position:relative;z-index:1;}
+    .inicio-panel .inicio-engranaje{
+        position:absolute;top:-28px;right:18px;width:68px;height:68px;color:#5f4719;opacity:1;
+        filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));animation:girar 40s linear infinite;
+    }
+    .inicio-panel-cab{
+        position:relative;margin:-.55rem 0 1.35rem;padding:1rem 0 1.05rem;
+        background:none;
+        border-bottom:1px solid;
+        border-image:linear-gradient(90deg, transparent, rgba(95,71,25,.45) 16%, rgba(95,71,25,.45) 84%, transparent) 1;
+    }
+    .inicio-panel h2{
+        font-family:'Georgia','Cambria','Times New Roman',serif;
+        color:#08213d;font-size:1.45rem;margin:0;letter-spacing:.5px;padding-right:70px;
+    }
+    .inicio-panel .sub{color:#4a3a15;font-size:.92rem;margin:.5rem 0 0;}
+    .inicio-panel label{display:block;font-weight:700;color:#4a3a15;font-size:.76rem;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:.55rem;}
+    .campo-caja{position:relative;margin-bottom:.7rem;}
+    .campo-ico{
+        position:absolute;left:15px;top:50%;transform:translateY(-50%);
+        width:20px;height:20px;color:#7c5f28;pointer-events:none;
+    }
+    .inicio-panel .inicio-campo{
+        width:100%;
+        background:#fffdf6;color:#0a2340;
+        border:2px solid #5f4719;border-radius:12px;
+        padding:1rem .9rem 1rem 3rem;
+        font-size:1.05rem;font-weight:600;letter-spacing:.3px;
+        box-shadow:inset 0 3px 8px rgba(90,60,10,.18);
+        -webkit-appearance:none;appearance:none;
+    }
+    .inicio-panel .inicio-campo::placeholder{color:#9a8557;opacity:1;font-weight:500;}
+    .inicio-panel .inicio-campo:focus{
+        outline:none;border-color:var(--bronce-claro);
+        box-shadow:inset 0 3px 8px rgba(90,60,10,.15),0 0 0 4px rgba(232,207,139,.28),0 10px 25px rgba(0,0,0,.35);
+    }
+    .inicio-panel .inicio-campo:-webkit-autofill,
+    .inicio-panel .inicio-campo:-webkit-autofill:hover,
+    .inicio-panel .inicio-campo:-webkit-autofill:focus{
+        -webkit-box-shadow:0 0 0 100px #fffdf6 inset;
+        -webkit-text-fill-color:#0a2340;
+        caret-color:#0a2340;
+        border-color:var(--bronce-osc);
+    }
+    .inicio-btn{
+        width:100%;padding:.95rem 1rem;border-radius:12px;margin-top:.15rem;
+        font-weight:700;font-size:1.05rem;letter-spacing:.6px;color:#f7e7b0;
+        font-family:'Georgia','Cambria','Times New Roman',serif;
+        background:linear-gradient(180deg,#1d5d8e 0%,#12395e 55%,#0a2340 100%);
+        border:2px solid #f7e7b0;
+        box-shadow:0 12px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .inicio-btn:hover{background:linear-gradient(180deg,#1e6da3 0%,#164b78 55%,#0b2a4a 100%);color:#fff;transform:translateY(-1px);}
+    .inicio-btn:active{transform:none;box-shadow:none;}
+    .inicio-continuar{width:100%;margin-top:.7rem;}
+    .inicio-continuar:empty{display:none;}
+    .inicio-continuar .btn{
+        flex:1;background:transparent;color:#4a3a15;
+        border:2px solid #5f4719;border-radius:10px;padding:.8rem 1rem;
+        font-family:inherit;
+    }
+    .inicio-continuar .btn:hover{background:rgba(95,71,25,.14);color:#2c2008;}
+    .inicio-nota{margin-top:1rem;font-size:.78rem;color:#4a3a15;text-align:center;letter-spacing:.3px;}
+    .inicio-panel .feedback{margin-top:.2rem;}
+
+    .inicio-pie{
+        margin-top:2rem;padding-top:1rem;border-top:1px solid var(--bronce-osc);
+        display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+        color:#889db5;font-size:.78rem;letter-spacing:.4px;
+    }
+
+    @media (max-width:900px){
+        .inicio-hero{grid-template-columns:1fr;max-width:620px;margin:0 auto;}
+        .inicio-pie{justify-content:center;text-align:center;}
+    }
+
+    /* ---------- Estación 1: rueda César steampunk ---------- */
+    #modalCripto .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #modalCripto .cripto-intro{background:linear-gradient(180deg,rgba(255,253,246,.7),rgba(255,253,246,0));border-color:var(--bronce-osc);}
+    #modalCripto .btn-next{background:linear-gradient(180deg,#1e6b45,#14523a);border:2px solid #14523a;}
+    #modalCripto .btn-next:hover{background:linear-gradient(180deg,#258055,#1a6247);}
+    #modalCripto .btn-back{background:transparent;color:#4a3a15;border:2px solid #5f4719;}
+    #modalCripto .btn-back:hover{background:rgba(95,71,25,.14);}
+    .stage{display:none;}
+    .stage.active{display:block;}
+    .cripto-intro{
+        text-align:center;background:linear-gradient(180deg,rgba(95,71,25,.1),rgba(95,71,25,0));
+        border:1px solid #e1e8f0;border-radius:12px;padding:1.4rem 1.2rem;margin-bottom:1rem;
+    }
+    .cripto-intro p{color:#33455c;font-size:.95rem;max-width:52ch;margin:.4rem auto 0;}
+    .cifrado{
+        text-align:center;font-size:clamp(1.1rem,4.5vw,1.7rem);margin:1rem 0;font-weight:bold;letter-spacing:4px;word-break:break-word;
+        font-family:'Courier New',monospace;color:#f7e7b0;background:linear-gradient(180deg,#1d5d8e,#0a2340);
+        border:2px solid var(--bronce-osc);border-radius:10px;padding:.8rem 1rem;
+        box-shadow:inset 0 0 14px rgba(0,0,0,.4);
+    }
+    .stage h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;font-size:1.2rem;text-align:center;letter-spacing:.3px;}
+    .wheel-section{text-align:center;margin:1.2rem 0;}
+    .wheel-container{
+        width:100%;aspect-ratio:1;max-width:380px;margin:0 auto;
+        background:
+            radial-gradient(20rem 12rem at 50% 0%, rgba(255,240,190,.55), transparent 60%),
+            linear-gradient(180deg,#e8cf8b 0%,#c9a24a 55%,#8a6420 100%);
+        border:2px solid #5f4719;border-radius:50%;
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 16px 34px rgba(0,0,0,.35), inset 0 3px 0 rgba(255,255,255,.4), inset 0 -14px 26px rgba(80,50,5,.4);
+        padding:14px;
+    }
+    .wheel-container svg{width:100%;height:100%;filter:drop-shadow(0 5px 12px rgba(0,0,0,.3));}
+    .controls{text-align:center;margin:1.2rem 0;}
+    .controls label{font-weight:700;color:#4a3a15;font-size:.8rem;letter-spacing:1.2px;text-transform:uppercase;}
+    .controls label span{color:#08213d;font-size:1.1rem;}
+    .controls input[type="range"]{width:100%;max-width:340px;height:8px;accent-color:#8a6420;}
+    .result{background:#fffdf6;padding:1rem;border-radius:10px;margin:1rem 0;border:2px solid var(--bronce-osc);box-shadow:inset 0 3px 8px rgba(90,60,10,.15);}
+    .result p{font-size:.75rem;color:#7c5f28;margin-bottom:.3rem;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;}
+    .result code{font-size:clamp(1rem,4vw,1.3rem);color:#0a2340;font-weight:bold;word-break:break-word;font-family:'Courier New',monospace;}
+    .buttons{display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;}
+    .btn-next{background:var(--verde);color:#fff;padding:.8rem 1.5rem;border-radius:10px;font-weight:600;}
+    .btn-next:hover{background:#218838;}
+    .btn-back{background:#6c757d;color:#fff;padding:.8rem 1.5rem;border-radius:10px;font-weight:600;}
+    .btn-back:hover{background:#5a6268;}
+
+    /* ---------- Estación 2: mapa steampunk ---------- */
+    #modalGeo .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #modalGeo .panel{background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:12px;box-shadow:inset 0 3px 8px rgba(90,60,10,.1);}
+    #modalGeo .panel h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;}
+    #modalGeo .pista{background:#fff5ef;border-left:4px solid #b4410f;box-shadow:inset 0 0 0 1px rgba(180,65,15,.12);}
+    #modalGeo .pista strong{color:#b4410f;}
+    #modalGeo .zona-respuesta .campo{background:#fffdf6;border:2px solid #5f4719;box-shadow:inset 0 3px 8px rgba(90,60,10,.18);}
+    #modalGeo .zona-respuesta .campo:focus{border-color:#b4410f;box-shadow:inset 0 3px 8px rgba(90,60,10,.15),0 0 0 4px rgba(180,65,15,.15);}
+    #modalGeo .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #modalGeo .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    .geo-pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:1rem 0;}
+    .geo-paso{background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:10px;padding:.6rem .7rem;font-size:.82rem;color:#4a3a15;text-align:center;}
+    .geo-paso b{display:block;font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;color:#7c5f28;margin-bottom:.15rem;}
+    .geo-paso.activo{border-color:#b4410f;background:#fff5ef;box-shadow:0 0 0 3px rgba(180,65,15,.12);}
+    @media (max-width:600px){.geo-pasos{grid-template-columns:1fr;}}
+    .geo-objetivo{
+        display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;
+        background:linear-gradient(180deg,#1d5d8e,#0a2340);color:#f7e7b0;
+        border:2px solid var(--bronce-osc);border-radius:10px;padding:.7rem 1rem;margin:1rem 0;
+        font-size:.9rem;
+    }
+    .geo-tx{display:flex;align-items:center;gap:.55rem;font-size:.72rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--bronce-claro);}
+    .geo-tx svg{width:22px;height:22px;flex:none;}
+    .geo-tx b{color:#fff;font-variant-numeric:tabular-nums;letter-spacing:1px;}
+    .geo-objetivo code{font-family:'Courier New',monospace;font-size:1.1rem;font-weight:bold;color:#fff;letter-spacing:1px;background:rgba(255,255,255,.08);border:1px solid rgba(232,207,139,.4);border-radius:6px;padding:.15rem .55rem;}
+    .geo-objetivo .cuenta{margin-left:auto;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--bronce-claro);}
+    .senal{display:flex;align-items:center;gap:.5rem;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:#9db9d2;min-width:190px;flex:1;justify-content:flex-end;}
+    .senal .medidor{width:96px;height:9px;border-radius:99px;background:rgba(255,255,255,.14);border:1px solid rgba(232,207,139,.4);overflow:hidden;}
+    .senal .medidor i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#69a8d4,#e8cf8b,#b4410f);transition:width .25s ease;}
+    #senalTxt.max{font-size:.95rem;font-weight:700;color:#ffd97a;text-shadow:0 0 12px rgba(255,183,3,.65);letter-spacing:1.5px;}
+    .senal.max .medidor{border-color:#ffd97a;box-shadow:0 0 12px rgba(255,183,3,.45);}
+    .telegrafo{
+        background:#0a2340;color:#e8cf8b;border:2px solid var(--bronce-osc);border-radius:10px;
+        font-family:'Courier New',monospace;font-size:.8rem;line-height:1.6;
+        padding:.6rem .9rem;margin:.7rem 0;min-height:3.2em;
+        box-shadow:inset 0 0 16px rgba(0,0,0,.5);
+    }
+    .telegrafo div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .telegrafo .ok{color:#9ff5c4;}
+    .telegrafo .mal{color:#ff9d8a;}
+    .mapa-caja{position:relative;overflow:hidden;}
+    .leyenda{display:flex;gap:1rem;flex-wrap:wrap;font-size:.75rem;color:#4a3a15;margin-top:.5rem;}
+    .leyenda span{display:inline-flex;align-items:center;gap:.4rem;}
+    .leyenda i{width:22px;height:0;border-top:3px solid #8fb8d8;display:inline-block;}
+    .leyenda i.tendido{border-color:#ff9d5c;}
+    .leyenda b.punto{width:12px;height:12px;border-radius:50%;background:#e8cf8b;border:2px solid #5f4719;display:inline-block;}
+    .enlace{stroke:#8fb8d8;stroke-width:1.5;stroke-dasharray:5 4;opacity:.35;}
+    .slot.lleno{animation:timbre .35s ease;}
+    @keyframes timbre{0%{transform:scale(.6);}60%{transform:scale(1.12);}100%{transform:scale(1);}}
+    .ruta-item{transition:border-color .25s,background .25s,box-shadow .25s;}
+    .mapa-caja{
+        background:linear-gradient(180deg,#e8cf8b,#c9a24a);border:2px solid #5f4719;border-radius:14px;padding:10px;
+        box-shadow:0 12px 26px rgba(0,0,0,.3), inset 0 2px 0 rgba(255,255,255,.4);
+    }
+    .mapa-caja svg{width:100%;height:auto;display:block;border-radius:8px;}
+    .nodo{cursor:pointer;}
+    .nodo circle.punto{transition:r .2s,fill .2s,stroke .2s;}
+    .nodo:hover circle.punto, .nodo:focus circle.punto{fill:var(--dorado);stroke:#fff;}
+    .nodo.encontrado{cursor:default;}
+    .nodo.encontrado circle.punto{fill:#3ddc84;stroke:#0b3d26;}
+    .ruta-lista{display:grid;gap:.5rem;margin-top:.8rem;}
+    .ruta-item{
+        display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
+        background:#fffdf6;border:2px solid #dbe3ec;border-radius:10px;padding:.5rem .8rem;font-size:.92rem;opacity:.75;
+    }
+    .ruta-item.activa{opacity:1;border-color:#b4410f;background:#fff5ef;box-shadow:0 0 0 3px rgba(180,65,15,.12);}
+    .ruta-item.lista-ok{opacity:1;border-color:var(--verde);background:#eefaf1;}
+    .ruta-item .orden{
+        width:26px;height:26px;border-radius:50%;background:#0a2340;color:#f7e7b0;
+        display:grid;place-items:center;font-size:.8rem;font-weight:bold;flex:none;border:1px solid var(--bronce-osc);
+    }
+    .ruta-item.activa .orden{background:#b4410f;color:#fff;}
+    .ruta-item.lista-ok .orden{background:var(--verde);color:#fff;}
+    .ruta-item code{font-family:'Courier New',monospace;font-size:.9rem;color:#0a2340;font-weight:bold;}
+    .ruta-item .letra{margin-left:auto;font-weight:bold;font-size:.95rem;color:#b4410f;letter-spacing:1px;min-width:1.2em;text-align:right;font-family:'Georgia','Cambria','Times New Roman',serif;}
+    .ruta-item.lista-ok .letra{color:#177245;}
+    .palabra-slots{display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;}
+    .slot{
+        width:46px;height:56px;border-radius:8px;border:2px dashed #b9c5d3;background:#fffdf6;
+        display:grid;place-items:center;font-size:1.5rem;font-weight:bold;color:#0a2340;font-family:'Courier New',monospace;
+    }
+    .frase-cinta{
+        display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap;margin-top:.9rem;
+        background:#0a2340;border:2px solid var(--bronce-osc);border-radius:10px;padding:.7rem .9rem;
+        box-shadow:inset 0 0 16px rgba(0,0,0,.5);
+    }
+    .frase-cinta span{
+        font-family:'Georgia','Cambria','Times New Roman',serif;font-size:1rem;letter-spacing:1px;
+        color:rgba(232,207,139,.35);border-bottom:2px dotted rgba(232,207,139,.4);padding:.1rem .3rem;min-width:2.2em;text-align:center;
+    }
+    .frase-cinta span.visto{color:#f7e7b0;border-bottom-style:solid;border-bottom-color:var(--bronce-claro);animation:timbre .35s ease;}
+    .slot.lleno{border-style:solid;border-color:var(--bronce-osc);background:#fff5ef;box-shadow:inset 0 3px 6px rgba(90,60,10,.15);}
+    .slot.siguiente{border-color:#b4410f;box-shadow:0 0 0 3px rgba(180,65,15,.15);}
+    .geo-progreso{height:10px;border-radius:99px;background:#e3d3a3;border:1px solid #5f4719;overflow:hidden;margin-top:.7rem;box-shadow:inset 0 2px 4px rgba(90,60,10,.25);}
+    .geo-progreso div{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#b4410f,#d9a441);transition:width .35s ease;}
+    .mapa-lectura{
+        display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;
+        font-size:.75rem;color:#4a3a15;letter-spacing:.4px;margin-top:.5rem;font-variant-numeric:tabular-nums;
+    }
+    .mapa-lectura b{color:#08213d;font-family:'Courier New',monospace;}
+    .nodo .halo{fill:none;stroke:rgba(255,183,3,.0);stroke-width:2;transition:stroke .2s;}
+    .nodo:hover .halo, .nodo:focus .halo{stroke:rgba(255,183,3,.8);}
+    .nodo.encontrado .halo{stroke:rgba(61,220,132,.9);}
+
+    /* ---------- Estación 3: máquina de Ohm steampunk ---------- */
+    #modalElec .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #modalElec .pista{background:#fff5ef;border-left:4px solid #b4410f;box-shadow:inset 0 0 0 1px rgba(180,65,15,.12);}
+    #modalElec .pista strong{color:#b4410f;}
+    #modalElec .zona-respuesta .campo{background:#fffdf6;border:2px solid #5f4719;box-shadow:inset 0 3px 8px rgba(90,60,10,.18);}
+    #modalElec .zona-respuesta .campo:focus{border-color:#b4410f;box-shadow:inset 0 3px 8px rgba(90,60,10,.15),0 0 0 4px rgba(180,65,15,.15);}
+    #modalElec .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #modalElec .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    .circuito-caja{
+        background:linear-gradient(180deg,#3a2a15 0%,#241a0c 100%);
+        border:2px solid #5f4719;border-radius:14px;padding:1rem;
+        box-shadow:0 12px 26px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.12);
+    }
+    .circuito-caja svg{width:100%;height:auto;display:block;max-width:520px;margin:0 auto;}
+    .flujo{animation:flujo 1.2s linear infinite;}
+    @keyframes flujo{to{stroke-dashoffset:-24;}}
+    @media (prefers-reduced-motion:reduce){.flujo{animation:none;}}
+    .lectura{
+        display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;
+    }
+    .display{
+        background:linear-gradient(180deg,#1d4a7a,#0a2340);color:#7ef9a2;border-radius:10px;padding:.6rem 1.1rem;
+        font-family:'Courier New',monospace;font-size:1.3rem;font-weight:bold;min-width:130px;text-align:center;
+        border:2px solid #5f4719;box-shadow:inset 0 0 12px rgba(0,0,0,.5);
+    }
+    .display small{display:block;font-size:.65rem;color:#d7c69c;letter-spacing:1.5px;font-family:'Segoe UI',sans-serif;}
+    .display.objetivo{color:var(--dorado);}
+    .display.ok{box-shadow:inset 0 0 12px rgba(0,0,0,.5), 0 0 18px rgba(61,220,132,.55);border-color:#3ddc84;}
+    .formula{
+        text-align:center;font-size:1.1rem;margin:.8rem 0;font-weight:bold;
+        font-family:'Courier New',monospace;color:#f7e7b0;background:linear-gradient(180deg,#1d5d8e,#0a2340);
+        border:2px solid var(--bronce-osc);border-radius:10px;padding:.7rem 1rem;
+    }
+    .formula span{color:var(--dorado);}
+    #modalElec .controls label{color:#4a3a15;}
+    #modalElec .controls label span{color:#08213d;}
+    #modalElec .controls input[type="range"]{accent-color:#8a6420;}
+    #modalElec .controls input[type="range"]:disabled{opacity:.45;cursor:not-allowed;}
+    .candado-fuente{font-size:.75rem;color:#7c5f28;letter-spacing:1px;text-transform:uppercase;font-weight:700;}
+    .elec-tabs{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin:1rem 0 .2rem;}
+    .elec-tab{
+        font-weight:700;font-size:.85rem;letter-spacing:.4px;padding:.6rem 1.1rem;border-radius:10px;
+        background:#fffdf6;color:#4a3a15;border:2px solid var(--bronce-osc);
+    }
+    .elec-tab.activa{background:linear-gradient(180deg,#1d5d8e,#0a2340);color:#f7e7b0;border-color:#5f4719;box-shadow:0 6px 14px rgba(0,0,0,.25);}
+    .elec-tab.lista{border-color:var(--verde);color:#177245;}
+    .elec-tab.lista.activa{background:linear-gradient(180deg,#1e6b45,#14523a);color:#d8ffe6;}
+    .estado-rep{font-family:'Courier New',monospace;font-weight:bold;letter-spacing:1px;}
+    .estado-rep.off{fill:#8a7a5a;}
+    .estado-rep.on{fill:#9ff5c4;}
+
+    /* ---------- Estación 4: morse ---------- */
+    .morse-letras{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1rem 0;}
+    .morse-letra{
+        min-width:56px;padding:.6rem .4rem;border-radius:10px;background:#fff;border:2px solid #dbe3ec;
+        text-align:center;font-family:'Courier New',monospace;font-size:1.25rem;color:var(--azul-700);font-weight:bold;
+    }
+    .morse-letra.sonando{border-color:var(--naranja);background:#fff5ef;box-shadow:0 0 0 4px rgba(201,162,74,.2);}
+    .morse-letra .oculto{color:#b9c5d3;letter-spacing:2px;}
+    .pulso{
+        width:70px;height:70px;border-radius:50%;margin:0 auto;
+        background:#dbe3ec;transition:background .05s,box-shadow .05s;
+    }
+    .pulso.on{background:var(--naranja);box-shadow:0 0 28px rgba(201,162,74,.65);}
+    .tabla-morse{
+        display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:.35rem;margin-top:.6rem;
+    }
+    .tabla-morse div{
+        background:#fff;border-radius:6px;padding:.3rem;text-align:center;font-size:.8rem;
+        font-family:'Courier New',monospace;color:#33455c;border:1px solid #e1e8f0;
+    }
+    .tabla-morse b{color:var(--azul-700);}
+    /* ---------- Estación 4: morse steampunk ---------- */
+    #modalMorse .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #modalMorse .panel{background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:12px;box-shadow:inset 0 3px 8px rgba(90,60,10,.1);}
+    #modalMorse .panel h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;}
+    #modalMorse .pista{background:#fff5ef;border-left:4px solid #b4410f;box-shadow:inset 0 0 0 1px rgba(180,65,15,.12);}
+    #modalMorse .pista strong{color:#b4410f;}
+    #modalMorse .zona-respuesta .campo{background:#fffdf6;border:2px solid #5f4719;box-shadow:inset 0 3px 8px rgba(90,60,10,.18);}
+    #modalMorse .zona-respuesta .campo:focus{border-color:#b4410f;box-shadow:inset 0 3px 8px rgba(90,60,10,.15),0 0 0 4px rgba(180,65,15,.15);}
+    #modalMorse .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #modalMorse .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    #modalMorse .morse-letra{background:#fffdf6;border-color:var(--bronce-osc);}
+    #modalMorse .morse-letra.sonando{border-color:#b4410f;background:#fff5ef;box-shadow:0 0 0 4px rgba(180,65,15,.2);}
+    #modalMorse .tabla-morse div{background:#fffdf6;border-color:#d9c9a3;}
+    #modalMorse .pulso{background:#d9c9a3;}
+    #modalMorse .pulso.on{background:#b4410f;box-shadow:0 0 28px rgba(180,65,15,.65);}
+    .morse-cuenta{text-align:center;font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;color:#7c5f28;font-weight:700;margin-top:.6rem;}
+    .morse-sep{
+        align-self:center;font-weight:bold;font-size:1.4rem;color:#b4410f;padding:0 .2rem;
+    }
+
+    /* ---------- Estación 5: datos steampunk ---------- */
+    #modalDatos .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+        max-width:1000px;
+    }
+    #modalDatos .pista{background:#fff5ef;border-left:4px solid #b4410f;box-shadow:inset 0 0 0 1px rgba(180,65,15,.12);}
+    #modalDatos .pista strong{color:#b4410f;}
+    #modalDatos .zona-respuesta .campo{background:#fffdf6;border:2px solid #5f4719;box-shadow:inset 0 3px 8px rgba(90,60,10,.18);}
+    #modalDatos .zona-respuesta .campo:focus{border-color:#b4410f;box-shadow:inset 0 3px 8px rgba(90,60,10,.15),0 0 0 4px rgba(180,65,15,.15);}
+    #modalDatos .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #modalDatos .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    .mini-leccion{
+        background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:10px;padding:.8rem 1rem;
+        font-size:.9rem;color:#4a3a15;margin:1rem 0;
+    }
+    .mini-leccion b{display:block;font-size:.72rem;letter-spacing:1.4px;text-transform:uppercase;color:#7c5f28;margin-bottom:.2rem;}
+    .mini-leccion code{font-family:'Courier New',monospace;background:#f3e6bd;border-radius:5px;padding:.1rem .4rem;color:#0a2340;font-weight:bold;}
+    #modalDatos .stage h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;font-size:1.2rem;text-align:center;letter-spacing:.3px;}
+    #modalDatos .grafico-caja{background:#fffdf6;border:2px solid var(--bronce-osc);box-shadow:inset 0 3px 8px rgba(90,60,10,.1);}
+    /* ---------- Estación 5: árbol binario ---------- */
+    .arbol-caja{
+        background:linear-gradient(180deg,#12333f 0%,#0b2334 100%);
+        border:2px solid #5f4719;border-radius:14px;padding:.8rem;
+        box-shadow:0 12px 26px rgba(0,0,0,.3), inset 0 2px 0 rgba(255,255,255,.08);
+    }
+    .arbol-caja svg{width:100%;height:auto;display:block;}
+    .nodo-arbol{cursor:pointer;}
+    .nodo-arbol:hover circle, .nodo-arbol:focus circle{stroke:#fff;}
+    .nodo-arbol.ocupado{cursor:default;}
+    .banco{display:flex;gap:.6rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:1rem 0 .4rem;}
+    .banco-titulo{font-size:.75rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#7c5f28;}
+    .ficha{
+        font-family:'Courier New',monospace;font-size:1.2rem;font-weight:bold;color:#3a2a12;
+        background:linear-gradient(180deg,#f2dd9e,#c9a24a);border:2px solid #5f4719;border-radius:10px;
+        min-width:56px;padding:.5rem .9rem;box-shadow:0 6px 14px rgba(0,0,0,.25);
+        cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+    }
+    .ficha:hover{transform:translateY(-2px);}
+    .ficha.sel{outline:3px solid #b4410f;box-shadow:0 0 16px rgba(180,65,15,.5);}
+    .ficha.usada{opacity:.35;}
+    .ficha-flotante{
+        position:fixed;z-index:2000;pointer-events:none;transform:translate(-50%,-60%);
+        font-family:'Courier New',monospace;font-size:1.4rem;font-weight:bold;color:#3a2a12;
+        background:linear-gradient(180deg,#f2dd9e,#c9a24a);border:2px solid #b4410f;border-radius:10px;
+        min-width:56px;padding:.5rem .9rem;text-align:center;
+        box-shadow:0 14px 30px rgba(0,0,0,.45);
+    }
+    .nodo-arbol.sobre circle{stroke:#fff;stroke-width:4;}
+    .grafico-caja{background:#fff;border-radius:var(--radio);padding:.8rem;border:1px solid #e1e8f0;}
+    .grafico-caja svg{width:100%;height:auto;display:block;}
+    .barra-dato rect{cursor:pointer;transition:fill .2s;}
+    .barra-dato:hover rect{fill:var(--dorado);}
+    .barra-dato.sel rect{fill:var(--naranja);}
+    .stats{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;font-size:.9rem;}
+    .stat{background:#fff;border:1px solid #e1e8f0;border-radius:8px;padding:.45rem .8rem;color:#33455c;}
+    .stat b{color:var(--azul-700);}
+
+    /* ---------- Estación 6: caza de paquetes ---------- */
+    #modalRedes .modal-box{
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #modalRedes .panel{background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:12px;box-shadow:inset 0 3px 8px rgba(90,60,10,.1);}
+    #modalRedes .panel h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;}
+    #modalRedes .pista{background:#fff5ef;border-left:4px solid #b4410f;box-shadow:inset 0 0 0 1px rgba(180,65,15,.12);}
+    #modalRedes .pista strong{color:#b4410f;}
+    #modalRedes .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #modalRedes .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    .ronda-bar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:1rem 0 .2rem;}
+    .ronda-bar h3{font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;margin:0;}
+    .ronda-puntos{font-size:1.1rem;letter-spacing:4px;color:#c9b98a;}
+    .ronda-puntos b{color:#b4410f;}
+    .paquetes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-top:.8rem;}
+    @media (max-width:600px){.paquetes{grid-template-columns:1fr;}}
+    .paquete{
+        font-family:'Courier New',monospace;font-size:1.02rem;font-weight:bold;color:#0a2340;
+        background:linear-gradient(180deg,#fffdf6,#f3e6bd);border:2px solid var(--bronce-osc);border-radius:10px;
+        padding:.9rem .6rem;box-shadow:0 6px 14px rgba(0,0,0,.18);
+        animation:aterriza .4s ease backwards;animation-delay:var(--d,0s);
+    }
+    @keyframes aterriza{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:none;}}
+    .paquete:hover:not(:disabled){border-color:#b4410f;transform:translateY(-2px);}
+    .paquete.sel{border-color:#b4410f;background:#fff5ef;box-shadow:0 0 0 4px rgba(180,65,15,.18);}
+    .paquete.bloq{opacity:.45;text-decoration:line-through;cursor:not-allowed;}
+    .paquete.ok{border-color:var(--verde);background:#eefaf1;color:#177245;cursor:default;}
+    .octeto .bin{display:block;font-size:.72rem;color:#7c5f28;margin-top:.15rem;}
+    .octeto.mal .bin{color:#a4161a;font-weight:bold;}
+    .cajones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:1rem 0;}
+    @media (max-width:600px){.cajones{grid-template-columns:1fr;}}
+    .cajon{
+        background:#fffdf6;border:2px dashed var(--bronce-osc);border-radius:12px;padding:.7rem;min-height:130px;
+        transition:border-color .2s, box-shadow .2s;
+    }
+    .cajon > b{display:block;text-align:center;font-size:.72rem;letter-spacing:1.6px;color:#7c5f28;margin-bottom:.5rem;}
+    .cajon.sel{border-style:solid;border-color:#b4410f;box-shadow:0 0 0 4px rgba(180,65,15,.15);}
+    .cajon-lista{display:grid;gap:.35rem;}
+    .ip-chip{
+        font-family:'Courier New',monospace;font-size:.82rem;font-weight:bold;color:#0a2340;text-align:center;
+        background:#f3e6bd;border:1px solid var(--bronce-osc);border-radius:7px;padding:.3rem .4rem;cursor:pointer;
+    }
+    .ficha-ip{
+        font-family:'Courier New',monospace;font-size:.9rem;font-weight:bold;color:#3a2a12;
+        background:linear-gradient(180deg,#f2dd9e,#c9a24a);border:2px solid #5f4719;border-radius:10px;
+        padding:.55rem .8rem;box-shadow:0 6px 14px rgba(0,0,0,.25);cursor:grab;
+        touch-action:none;user-select:none;-webkit-user-select:none;
+    }
+    .ficha-ip:hover{transform:translateY(-2px);}
+    .ficha-ip.sel{outline:3px solid #b4410f;box-shadow:0 0 16px rgba(180,65,15,.5);}
+    .ficha-ip.fuera{display:none;}
+    .cajon.sobre{border-style:solid;border-color:#fff;box-shadow:0 0 18px rgba(232,207,139,.7);}
+    .bin-tabla{
+        display:grid;gap:.25rem;margin-top:.7rem;font-family:'Courier New',monospace;font-size:.82rem;color:#0a2340;
+        background:#0a2340;border-radius:8px;padding:.7rem .9rem;text-align:left;
+    }
+    .bin-tabla div{color:#e8cf8b;word-break:break-all;}
+    .bin-tabla b{color:#ffd97a;}
+    #faseRed2 .zona-respuesta{grid-template-columns:1fr 1fr 1fr;}
+    @media (max-width:600px){#faseRed2 .zona-respuesta{grid-template-columns:1fr;}}
+    .octetos{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+    .octeto{
+        min-width:76px;padding:.6rem;border-radius:10px;text-align:center;
+        background:#fff;border:2px solid #dbe3ec;font-family:'Courier New',monospace;font-weight:bold;
+    }
+    .octeto.ok{border-color:var(--verde);color:#177245;}
+    .octeto.mal{border-color:var(--rojo);color:#a4161a;background:#fdeef0;}
+    .octeto small{display:block;font-size:.65rem;font-family:'Segoe UI',sans-serif;font-weight:normal;color:var(--gris);}
+
+    /* ---------- Estación 6: ayuda didáctica redes ---------- */
+    .red-ayuda{background:#fffdf6;border:2px solid var(--bronce-osc);border-radius:12px;padding:1rem 1.1rem;font-size:.9rem;color:#4a3a15;margin:1rem 0;box-shadow:inset 0 3px 8px rgba(90,60,10,.08);}
+    .red-ayuda > b{display:block;font-size:.72rem;letter-spacing:1.4px;text-transform:uppercase;color:#7c5f28;margin-bottom:.5rem;}
+    .red-ayuda code{font-family:'Courier New',monospace;background:#f3e6bd;border-radius:5px;padding:.1rem .4rem;color:#0a2340;font-weight:bold;white-space:nowrap;}
+    .red-pasos{list-style:none;display:grid;gap:.5rem;margin:.6rem 0;padding:0;counter-reset:paso;}
+    .red-pasos li{position:relative;background:#fff;border:1.5px solid #e3d3a3;border-radius:10px;padding:.6rem .8rem .6rem 3rem;font-size:.88rem;line-height:1.5;}
+    .red-pasos li::before{counter-increment:paso;content:counter(paso);position:absolute;left:.7rem;top:.6rem;width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#1d5d8e,#0a2340);color:#f7e7b0;font-weight:bold;font-size:.85rem;display:grid;place-items:center;border:1px solid #5f4719;}
+    .red-pasos li b{color:#08213d;}
+    .red-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:.7rem 0;}
+    @media (max-width:600px){.red-cards{grid-template-columns:1fr;}}
+    .red-card{border-radius:10px;padding:.65rem .7rem;font-size:.82rem;line-height:1.5;border:2px solid;}
+    .red-card b{display:block;font-size:.72rem;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:.25rem;}
+    .red-card.esp{background:#fdeef0;border-color:#c0392b;}
+    .red-card.esp b{color:#a4161a;}
+    .red-card.priv{background:#eaf2fb;border-color:#1d5d8e;}
+    .red-card.priv b{color:#0a3a5e;}
+    .red-card.pub{background:#eefaf1;border-color:#1e6b45;}
+    .red-card.pub b{color:#177245;}
+    .red-card code{background:rgba(0,0,0,.06);}
+    .red-ejemplo{margin-top:.7rem;border-radius:10px;overflow:hidden;border:1.5px solid #d9c9a3;}
+    .red-ejemplo summary{cursor:pointer;background:#f3e6bd;padding:.6rem .9rem;font-weight:700;font-size:.85rem;color:#4a3a15;list-style:none;}
+    .red-ejemplo summary::before{content:"▶ ";font-size:.75rem;}
+    .red-ejemplo[open] summary::before{content:"▼ ";}
+    .red-ejemplo .cuerpo{padding:.7rem .9rem;background:#fff;font-size:.85rem;line-height:1.6;}
+    .red-ejemplo .cuerpo .bueno{color:#177245;font-weight:700;}
+    .red-ejemplo .cuerpo .malo{color:#a4161a;font-weight:700;}
+    .tabla-bloques{width:100%;border-collapse:collapse;margin:.6rem 0;font-size:.82rem;font-family:'Courier New',monospace;}
+    .tabla-bloques th,.tabla-bloques td{border:1px solid #d9c9a3;padding:.35rem .5rem;text-align:center;}
+    .tabla-bloques th{background:#0a2340;color:#f7e7b0;font-family:'Segoe UI',sans-serif;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;}
+    .tabla-bloques td{background:#fff;}
+    .tabla-bloques tr.destaca td{background:#fff5ef;font-weight:bold;border-color:#b4410f;}
+    .bin-red{color:#ffd97a;font-weight:bold;}
+    .bin-host{color:#9ff5c4;font-weight:bold;}
+    .bin-sep{color:#8a9bb0;}
+    #bloqueInfo{text-align:center;font-size:.82rem;color:#4a3a15;margin-top:.5rem;background:#f3e6bd;border-radius:8px;padding:.4rem .6rem;}
+    #bloqueInfo b{color:#0a2340;font-family:'Courier New',monospace;}
+
+    /* ---------- Pantalla final steampunk ---------- */
+    #pantallaFinal .tarjeta{
+        position:relative;
+        background:
+            radial-gradient(30rem 14rem at 85% 0%, rgba(255,240,190,.6), transparent 55%),
+            linear-gradient(180deg,#fbf3da 0%,#f3e6bd 60%,#e6d09a 100%);
+        border:2px solid #5f4719;border-radius:18px;
+        box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.5);
+    }
+    #pantallaFinal .tarjeta::before{
+        content:"";position:absolute;inset:8px;border:1px solid rgba(95,71,25,.35);border-radius:13px;pointer-events:none;
+    }
+    #pantallaFinal h1{
+        font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;
+        font-size:2rem;letter-spacing:.5px;
+    }
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+        #pantallaFinal h1{
+            color:transparent;
+            background:linear-gradient(180deg,#8a6a26 0%,#a8812f 45%,#d9b45b 75%,#f4e2a4 100%);
+            -webkit-background-clip:text;background-clip:text;
+            filter:drop-shadow(0 1px 0 rgba(255,255,255,.4));
+        }
+    }
+    #pantallaFinal .sub{color:#4a3a15;}
+    .resumen{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.93rem;}
+    .resumen th,.resumen td{padding:.6rem .5rem;text-align:left;border-bottom:1px solid #d9c9a3;}
+    .resumen th{color:#7c5f28;font-weight:700;font-size:.75rem;letter-spacing:1.4px;text-transform:uppercase;}
+    .resumen td.pts{text-align:right;font-weight:bold;color:#08213d;white-space:nowrap;}
+    .resumen td.resp{font-family:'Courier New',monospace;color:#4a3a15;}
+    .resumen td.est{display:flex;align-items:center;gap:.6rem;font-weight:600;color:#0a2340;}
+    .resumen .mini-ico{
+        flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+        color:var(--bronce-claro);background:radial-gradient(circle at 35% 30%,#1d4a7a,#0a2340 70%);
+        border:2px solid var(--bronce-osc);
+    }
+    .resumen .mini-ico svg{width:17px;height:17px;display:block;}
+    .total{
+        display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;
+        background:linear-gradient(180deg,#1d5d8e,#0a2340);color:#fff;
+        border:2px solid var(--bronce-osc);border-radius:12px;padding:1rem 1.3rem;margin-top:.5rem;
+        box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    .total .cifra{font-size:2rem;font-weight:bold;color:var(--dorado);}
+    #pantallaFinal .btn-primario{background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;color:#f7e7b0;}
+    #pantallaFinal .btn-primario:hover{background:linear-gradient(180deg,#1e6da3,#164b78);color:#fff;}
+    #pantallaFinal .btn-fantasma{color:#4a3a15;border-color:#5f4719;}
+    #pantallaFinal .btn-fantasma:hover{background:rgba(95,71,25,.14);color:#2c2008;}
+    /* ---------- Certificado ---------- */
+    #printCert{display:none;}
+    .certificado{
+        position:relative;margin-top:1.5rem;text-align:center;
+        background:
+            radial-gradient(36rem 18rem at 50% 0%, rgba(255,240,190,.75), transparent 60%),
+            linear-gradient(180deg,#fdf6e0 0%,#f3e2b3 55%,#e3c98f 100%);
+        border:3px double #5f4719;border-radius:14px;padding:2.4rem 2rem;
+        box-shadow:0 18px 44px rgba(0,0,0,.35), inset 0 0 0 6px rgba(251,243,218,.6), inset 0 0 0 7px rgba(95,71,25,.5);
+    }
+    .certificado .cert-ojal{
+        font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#7c5f28;
+    }
+    .certificado h2{
+        font-family:'Georgia','Cambria','Times New Roman',serif;font-size:clamp(1.6rem,4vw,2.3rem);
+        color:#08213d;margin:.4rem 0;letter-spacing:.5px;
+    }
+    .certificado .cert-equipo{
+        font-family:'Georgia','Cambria','Times New Roman',serif;font-size:clamp(1.5rem,4.5vw,2.2rem);
+        color:#5f4719;margin:.6rem 0 .2rem;padding:.4rem 0;
+        border-top:1px solid rgba(95,71,25,.5);border-bottom:1px solid rgba(95,71,25,.5);
+    }
+    .certificado .cert-detalle{font-family:'Courier New',monospace;font-weight:bold;color:#0a2340;margin-top:.6rem;}
+    .certificado .cert-rango{
+        display:inline-block;margin-top:.6rem;padding:.35rem 1.1rem;border-radius:999px;
+        font-family:'Georgia','Cambria','Times New Roman',serif;font-weight:bold;letter-spacing:1px;color:#f7e7b0;
+        background:linear-gradient(180deg,#1d5d8e,#0a2340);border:2px solid #5f4719;
+        box-shadow:0 6px 14px rgba(0,0,0,.3);
+    }
+    .certificado table{width:100%;border-collapse:collapse;margin:1rem auto 0;max-width:640px;font-size:.82rem;}
+    .certificado table td{padding:.35rem .5rem;border-bottom:1px solid rgba(95,71,25,.35);color:#4a3a15;text-align:left;vertical-align:top;}
+    .certificado table td.pts{text-align:right;font-weight:bold;color:#08213d;white-space:nowrap;font-family:'Courier New',monospace;}
+    .certificado .cert-resp{display:block;font-family:'Courier New',monospace;font-size:.72rem;color:#0a2340;line-height:1.5;margin-top:.15rem;word-break:break-word;}
+    .certificado .cert-resp div{padding:.05rem 0;}
+    .certificado .firmas{display:flex;justify-content:space-around;gap:1rem;flex-wrap:wrap;margin-top:1.6rem;}
+    .certificado .firma{position:relative;min-width:200px;padding-top:2.2rem;text-align:center;font-size:.72rem;color:#4a3a15;letter-spacing:.5px;}
+    .certificado .firma::before{content:"";position:absolute;top:2rem;left:0;right:0;border-top:1.5px solid #5f4719;}
+    .certificado .firma-nombre{
+        position:absolute;left:0;right:0;top:.5rem;
+        font-family:'Brush Script MT','Segoe Script','Snell Roundhand','Apple Chancery',cursive;
+        font-size:2rem;font-style:italic;color:#2c2008;line-height:1.1;
+        transform:rotate(-3deg);pointer-events:none;
+    }
+    .certificado .esquina{position:absolute;width:64px;height:64px;color:#8a6a26;opacity:.5;}
+    .certificado .esquina.e1{top:12px;left:12px;}
+    .certificado .esquina.e2{top:12px;right:12px;transform:scaleX(-1);}
+    .certificado .esquina.e3{bottom:12px;left:12px;transform:scaleY(-1);}
+    .certificado .esquina.e4{bottom:12px;right:12px;transform:scale(-1);}
+    .certificado .cert-fecha{font-size:.8rem;color:#7c5f28;margin-top:.4rem;letter-spacing:.5px;}
+    .certificado .cert-folio{font-size:.7rem;color:#9a8557;margin-top:.2rem;letter-spacing:1.5px;}
+    .certificado .cert-sellos{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap;margin-top:1.4rem;}
+    .certificado .sello{
+        width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+        color:var(--bronce-claro);background:radial-gradient(circle at 35% 30%,#1d4a7a,#0a2340 70%);
+        border:3px solid #5f4719;box-shadow:0 0 0 3px rgba(95,71,25,.25);
+    }
+    .certificado .sello svg{width:38px;height:38px;}
+    @media print{
+        body > *{display:none !important;}
+        body > #printCert{display:block !important;position:static;}
+        #printCert .certificado{box-shadow:none;margin:0;}
+        #printCert .no-print{display:none !important;}
+    }
+
+    /* ---------- Footer RRSS steampunk ---------- */
+    .pie-ctf{
+        position:fixed;left:0;right:0;bottom:0;z-index:400;
+        display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+        padding:.7rem 1.5rem;
+        background:linear-gradient(180deg,#123352 0%,#0a2340 100%);
+        border-top:2px solid var(--bronce-claro);
+        box-shadow:0 -8px 24px rgba(0,0,0,.45);
+        color:#889db5;font-size:.82rem;letter-spacing:.4px;
+    }
+    .pie-ctf .pie-marca{display:flex;align-items:center;gap:.6rem;font-family:'Georgia','Cambria','Times New Roman',serif;color:#d7c69c;}
+    .pie-ctf .pie-marca svg{width:18px;height:18px;color:var(--bronce-claro);}
+    .pie-rrss{display:flex;gap:.6rem;align-items:center;}
+    .pie-rrss a{
+        width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+        color:var(--bronce-claro);background:linear-gradient(180deg,#123352,#0a2340);
+        border:1px solid var(--bronce-osc);text-decoration:none;
+        transition:transform .15s,border-color .2s,color .2s;
+    }
+    .pie-rrss a:hover{transform:translateY(-2px);border-color:var(--bronce-claro);color:#fff;}
+    .pie-rrss svg{width:18px;height:18px;display:block;}
+
+    @media (max-width:600px){
+        .envoltura{padding:1rem .7rem;}
+        .tarjeta{padding:1.3rem;}
+        .modal{padding:0;}
+        .modal-box{border-radius:0;max-height:100vh;min-height:100vh;padding:1.3rem 1rem 2rem;}
+        .barra{padding:.6rem .8rem;gap:.6rem;}
+        .barra .marca{font-size:.9rem;}
+        .reloj,.marcador{font-size:1rem;padding:.25rem .6rem;}
+        .fila-btn .btn{width:100%;}
+        .btn-entregar{padding:.5rem .9rem;font-size:.85rem;}
+        .tablero{grid-template-columns:1fr;}
+        .estacion{min-height:220px;padding:1.6rem 1.4rem;}
+    }
+    @media (prefers-reduced-motion:reduce){
+        *{animation:none!important;transition:none!important;}
+    }
+</style>
+</head>
+<body>
+
+<header class="barra" id="barra" hidden>
+    <div class="marca"><span class="logo-punto" aria-hidden="true"></span>CTF Telemática</div>
+    <div class="equipo" id="barraEquipo">Equipo</div>
+    <div class="espacio"></div>
+    <div class="reloj" id="reloj" title="Tiempo restante">40:00</div>
+    <div class="marcador" id="marcador" title="Puntaje acumulado">0 pts</div>
+    <button id="btnEntregar" class="btn-entregar" onclick="terminar(false)" title="Entregar y ver resultados">Entregar</button>
+    <a class="salir" href="./" title="Salir y volver a Talleres">✕ Salir</a>
+</header>
+
+<!-- ================= PANTALLA INICIO ================= -->
+<section id="pantallaInicio" class="pantalla activa">
+    <div class="inicio">
+        <div class="inicio-motor" aria-hidden="true">
+            <svg class="engranaje e1" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                <circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/>
+                <circle cx="50" cy="50" r="34" stroke-width="2.5"/>
+                <circle cx="50" cy="50" r="10" fill="currentColor" stroke="none"/>
+            </svg>
+            <svg class="engranaje e2" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                <circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/>
+                <circle cx="50" cy="50" r="34" stroke-width="2.5"/>
+                <circle cx="50" cy="50" r="10" fill="currentColor" stroke="none"/>
+            </svg>
+        </div>
+
+        <div class="inicio-marco">
+        <a class="volver" href="./">← Volver a Talleres</a>
+        <header class="inicio-topbar">
+            <div class="inicio-marca">
+                <span class="inicio-marca-engranaje" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="42" stroke-width="8" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg></span>
+                CTF <b>Telemática</b>
+            </div>
+            <div class="inicio-chips">
+                <span class="chip"><b>6</b> estaciones</span>
+                <span class="chip"><b>40</b> minutos</span>
+                <span class="chip">Trabajo en equipo</span>
+            </div>
+        </header>
+
+        <div class="inicio-hero">
+            <div class="inicio-info">
+                <p class="inicio-eyebrow"><span class="raya"></span>Taller práctico · Ingeniería Civil en Telemática<span class="raya"></span></p>
+                <h1>Hackea <span>tu futuro</span></h1>
+                <p class="inicio-sub">Seis estaciones, 40 minutos y un solo objetivo: descubrir cómo viaja la información desde una antena hasta tu pantalla.</p>
+
+                <ul class="intro-lista">
+                    <li class="intro-item">
+                        <span class="intro-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="10.5" stroke-dasharray="3.3 3.3"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg></span>
+                        <div><b>Cada estación es un desafío.</b><p>Ábrela desde el tablero, resuélvela y su respuesta queda registrada.</p></div>
+                    </li>
+                    <li class="intro-item">
+                        <span class="intro-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M13 3h-2"/><circle cx="12" cy="13" r="8.5"/><circle cx="12" cy="13" r="12" stroke-dasharray="4.2 4.2"/><path d="M12 9.5V13l2.5 1.5"/></svg></span>
+                        <div><b>El tiempo resta puntos.</b><p>Cada estación parte en 100 puntos y baja 1 punto cada 30 segundos, hasta un mínimo de 40.</p></div>
+                    </li>
+                    <li class="intro-item">
+                        <span class="intro-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M18.6 2.8v4.4h-4.4"/></svg></span>
+                        <div><b>Puedes salir y volver.</b><p>El avance dentro de un desafío no se pierde al cerrar el modal.</p></div>
+                    </li>
+                    <li class="intro-item">
+                        <span class="intro-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7.5h6M9 11h6M9 14.5h4"/></svg></span>
+                        <div><b>Al terminar verás el resumen.</b><p>Tus respuestas quedan registradas y listas para copiarlas y entregarlas al profesor.</p></div>
+                    </li>
+                </ul>
+            </div>
+
+            <aside class="inicio-panel">
+                <svg class="inicio-engranaje" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true">
+                    <circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/>
+                    <circle cx="50" cy="50" r="30" stroke-width="3"/>
+                    <circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/>
+                </svg>
+                <div class="inicio-panel-cab">
+                    <h2>Registro de la expedición</h2>
+                    <p class="sub">Escribe el nombre de tu equipo para abrir el motor del tablero.</p>
+                </div>
+                <label for="nombreEquipo">Identificación del equipo</label>
+                <div class="campo-caja">
+                    <svg class="campo-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+                    <input id="nombreEquipo" class="inicio-campo" type="text" maxlength="30" placeholder="Ej: Los Bits Perdidos" autocomplete="off">
+                </div>
+                <div id="avisoEquipo" class="feedback"></div>
+                <button class="inicio-btn" onclick="comenzar()">Comenzar el desafío</button>
+                <div class="fila-btn inicio-continuar"></div>
+                <p class="inicio-nota">El cronómetro de 40 minutos comienza al confirmar.</p>
+            </aside>
+        </div>
+
+        <footer class="inicio-pie">
+            <span>Telemática - Puertas Abiertas 2026</span>
+            <span><a href="./">← Talleres</a> · <a href="./diftel/">Simulador</a> · <a href="../">Portal DIFTEL</a></span>
+        </footer>
+        </div>
+    </div>
+    </section>
+
+<div class="envoltura">
+
+<!-- ================= PANTALLA JUEGO ================= -->
+<section id="pantallaJuego" class="pantalla">
+    <div class="cabecera-tablero">
+        <h2>Tablero de estaciones</h2>
+        <p id="progresoTexto">0 de 6 estaciones resueltas</p>
+    </div>
+    <div class="tablero" id="tablero"></div>
+</section>
+
+<!-- ================= PANTALLA FINAL ================= -->
+<section id="pantallaFinal" class="pantalla">
+    <div class="tarjeta">
+        <h1 id="tituloFinal">Resultados</h1>
+        <p class="sub" id="subtituloFinal"></p>
+
+        <table class="resumen">
+            <thead>
+                <tr><th>Estación</th><th>Respuesta</th><th style="text-align:right;">Puntos</th></tr>
+            </thead>
+            <tbody id="cuerpoResumen"></tbody>
+        </table>
+
+        <div class="total">
+            <div>
+                <div style="font-size:.85rem;color:#c6d4e3;">Puntaje del equipo</div>
+                <div id="nombreFinal" style="font-weight:bold;"></div>
+            </div>
+            <div class="cifra"><span id="puntajeFinal">0</span> pts</div>
+        </div>
+
+        <div class="fila-btn">
+            <button class="btn btn-primario" onclick="copiarResultados()">Copiar resultados</button>
+            <button class="btn btn-primario" onclick="generarCertificado()">Generar certificado</button>
+            <button class="btn btn-fantasma" onclick="reiniciar()">Jugar de nuevo</button>
+        </div>
+        <div id="avisoCopia" class="feedback"></div>
+
+        <div class="certificado" id="certificado" hidden>
+            <svg class="esquina e1" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg>
+            <svg class="esquina e2" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg>
+            <svg class="esquina e3" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg>
+            <svg class="esquina e4" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg>
+            <div class="cert-ojal">Taller práctico · Ingeniería Civil en Telemática</div>
+            <h2>Certificado de Participación</h2>
+            <div class="cert-ojal">Otorgado al equipo</div>
+            <div class="cert-equipo" id="certEquipo">—</div>
+            <p class="sub" style="margin:0;">Por su trabajo en equipo en el desafío <b>CTF Telemática · 6 estaciones</b></p>
+            <div><span class="cert-rango" id="certRango">—</span></div>
+            <table aria-label="Detalle por estación"><tbody id="certTabla"></tbody></table>
+            <div class="cert-detalle" id="certDetalle">—</div>
+            <div class="cert-fecha" id="certFecha">—</div>
+            <div class="cert-folio" id="certFolio">—</div>
+            <div class="firmas">
+                <div class="firma"><div class="firma-nombre">Diftel Telemática</div>Coordinación del taller</div>
+                <div class="firma">Capitanía del equipo</div>
+            </div>
+            <div class="cert-sellos">
+                <span class="sello" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="42" stroke-width="8" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg></span>
+                <span class="sello" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 8.5 22 9.3 17 14l1.2 7L12 17.8 5.8 21 7 14 2 9.3 9 8.5z"/></svg></span>
+            </div>
+            <div class="fila-btn centro no-print" style="margin-top:1.2rem;">
+                <button class="btn btn-primario" onclick="imprimirCertificado()">Imprimir / Guardar PDF</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="pie-ctf">
+    <span class="pie-marca">
+        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke-width="8" stroke-dasharray="9 11"/><circle cx="50" cy="50" r="30" stroke-width="3"/><circle cx="50" cy="50" r="9" fill="currentColor" stroke="none"/></svg>
+        Telemática - Puertas Abiertas 2026
+    </span>
+    <span class="pie-rrss">
+        <!-- RRSS Diftel -->
+        <a href="https://www.instagram.com/diftelusm/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@diftel.sj" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 8.5v8.3a2.8 2.8 0 1 0 2.8-2.8"/><path d="M9.5 8.5c.6 2.6 2.4 4 5.2 4.2V9.6c-.9 0-1.9-.3-2.7-.9"/><path d="M9.5 5v3.5"/></svg>
+        </a>
+    </span>
+</footer>
+
+</div>
+<!-- ================= ESTACIÓN 1: CRIPTOGRAFÍA ================= -->
+<div class="modal" id="modalCripto">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalCripto')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/><path d="M12 16.3v1.4"/><circle cx="12" cy="12" r="10.2" stroke-dasharray="2.5 2.8" opacity=".45"/></svg></span>Criptografía César</h2>
+    <p class="sub">El telégrafo rival cifra con César y cambia el desplazamiento en cada rueda. La corona exterior es el mensaje interceptado: gira hasta que la interior tenga sentido.</p>
+
+    <div id="introStage" class="stage active">
+        <div class="cripto-intro">
+            <h3>Máquina de cifrado</h3>
+            <p>Tres ruedas encadenadas, cada una con otro desplazamiento: la exterior es el cifrado, la interior tu lectura. Activa la primera y avanza.</p>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primario" onclick="ir(1)">Activar la primera rueda</button>
+        </div>
+    </div>
+
+    <div id="nivel1" class="stage">
+        <h3>Primera rueda · una palabra</h3>
+        <div class="cifrado">UHGHV</div>
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="200" cy="200" r="180" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="190" fill="none" stroke="#5f4719" stroke-width="7" stroke-dasharray="7 9" opacity="0.85"/>
+                    <g id="outer1"></g>
+                    <circle cx="200" cy="200" r="120" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="115" fill="#fffdf6" stroke="#5f4719" stroke-width="2"/>
+                    <g id="inner1" style="transition: transform 0.3s; transform-origin: 200px 200px;"></g>
+                    <line x1="200" y1="10" x2="200" y2="35" stroke="#b4410f" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Desplazamiento: <span id="shift1val">0</span></label><br><br>
+            <input type="range" id="shift1" min="0" max="25" value="0" oninput="decodificar(1, 'UHGHV')">
+        </div>
+        <div class="result">
+            <p>Resultado decodificado:</p>
+            <code id="result1">UHGHV</code>
+        </div>
+        <div id="feedback1" class="feedback"></div>
+        <div class="buttons">
+            <button class="btn-back" onclick="ir(0)">← Atrás</button>
+            <button class="btn-next" onclick="verificar(1)">Siguiente →</button>
+        </div>
+    </div>
+
+    <div id="nivel2" class="stage">
+        <h3>Segunda rueda · dos palabras</h3>
+        <div class="cifrado">ZWPKO YEBNWZKO</div>
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="200" cy="200" r="180" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="190" fill="none" stroke="#5f4719" stroke-width="7" stroke-dasharray="7 9" opacity="0.85"/>
+                    <g id="outer2"></g>
+                    <circle cx="200" cy="200" r="120" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="115" fill="#fffdf6" stroke="#5f4719" stroke-width="2"/>
+                    <g id="inner2" style="transition: transform 0.3s; transform-origin: 200px 200px;"></g>
+                    <line x1="200" y1="10" x2="200" y2="35" stroke="#b4410f" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Desplazamiento: <span id="shift2val">0</span></label><br><br>
+            <input type="range" id="shift2" min="0" max="25" value="0" oninput="decodificar(2, 'ZWPKO YEBNWZKO')">
+        </div>
+        <div class="result">
+            <p>Resultado decodificado:</p>
+            <code id="result2">ZWPKO YEBNWZKO</code>
+        </div>
+        <div id="feedback2" class="feedback"></div>
+        <div class="buttons">
+            <button class="btn-back" onclick="ir(1)">← Atrás</button>
+            <button class="btn-next" onclick="verificar(2)">Siguiente →</button>
+        </div>
+    </div>
+
+    <div id="nivel3" class="stage">
+        <h3>Tercera rueda · la frase final</h3>
+        <div class="cifrado">BQ QDJUDQ HUSYRU FKBIEI</div>
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="200" cy="200" r="180" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="190" fill="none" stroke="#5f4719" stroke-width="7" stroke-dasharray="7 9" opacity="0.85"/>
+                    <g id="outer3"></g>
+                    <circle cx="200" cy="200" r="120" fill="none" stroke="#5f4719" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="115" fill="#fffdf6" stroke="#5f4719" stroke-width="2"/>
+                    <g id="inner3" style="transition: transform 0.3s; transform-origin: 200px 200px;"></g>
+                    <line x1="200" y1="10" x2="200" y2="35" stroke="#b4410f" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Desplazamiento: <span id="shift3val">0</span></label><br><br>
+            <input type="range" id="shift3" min="0" max="25" value="0" oninput="decodificar(3, 'BQ QDJUDQ HUSYRU FKBIEI')">
+        </div>
+        <div class="result">
+            <p>Resultado decodificado:</p>
+            <code id="result3">BQ QDJUDQ HUSYRU FKBIEI</code>
+        </div>
+        <div id="feedback3" class="feedback"></div>
+        <div class="buttons">
+            <button class="btn-back" onclick="ir(2)">← Atrás</button>
+            <button class="btn-next" onclick="verificar(3)">✓ Finalizar estación</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ESTACIÓN 2: GEOLOCALIZACIÓN ================= -->
+<div class="modal" id="modalGeo">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalGeo')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5" stroke-dasharray="2 2" opacity=".7"/><path d="M14.2 9.8 13 13l-3.2 1.2L11 11z" fill="currentColor" stroke="none"/><path d="M12 1.8v1.8M12 20.4v1.8M1.8 12h1.8M20.4 12h1.8"/></svg></span>Geolocalización</h2>
+    <p class="sub">La compañía tiende fibra óptica por Santiago y la luz salta de nodo en nodo. Sintoniza las 5 coordenadas en orden: cada acierto dibuja el tendido y revela una palabra del mensaje.</p>
+
+    <div class="geo-pasos">
+        <div class="geo-paso" id="pasoGeo1"><b>Paso 1 · Ubica</b>Haz clic en el nodo del plano que coincida con la coordenada objetivo.</div>
+        <div class="geo-paso" id="pasoGeo2"><b>Paso 2 · Revela</b>Cada acierto anota una letra y dibuja el tendido en el mapa.</div>
+        <div class="geo-paso" id="pasoGeo3"><b>Paso 3 · Valida</b>Completa las 5 letras y escribe la palabra abajo.</div>
+    </div>
+
+    <div class="geo-objetivo">
+        <span class="geo-tx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5" stroke-dasharray="2 2" opacity=".7"/><path d="M14.2 9.8 13 13l-3.2 1.2L11 11z" fill="currentColor" stroke="none"/></svg>Sintonía <b id="numTx">01/05</b></span>
+        <code id="coordObjetivo">—</code>
+        <span class="cuenta" id="contadorGeo">Letra 1 de 5</span>
+        <span class="senal"><span id="senalTxt">Señal —</span><span class="medidor"><i id="senalBarra"></i></span></span>
+    </div>
+    <div class="geo-progreso" aria-hidden="true"><div id="barraGeo"></div></div>
+    <div class="telegrafo" id="logGeo" aria-live="polite"><div>— telégrafo listo — sintoniza la primera coordenada —</div></div>
+
+    <div class="mapa-caja">
+        <svg id="mapa" viewBox="0 0 600 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano de nodos de red con coordenadas"></svg>
+    </div>
+    <div class="mapa-lectura">
+        <span>Cursor → Lat <b id="lectLat">—</b> · Lon <b id="lectLon">—</b></span>
+        <span>Compara con el objetivo para elegir el nodo</span>
+    </div>
+    <div class="leyenda"><span><b class="punto"></b>Nodo</span><span><i></i>Malla metropolitana</span><span><i class="tendido"></i>Tendido bus F→I→B→R→A</span></div>
+
+    <div class="panel">
+        <h3 style="margin-bottom:.2rem;">Ruta del tendido</h3>
+        <p style="font-size:.85rem;color:#6b7785;">La malla une los 7 nodos; tu tendido usa topología <b>bus</b> encadenando <b>F→I→B→R→A</b>. El recuadro naranja marca la coordenada que debes sintonizar ahora.</p>
+        <div class="ruta-lista" id="rutaLista"></div>
+        <div class="fila-btn" style="margin-top:.8rem;">
+            <button class="btn btn-fantasma" onclick="reiniciarGeo()" style="padding:.5rem 1rem;font-size:.85rem;">↺ Reiniciar ruta</button>
+        </div>
+    </div>
+
+    <div class="palabra-slots" id="slotsGeo"></div>
+    <div class="frase-cinta" id="fraseGeo" aria-live="polite"></div>
+
+    <div class="zona-respuesta">
+        <input id="respGeo" class="campo" type="text" maxlength="40" placeholder="Escribe el mensaje completo" autocomplete="off">
+        <button class="btn btn-primario" onclick="revisarGeo()">Validar respuesta</button>
+    </div>
+    <div id="fbGeo" class="feedback"></div>
+  </div>
+</div>
+<!-- ================= ESTACIÓN 3: ELECTRÓNICA ================= -->
+<div class="modal" id="modalElec">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalElec')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="10.2" stroke-dasharray="2.5 2.8" opacity=".45"/><path d="M13.2 6.8 8.6 13H11l-1 4.2 4.6-6.2H12z"/></svg></span>Electrónica</h2>
+    <p class="sub">Dos repetidores, dos incógnitas: en el primero halla el <b>voltaje</b> que clava la aguja; en el segundo, con la fuente fijada, despeja la <b>resistencia</b>. Cada lámpara encendida es media estación.</p>
+
+    <div class="geo-pasos">
+        <div class="geo-paso" id="pasoElec1"><b>Paso 1 · Energía</b>Sube el voltaje con el deslizador y mira correr la corriente.</div>
+        <div class="geo-paso" id="pasoElec2"><b>Paso 2 · Punto exacto</b>Clava el amperímetro en el objetivo hasta que encienda la lámpara.</div>
+        <div class="geo-paso" id="pasoElec3"><b>Paso 3 · Registra</b>Anota el voltaje que lo logró y valida. Repite con el segundo repetidor.</div>
+    </div>
+
+    <div class="elec-tabs">
+        <button class="elec-tab activa" id="tabElec1" onclick="irCasoElec(1)">Repetidor I · halla V</button>
+        <button class="elec-tab" id="tabElec2" onclick="irCasoElec(2)">Repetidor II · halla R</button>
+    </div>
+
+    <div class="circuito-caja">
+        <svg viewBox="0 0 520 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Máquina eléctrica con fuente, resistencia, amperímetro y lámpara">
+            <defs>
+                <linearGradient id="placa" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4a3519"/><stop offset="100%" stop-color="#2a1e0e"/>
+                </linearGradient>
+                <linearGradient id="laton" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f2dd9e"/><stop offset="55%" stop-color="#c9a24a"/><stop offset="100%" stop-color="#8a6420"/>
+                </linearGradient>
+                <radialGradient id="brilloBulbo" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffe6a3" stop-opacity=".95"/>
+                    <stop offset="55%" stop-color="#ffb703" stop-opacity=".45"/>
+                    <stop offset="100%" stop-color="#ffb703" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <rect x="4" y="4" width="512" height="252" rx="14" fill="url(#placa)" stroke="#5f4719" stroke-width="2"/>
+            <circle cx="20" cy="20" r="4" fill="#e8cf8b" stroke="#5f4719" stroke-width="1.5"/>
+            <circle cx="500" cy="20" r="4" fill="#e8cf8b" stroke="#5f4719" stroke-width="1.5"/>
+            <circle cx="20" cy="240" r="4" fill="#e8cf8b" stroke="#5f4719" stroke-width="1.5"/>
+            <circle cx="500" cy="240" r="4" fill="#e8cf8b" stroke="#5f4719" stroke-width="1.5"/>
+            <path d="M70 50 H450 V210 H70 Z" fill="none" stroke="#160f06" stroke-width="8" stroke-linejoin="round"/>
+            <path d="M70 50 H450 V210 H70 Z" fill="none" stroke="#c98a3d" stroke-width="3.5" stroke-linejoin="round"/>
+            <path id="chispa" class="flujo" d="M70 50 H450 V210 H70 Z" fill="none" stroke="#ffe6a3" stroke-width="1.8" stroke-dasharray="3 9" stroke-linejoin="round" opacity=".9"/>
+            <g id="electrones"></g>
+            <g>
+                <rect x="34" y="102" width="52" height="58" rx="6" fill="url(#laton)" stroke="#3a2a12" stroke-width="2"/>
+                <line x1="60" y1="102" x2="60" y2="94" stroke="#e8cf8b" stroke-width="5" stroke-linecap="round"/>
+                <line x1="60" y1="166" x2="60" y2="160" stroke="#8a7a5a" stroke-width="5" stroke-linecap="round"/>
+                <text x="60" y="128" text-anchor="middle" font-size="16" font-weight="bold" fill="#3a2a12">+</text>
+                <text x="60" y="186" text-anchor="middle" font-size="12" font-weight="bold" fill="#f0e2ae" font-family="Georgia,serif">FUENTE</text>
+                <text x="60" y="201" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffd97a" font-family="'Courier New',monospace" id="etiquetaV">0 V</text>
+            </g>
+            <g>
+                <rect x="422" y="112" width="76" height="34" rx="17" fill="#e8dcc0" stroke="#3a2a12" stroke-width="2.5"/>
+                <rect x="440" y="112" width="7" height="34" fill="#b4410f"/>
+                <rect x="451" y="112" width="7" height="34" fill="#b4410f"/>
+                <rect x="462" y="112" width="7" height="34" fill="#5a3a1a"/>
+                <text x="460" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0e2ae" font-family="'Courier New',monospace" id="etiquetaR">440 Ω</text>
+                <text x="460" y="166" text-anchor="middle" font-size="11" font-weight="bold" fill="#f0e2ae" font-family="Georgia,serif">RESISTENCIA</text>
+            </g>
+            <g>
+                <circle cx="260" cy="40" r="44" fill="none" stroke="url(#laton)" stroke-width="7"/>
+                <circle cx="260" cy="40" r="37" fill="#f7efda" stroke="#5f4719" stroke-width="2"/>
+                <path id="zonaVerde" d="M262.4 12.1 A28 28 0 0 1 271.8 14.6" fill="none" stroke="#28a745" stroke-width="5" stroke-linecap="round"/>
+                <line x1="232" y1="40" x2="238" y2="40" stroke="#7c5f28" stroke-width="2"/>
+                <line x1="282" y1="40" x2="288" y2="40" stroke="#7c5f28" stroke-width="2"/>
+                <line x1="260" y1="6" x2="260" y2="12" stroke="#7c5f28" stroke-width="2"/>
+                <line id="aguja" x1="260" y1="40" x2="260" y2="12" stroke="#b4410f" stroke-width="3.5" stroke-linecap="round" transform="rotate(-60 260 40)"/>
+                <circle cx="260" cy="40" r="5" fill="#3a2a12" stroke="#e8cf8b" stroke-width="1.5"/>
+                <text x="260" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#3a2a12">A</text>
+            </g>
+            <g>
+                <circle id="haloBulbo" cx="260" cy="220" r="34" fill="url(#brilloBulbo)" opacity="0"/>
+                <rect x="248" y="228" width="24" height="14" rx="3" fill="url(#laton)" stroke="#3a2a12" stroke-width="2"/>
+                <circle cx="260" cy="212" r="20" fill="#fffdf6" opacity=".28" stroke="#e8cf8b" stroke-width="2"/>
+                <path id="filamento" d="M252 218 L256 206 L260 218 L264 206 L268 218" fill="none" stroke="#8a7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="260" y="251" text-anchor="middle" font-size="11" font-weight="bold" fill="#f0e2ae" font-family="Georgia,serif">REPETIDOR</text>
+                <text id="estadoRep" x="330" y="224" font-size="11" font-family="'Courier New',monospace" class="estado-rep off">○ APAGADO</text>
+            </g>
+        </svg>
+    </div>
+
+    <div class="lectura">
+        <div class="display"><small>AMPERÍMETRO</small><span id="lecturaI">0.00</span> A</div>
+        <div class="display objetivo"><small>OBJETIVO</small><span id="objetivoI">0.50</span> A</div>
+    </div>
+
+    <div class="controls">
+        <label>Voltaje de la fuente: <span id="vVal">0</span> V</label> <span class="candado-fuente" id="lockV" hidden>· fuente fijada en 180 V</span><br><br>
+        <input type="range" id="sliderV" min="0" max="300" step="5" value="0" oninput="actualizarCircuito()">
+    </div>
+
+    <div class="formula" id="formulaOhm">V = I × R → <span>? </span> = 0,00 A × 440 Ω</div>
+
+    <div class="pista">
+        <strong>Manual del operador</strong>
+        La ley de Ohm dice que la corriente es el voltaje dividido por la resistencia. Si necesitas 0,50 A a través de 440 Ω, el voltaje sale de multiplicar ambos valores.
+    </div>
+
+    <div class="zona-respuesta">
+        <input id="respElec" class="campo num" type="number" placeholder="Voltaje en volts" autocomplete="off">
+        <button class="btn btn-primario" onclick="revisarElec()">Validar respuesta</button>
+    </div>
+    <div id="fbElec" class="feedback"></div>
+  </div>
+</div>
+
+<!-- ================= ESTACIÓN 4: TELECOMUNICACIONES ================= -->
+<div class="modal" id="modalMorse">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalMorse')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5v-7"/><circle cx="12" cy="10.5" r="1.5" fill="currentColor" stroke="none"/><path d="M8 21h8"/><path d="M7.8 7a6 6 0 0 0 0 6.4M16.2 7a6 6 0 0 1 0 6.4M5.2 4.5a10 10 0 0 0 0 11M18.8 4.5a10 10 0 0 1 0 11"/></svg></span>Telecomunicaciones</h2>
+    <p class="sub">La estación remota transmite en morse: una palabra de 6 letras, el impulso de Dirac y la técnica que digitaliza la voz. Oído, tabla y paciencia.</p>
+
+    <div class="elec-tabs">
+        <button class="elec-tab activa" id="tabMorse1" onclick="irCasoMorse(1)">Señal I · 6 letras</button>
+        <button class="elec-tab" id="tabMorse2" onclick="irCasoMorse(2)">Señal II · frase</button>
+        <button class="elec-tab" id="tabMorse3" onclick="irCasoMorse(3)">Señal III · frase larga</button>
+    </div>
+
+    <div class="panel" style="text-align:center;">
+        <div class="pulso" id="pulso"></div>
+        <div class="morse-letras" id="morseLetras"></div>
+        <div class="morse-cuenta" id="contadorMorse">Señal I · 6 letras</div>
+        <div class="fila-btn centro">
+            <button class="btn btn-primario" id="btnMorse" onclick="reproducirMorse()">▶ Reproducir señal</button>
+            <button class="btn btn-fantasma" onclick="alternarSenal()" id="btnVerSenal">Ver la señal escrita</button>
+        </div>
+        <p style="font-size:.8rem;color:#6b7785;margin-top:.7rem;">Pulso corto = punto · pulso largo = raya · silencio = separación entre letras</p>
+    </div>
+
+    <div class="panel">
+        <h3>Tabla de referencia</h3>
+        <div class="tabla-morse" id="tablaMorse"></div>
+    </div>
+
+    <div class="pista">
+        <strong>Pista</strong>
+        <span id="pistaMorse">Convierte la señal eléctrica en ondas que viajan por el aire, y viceversa.</span>
+    </div>
+
+    <div class="zona-respuesta">
+        <input id="respMorse" class="campo" type="text" maxlength="45" placeholder="Palabra o frase recibida" autocomplete="off">
+        <button class="btn btn-primario" onclick="revisarMorse()">Validar respuesta</button>
+    </div>
+    <div id="fbMorse" class="feedback"></div>
+  </div>
+</div>
+
+<!-- ================= ESTACIÓN 5: ESTRUCTURAS DE DATOS ================= -->
+<div class="modal" id="modalDatos">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalDatos')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="13" r="2.2"/><circle cx="18" cy="13" r="2.2"/><circle cx="18" cy="20" r="2.2"/><circle cx="18" cy="20" r=".9" fill="currentColor" stroke="none"/><path d="M10.5 6.5 7.5 11M13.5 6.5l3 4.5M18 15.2v2.6"/></svg></span>Estructuras de Datos</h2>
+    <p class="sub">El índice del router es un ABB de 4 niveles con seis nodos caídos y tres fichas trampa en el banco. Repón cada valor con la regla estricta y cierra escribiendo el inorden de los 15.</p>
+
+    <div class="mini-leccion"><b>Lección · ABB</b>Izquierda &lt; padre &lt; derecha, <b>estricto</b>: un valor igual al padre NO vale. El banco trae <code>65 · 30 · 90 · 25 · 50 · 45 · 70 · 55 · 35</code>: seis encajan, tres son trampa. Sin rangos escritos: sube por las ramas desde cada “?”.</div>
+
+    <div class="arbol-caja">
+        <svg id="arbol" viewBox="0 0 1000 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Árbol binario de cuatro niveles con seis nodos vacíos">
+            <line x1="500" y1="55" x2="280" y2="150" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="500" y1="55" x2="720" y2="150" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="280" y1="150" x2="150" y2="250" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="280" y1="150" x2="410" y2="250" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="720" y1="150" x2="590" y2="250" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="720" y1="150" x2="850" y2="250" stroke="#8a6420" stroke-width="3.5"/>
+            <line x1="150" y1="250" x2="85" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="150" y1="250" x2="215" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="410" y1="250" x2="345" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="410" y1="250" x2="475" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="590" y1="250" x2="525" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="590" y1="250" x2="655" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="850" y1="250" x2="785" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <line x1="850" y1="250" x2="915" y2="350" stroke="#8a6420" stroke-width="3"/>
+            <g><circle cx="500" cy="55" r="30" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="500" y="64" text-anchor="middle" font-size="24" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">50</text></g>
+            <g><circle cx="280" cy="150" r="30" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="280" y="159" text-anchor="middle" font-size="24" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">30</text></g>
+            <g><circle cx="720" cy="150" r="30" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="720" y="159" text-anchor="middle" font-size="24" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">70</text></g>
+            <g><circle cx="150" cy="250" r="28" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="150" y="259" text-anchor="middle" font-size="22" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">20</text></g>
+            <g><circle cx="410" cy="250" r="28" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="410" y="259" text-anchor="middle" font-size="22" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">40</text></g>
+            <g><circle cx="590" cy="250" r="28" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="590" y="259" text-anchor="middle" font-size="22" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">60</text></g>
+            <g><circle cx="850" cy="250" r="28" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="850" y="259" text-anchor="middle" font-size="22" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">80</text></g>
+            <g><circle cx="85" cy="350" r="24" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="85" y="358" text-anchor="middle" font-size="20" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">10</text></g>
+            <g><circle cx="785" cy="350" r="24" fill="#c9a24a" stroke="#3a2a12" stroke-width="2.5"/><text x="785" y="358" text-anchor="middle" font-size="20" font-weight="bold" fill="#3a2a12" font-family="'Courier New',monospace">75</text></g>
+            <g class="nodo-arbol" data-slot="LLR" tabindex="0" role="button" aria-label="Nodo vacío en la rama izquierda">
+                <circle id="cirLLR" cx="215" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtLLR" x="215" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+            <g class="nodo-arbol" data-slot="LRL" tabindex="0" role="button" aria-label="Nodo vacío en la rama izquierda">
+                <circle id="cirLRL" cx="345" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtLRL" x="345" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+            <g class="nodo-arbol" data-slot="LRR" tabindex="0" role="button" aria-label="Nodo vacío en la rama izquierda">
+                <circle id="cirLRR" cx="475" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtLRR" x="475" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+            <g class="nodo-arbol" data-slot="RLL" tabindex="0" role="button" aria-label="Nodo vacío en la rama derecha">
+                <circle id="cirRLL" cx="525" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtRLL" x="525" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+            <g class="nodo-arbol" data-slot="RLR" tabindex="0" role="button" aria-label="Nodo vacío en la rama derecha">
+                <circle id="cirRLR" cx="655" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtRLR" x="655" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+            <g class="nodo-arbol" data-slot="RRR" tabindex="0" role="button" aria-label="Nodo vacío en la rama derecha">
+                <circle id="cirRRR" cx="915" cy="350" r="24" fill="rgba(232,207,139,.12)" stroke="#e8cf8b" stroke-width="2.5" stroke-dasharray="6 5"/>
+                <text id="txtRRR" x="915" y="359" text-anchor="middle" font-size="22" font-weight="bold" fill="#e8cf8b" font-family="'Courier New',monospace">?</text>
+            </g>
+        </svg>
+    </div>
+
+    <div class="banco" id="bancoArbol">
+        <span class="banco-titulo">Banco: arrastra o toca</span>
+        <button class="ficha" data-v="65">65</button>
+        <button class="ficha" data-v="30">30</button>
+        <button class="ficha" data-v="90">90</button>
+        <button class="ficha" data-v="25">25</button>
+        <button class="ficha" data-v="50">50</button>
+        <button class="ficha" data-v="45">45</button>
+        <button class="ficha" data-v="70">70</button>
+        <button class="ficha" data-v="55">55</button>
+        <button class="ficha" data-v="35">35</button>
+    </div>
+
+    <div class="fila-btn centro">
+        <button class="btn btn-primario" onclick="revisarArbol()">Validar estructura</button>
+        <button class="btn btn-fantasma" onclick="limpiarArbol()">Vaciar nodos</button>
+    </div>
+    <div id="fbArbol" class="feedback"></div>
+
+    <div id="faseArbol2" hidden>
+        <div class="mini-leccion"><b>Fase 2 · recorrido inorden</b>El inorden visita <code>izquierda → nodo → derecha</code> y en un ABB sale ordenado de menor a mayor. Escribe los 15 valores separados por comas o espacios.</div>
+        <div class="zona-respuesta">
+            <input id="respInorden" class="campo num" type="text" placeholder="10, 20, 25, …" autocomplete="off">
+            <button class="btn btn-primario" onclick="verificarInorden()">Validar estación</button>
+        </div>
+        <div id="fbInorden" class="feedback"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ESTACIÓN 6: REDES ================= -->
+<div class="modal" id="modalRedes">
+  <div class="modal-box">
+    <button class="cerrar" onclick="cerrarModal('modalRedes')" aria-label="Cerrar">&times;</button>
+    <h2 class="modal-titulo"><span class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6.5" r="2.3"/><circle cx="18" cy="6.5" r="2.3"/><circle cx="12" cy="17.5" r="2.3"/><path d="M7.7 8.2 10.6 15.5M16.3 8.2 13.4 15.5M8.3 6.5h7.4"/></svg></span>Redes</h2>
+    <p class="sub">Dos faenas de router con tráfico fresco en cada visita: clasifica 6 direcciones en privada, pública o especial, y luego calcula red, broadcast y hosts de la subred asignada.</p>
+
+    <div id="faseRed1" class="stage active">
+        <h3 style="text-align:center;font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;">Fase 1 · Clasifica el tráfico</h3>
+        <div class="red-ayuda"><b>Cómo decidir en 10 segundos — sigue este orden</b>
+            <div style="font-size:.88rem;line-height:1.55;">Piensa en el router como un portero: primero aparta a los <code>ESPECIALES</code> (tienen trabajo fijo), luego reconoce a los <code>PRIVADOS</code> (son de casa), lo que quede es <code>PÚBLICO</code> (vive en internet).</div>
+            <ol class="red-pasos">
+                <li><b>Paso 1 · ¿Es ESPECIAL?</b> Mira solo el inicio: <code>127.x</code>, <code>224–239.x</code>, <code>169.254.x</code>, <code>192.0.2.x</code> o el <code>255.255.255.255</code>. Si coincide → cajón <b>ESPECIAL</b>, no sigas.</li>
+                <li><b>Paso 2 · ¿Es PRIVADA?</b> Solo hay 3 familias: <code>10.</code> (cualquiera que empiece en 10), <code>172.16.–172.31.</code> (ojo: 172.15 y 172.32 ya NO valen) y <code>192.168.</code> Si coincide → cajón <b>PRIVADA</b>.</li>
+                <li><b>Paso 3 · Si no fue ni especial ni privada → PÚBLICA.</b> Ejemplo: <code>80.45.12.9</code> o <code>103.22.1.5</code> son direcciones normales de internet.</li>
+            </ol>
+            <div class="red-cards">
+                <div class="red-card esp"><b>Especial · oficio fijo</b><code>127.0.0.1</code> = esta máquina (loopback)<br><code>224.0.0.251</code> = multicast<br><code>169.254.13.7</code> = sin Wi-Fi/DHCP<br><code>192.0.2.44</code> = solo ejemplos<br><code>255.255.255.255</code> = grito local</div>
+                <div class="red-card priv"><b>Privada · de casa/oficina</b><code>10.4.8.2</code> ✓<br><code>172.20.5.9</code> ✓ (16–31)<br><code>192.168.1.20</code> ✓<br><span style="color:#a4161a;">✗ <code>172.15.9.1</code> no es privada</span><br><span style="color:#a4161a;">✗ <code>172.32.0.5</code> no es privada</span></div>
+                <div class="red-card pub"><b>Pública · internet</b>Todo lo demás.<br><code>8.8.8.8</code> (Google)<br><code>80.45.12.9</code><br><code>103.22.1.5</code></div>
+            </div>
+            <details class="red-ejemplo">
+                <summary>Ver 3 casos resueltos paso a paso</summary>
+                <div class="cuerpo">
+                    <b>1) <code>10.20.5.4</code></b> → Paso 1: ¿empieza en 127, 224–239, 169.254, 192.0.2? No. Paso 2: ¿empieza en <code>10.</code>? Sí → <span class="bueno">PRIVADA</span>.<br>
+                    <b>2) <code>172.15.9.1</code></b> → Paso 1: no es especial. Paso 2: empieza en 172 pero el segundo número es 15 (fuera de 16–31) → no es privada → <span class="bueno">PÚBLICA</span> (trampa típica).<br>
+                    <b>3) <code>127.0.0.1</code></b> → Paso 1: empieza en <code>127.</code> → <span class="bueno">ESPECIAL</span>, no importa nada más.
+                </div>
+            </details>
+            <div style="margin-top:.6rem;font-size:.85rem;">Mecánica: toca una ficha y luego su cajón. Puedes sacarla haciendo clic de nuevo.</div>
+        </div>
+        <div class="banco" id="fichasIP"></div>
+        <div class="cajones">
+            <div class="cajon" data-cat="privada" tabindex="0"><b>PRIVADA</b><div class="cajon-lista" id="cj-privada"></div></div>
+            <div class="cajon" data-cat="publica" tabindex="0"><b>PÚBLICA</b><div class="cajon-lista" id="cj-publica"></div></div>
+            <div class="cajon" data-cat="especial" tabindex="0"><b>ESPECIAL</b><div class="cajon-lista" id="cj-especial"></div></div>
+        </div>
+        <div class="fila-btn centro">
+            <button class="btn btn-primario" onclick="validarFase1Red()">Validar clasificación</button>
+            <button class="btn btn-fantasma" onclick="repartirIPs(true)" style="padding:.5rem 1rem;font-size:.85rem;">↻ Nuevas IPs</button>
+        </div>
+        <div id="fbFase1" class="feedback"></div>
+    </div>
+
+    <div id="faseRed2" class="stage">
+        <h3 style="text-align:center;font-family:'Georgia','Cambria','Times New Roman',serif;color:#08213d;">Fase 2 · Calcula la subred</h3>
+        <div class="red-ayuda"><b>Receta en 3 pasos — solo mira el último número</b>
+            <div style="font-size:.88rem;line-height:1.55;">El <code>/24, /25, /26</code> te dice de qué tamaño es el barrio. Como la IP asignada siempre es <code>192.168.x.x</code>, los 3 primeros grupos ya son red: solo debes resolver el último octeto.</div>
+            <ol class="red-pasos">
+                <li><b>Paso 1 · Tamaño del bloque.</b> <code>bloque = 2^(32 − máscara)</code>. Es decir: <code>/24 → 256</code>, <code>/25 → 128</code>, <code>/26 → 64</code>. Ese bloque siempre parte en múltiplos: ej. con bloque 128 hay solo dos barrios: <code>.0–.127</code> y <code>.128–.255</code>.</li>
+                <li><b>Paso 2 · Red y broadcast.</b> Busca en qué barrio cae tu IP. <code>red</code> = inicio del barrio, <code>broadcast</code> = fin del barrio (<code>red + bloque − 1</code>). Ejemplo: IP <code>.130</code> con <code>/25</code> cae en <code>.128–.255</code> → red <code>.128</code>, broadcast <code>.255</code>.</li>
+                <li><b>Paso 3 · Hosts útiles.</b> <code>hosts = bloque − 2</code> (se restan red y broadcast, que no son PCs). <code>/24 → 254</code>, <code>/25 → 126</code>, <code>/26 → 62</code>.</li>
+            </ol>
+            <table class="tabla-bloques" aria-label="Tabla de bloques por máscara">
+                <thead><tr><th>Máscara</th><th>Bloque</th><th>Barrios</th><th>Hosts</th></tr></thead>
+                <tbody id="tablaBloques">
+                    <tr data-m="24"><td>/24</td><td>256</td><td>.0 – .255 (uno solo)</td><td>254</td></tr>
+                    <tr data-m="25"><td>/25</td><td>128</td><td>.0–.127 · .128–.255</td><td>126</td></tr>
+                    <tr data-m="26"><td>/26</td><td>64</td><td>.0–.63 · .64–.127 · .128–.191 · .192–.255</td><td>62</td></tr>
+                </tbody>
+            </table>
+            <details class="red-ejemplo" open>
+                <summary>Ejemplo resuelto: 192.168.5.130 /25</summary>
+                <div class="cuerpo">
+                    1) Bloque = 2^(32−25) = <b>128</b>. Barrios: <code>.0–.127</code> y <code>.128–.255</code>.<br>
+                    2) <code>.130</code> cae en el 2º barrio → <b>red = <code>192.168.5.128</code></b>, <b>broadcast = <code>192.168.5.255</code></b> (128+128−1).<br>
+                    3) Hosts = 128 − 2 = <b>126</b> (de .129 a .254).<br>
+                    <span style="color:#7c5f28;">Truco: si el último número es menor que el bloque, la red es .0. Ej: <code>.70 /25</code> → red <code>.0</code>, broadcast <code>.127</code>.</span>
+                </div>
+            </details>
+        </div>
+        <div class="panel" style="text-align:center;">
+            <div style="font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;color:#7c5f28;font-weight:700;">Dirección asignada — resuelve con la receta</div>
+            <div id="subIP" style="font-family:'Courier New',monospace;font-size:1.5rem;font-weight:bold;color:#0a2340;">—</div>
+            <div id="bloqueInfo">—</div>
+            <div class="bin-tabla" id="binSub"></div>
+            <div style="font-size:.78rem;color:#4a3a15;margin-top:.5rem;"><span class="bin-red" style="color:#b4410f;">■</span> bits de red &nbsp; <span class="bin-host" style="color:#177245;">■</span> bits de host — la máscara tiene 1s en red y 0s en host</div>
+        </div>
+        <div class="zona-respuesta" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;">
+            <input id="inpRed" class="campo num" type="text" maxlength="18" placeholder="Dirección de red" autocomplete="off">
+            <input id="inpBc" class="campo num" type="text" maxlength="18" placeholder="Broadcast" autocomplete="off">
+            <input id="inpHosts" class="campo num" type="number" placeholder="Nº hosts" autocomplete="off">
+        </div>
+        <div class="fila-btn centro">
+            <button class="btn btn-primario" onclick="validarFase2Red()">Validar subred</button>
+            <button class="btn btn-fantasma" onclick="generarSubred()" style="padding:.5rem 1rem;font-size:.85rem;">↻ Otro ejercicio</button>
+        </div>
+        <div id="fbRedes" class="feedback"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =======================================================
+   MOTOR DEL CTF
+   ======================================================= */
+const DURACION = 40 * 60;          // 40 minutos
+const PTS_BASE = 100;
+const PTS_MIN  = 40;
+const CLAVE_GUARDADO = 'ctf-telematica-v1';
+
+const ESTACIONES = [
+    {id:1, icono:'🔐', nombre:'Criptografía',       detalle:'Tres ruedas, tres desplazamientos: gira el latón hasta leer el mensaje.',   modal:'modalCripto', respuesta:'LA ANTENA RECIBE PULSOS', base:120, min:48},
+    {id:2, icono:'📍', nombre:'Geolocalización',    detalle:'Sintoniza 5 coordenadas y deja que la red deletree el mensaje.',          modal:'modalGeo',    respuesta:'LA LUZ VIAJA EN FIBRA', base:110, min:44},
+    {id:3, icono:'⚡', nombre:'Electrónica',        detalle:'Dos repetidores mudos: enciende sus lámparas con la ley de Ohm.', modal:'modalElec',   respuesta:'220 V · 400 Ω', base:120, min:48},
+    {id:4, icono:'📡', nombre:'Telecomunicaciones', detalle:'Tres señales morse: de la antena al código que digitaliza la voz.',              modal:'modalMorse',  respuesta:'ANTENA · DELTA DE DIRAC · PULSE CODE MODULATION', base:150, min:60},
+    {id:5, icono:'🌳', nombre:'Estructuras de Datos', detalle:'Un ABB herido: 6 nodos caídos, 3 fichas trampa y el inorden final.',modal:'modalDatos',  respuesta:'25·35·45·55·65·90', base:150, min:60},
+    {id:6, icono:'🌐', nombre:'Redes',              detalle:'Separa el tráfico en cajones y calcula la subred asignada.', modal:'modalRedes',  respuesta:'red calculada', base:130, min:52}
+];
+
+/* Iconos steampunk (trazo bronce, heredan color del medallón) */
+const ICONOS = {
+    1: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/><path d="M12 16.3v1.4"/><circle cx="12" cy="12" r="10.2" stroke-dasharray="2.5 2.8" opacity=".45"/></svg>',
+    2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5" stroke-dasharray="2 2" opacity=".7"/><path d="M14.2 9.8 13 13l-3.2 1.2L11 11z" fill="currentColor" stroke="none"/><path d="M12 1.8v1.8M12 20.4v1.8M1.8 12h1.8M20.4 12h1.8"/></svg>',
+    3: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="10.2" stroke-dasharray="2.5 2.8" opacity=".45"/><path d="M13.2 6.8 8.6 13H11l-1 4.2 4.6-6.2H12z"/></svg>',
+    4: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5v-7"/><circle cx="12" cy="10.5" r="1.5" fill="currentColor" stroke="none"/><path d="M8 21h8"/><path d="M7.8 7a6 6 0 0 0 0 6.4M16.2 7a6 6 0 0 1 0 6.4M5.2 4.5a10 10 0 0 0 0 11M18.8 4.5a10 10 0 0 1 0 11"/></svg>',
+    5: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="13" r="2.2"/><circle cx="18" cy="13" r="2.2"/><circle cx="18" cy="20" r="1.6"/><path d="M10.5 6.5 7.5 11M13.5 6.5l3 4.5M18 15v3.4"/></svg>',
+    6: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6.5" r="2.3"/><circle cx="18" cy="6.5" r="2.3"/><circle cx="12" cy="17.5" r="2.3"/><path d="M7.7 8.2 10.6 15.5M16.3 8.2 13.4 15.5M8.3 6.5h7.4"/></svg>'
+};
+
+const estado = {equipo:'', restante:DURACION, completadas:{}, jugando:false, terminado:false};
+let cronometro = null;
+let confirmandoEntrega = false, tiempoEntrega = null;
+
+/* ---------- utilidades ---------- */
+function normaliza(txt){
+    return String(txt).trim().toUpperCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g,'')
+        .replace(/\s+/g,' ');
+}
+/* Hash no reversible para validar respuestas sin exponerlas en el código. */
+function cyrb53(str, seed){
+    seed = seed || 0;
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for(let i = 0; i < str.length; i++){
+        const ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0).toString(16).padStart(8,'0') + (h1 >>> 0).toString(16).padStart(8,'0');
+}
+/* Descifra César en vivo: evita guardar el texto claro en el código. */
+function cesarDescifrar(enc, shift){
+    return String(enc).replace(/[A-Z]/g, ch => String.fromCharCode(((ch.charCodeAt(0) - 65 - shift) % 26 + 26) % 26 + 65));
+}
+function mmss(seg){
+    const m = Math.floor(seg/60), s = seg%60;
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function transcurrido(){ return DURACION - estado.restante; }
+function valorActual(id){
+    const est = ESTACIONES.find(e=>e.id===id);
+    const base = est && est.base ? est.base : PTS_BASE;
+    const minimo = est && est.min ? est.min : PTS_MIN;
+    return Math.max(minimo, base - Math.floor(transcurrido()/30));
+}
+function puntajeTotal(){
+    return Object.values(estado.completadas).reduce((a,c)=>a+c.pts,0);
+}
+function mostrarPantalla(id){
+    document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+    document.getElementById(id).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function avisar(idFeedback, ok, texto){
+    const fb = document.getElementById(idFeedback);
+    fb.className = 'feedback ' + (ok ? 'correct' : 'incorrect');
+    fb.textContent = texto;
+}
+
+/* ---------- guardado local (opcional, tolerante a fallos) ---------- */
+function guardar(){
+    try{
+        localStorage.setItem(CLAVE_GUARDADO, JSON.stringify({
+            equipo:estado.equipo, restante:estado.restante,
+            completadas:estado.completadas, terminado:estado.terminado
+        }));
+    }catch(e){/* almacenamiento no disponible: el juego sigue igual */}
+}
+function leerGuardado(){
+    try{
+        const raw = localStorage.getItem(CLAVE_GUARDADO);
+        return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+}
+function borrarGuardado(){
+    try{ localStorage.removeItem(CLAVE_GUARDADO); }catch(e){}
+}
+
+/* ---------- inicio y cronómetro ---------- */
+function comenzar(){
+    const nombre = document.getElementById('nombreEquipo').value.trim();
+    if(nombre.length < 2){
+        avisar('avisoEquipo', false, 'Escribe el nombre del equipo para comenzar.');
+        document.getElementById('nombreEquipo').focus();
+        return;
+    }
+    estado.equipo = nombre;
+    estado.restante = DURACION;
+    estado.completadas = {};
+    estado.terminado = false;
+    arrancarJuego();
+}
+function continuarPartida(guardado){
+    estado.equipo = guardado.equipo;
+    estado.restante = guardado.restante;
+    estado.completadas = guardado.completadas || {};
+    estado.terminado = false;
+    arrancarJuego();
+}
+function arrancarJuego(){
+    estado.jugando = true;
+    document.getElementById('barra').hidden = false;
+    document.getElementById('barraEquipo').textContent = estado.equipo;
+    pintarTablero();
+    actualizarMarcador();
+    mostrarPantalla('pantallaJuego');
+    clearInterval(cronometro);
+    cronometro = setInterval(tic, 1000);
+    tic(true);
+    guardar();
+}
+function tic(sinDescontar){
+    if(!estado.jugando) return;
+    if(sinDescontar !== true) estado.restante--;
+    const reloj = document.getElementById('reloj');
+    reloj.textContent = mmss(Math.max(0, estado.restante));
+    reloj.classList.toggle('alerta', estado.restante <= 300);
+    actualizarValores();
+    if(estado.restante % 5 === 0) guardar();
+    if(estado.restante <= 0) terminar(true);
+}
+function actualizarMarcador(){
+    document.getElementById('marcador').textContent = puntajeTotal() + ' pts';
+    const n = Object.keys(estado.completadas).length;
+    const vs = ESTACIONES.map(e=>valorActual(e.id));
+    document.getElementById('progresoTexto').textContent =
+        n + ' de 6 resueltas · valen ' + Math.min(...vs) + '–' + Math.max(...vs) + ' pts ahora';
+}
+
+/* ---------- tablero ---------- */
+function pintarTablero(){
+    const cont = document.getElementById('tablero');
+    cont.innerHTML = '';
+    ESTACIONES.forEach(est=>{
+        const hecha = estado.completadas[est.id];
+        const b = document.createElement('button');
+        b.className = 'estacion' + (hecha ? ' resuelta' : '');
+        b.id = 'carta' + est.id;
+        b.innerHTML =
+            '<div class="icono" aria-hidden="true">'+(ICONOS[est.id]||est.icono)+'</div>' +
+            '<div class="nombre">'+est.nombre+'</div>' +
+            '<div class="detalle">'+(hecha ? 'Respuesta registrada: '+hecha.respuesta : est.detalle)+'</div>' +
+            '<div class="valor" data-valor="'+est.id+'">'+(hecha ? '✓ '+hecha.pts+' pts' : 'Vale '+valorActual(est.id)+' pts')+'</div>';
+        if(!hecha) b.onclick = ()=>abrirModal(est.modal, est.id);
+        cont.appendChild(b);
+    });
+}
+function actualizarValores(){
+    ESTACIONES.forEach(est=>{
+        if(estado.completadas[est.id]) return;
+        const el = document.querySelector('[data-valor="'+est.id+'"]');
+        if(el) el.textContent = 'Vale ' + valorActual(est.id) + ' pts';
+    });
+    actualizarMarcador();
+}
+
+/* ---------- modales ---------- */
+function abrirModal(idModal, idEstacion){
+    document.getElementById(idModal).classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if(idEstacion === 1) abrirCripto();
+    if(idEstacion === 2) prepararGeo();
+    if(idEstacion === 3) actualizarCircuito();
+    if(idEstacion === 5) prepararArbol();
+}
+function cerrarModal(idModal){
+    document.getElementById(idModal).classList.remove('active');
+    document.body.style.overflow = '';
+    detenerMorse();
+}
+function resolverEstacion(id, respuesta, idFeedback, detalle){
+    if(estado.completadas[id]) return;
+    const pts = valorActual(id);
+    estado.completadas[id] = {pts, respuesta, detalle: detalle || null};
+    const est = ESTACIONES.find(e=>e.id===id);
+    if(idFeedback) avisar(idFeedback, true, '✓ ¡Correcto! Ganaste ' + pts + ' puntos.');
+    pintarTablero();
+    actualizarMarcador();
+    guardar();
+    setTimeout(()=>{
+        cerrarModal(est.modal);
+        if(Object.keys(estado.completadas).length === 6) terminar(true);
+    }, 1400);
+}
+
+/* ---------- cierre ---------- */
+function terminar(automatico){
+    if(estado.terminado) return;
+    if(!automatico && Object.keys(estado.completadas).length < 6 && !confirmandoEntrega){
+        const faltan = 6 - Object.keys(estado.completadas).length;
+        const btn = document.getElementById('btnEntregar');
+        confirmandoEntrega = true;
+        btn.textContent = '¿Entregar con ' + faltan + ' pendiente(s)?';
+        btn.classList.add('btn-primario');
+        clearTimeout(tiempoEntrega);
+        tiempoEntrega = setTimeout(()=>{
+            confirmandoEntrega = false;
+            btn.textContent = 'Entregar';
+            btn.classList.remove('btn-primario');
+        }, 6000);
+        return;
+    }
+    estado.terminado = true;
+    estado.jugando = false;
+    clearInterval(cronometro);
+    document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active'));
+    document.body.style.overflow = '';
+    detenerMorse();
+
+    const resueltas = Object.keys(estado.completadas).length;
+    const usado = mmss(Math.max(0, DURACION - estado.restante));
+    document.getElementById('tituloFinal').textContent =
+        resueltas === 6 ? 'CTF completado' : 'Resultados del CTF';
+    document.getElementById('subtituloFinal').textContent =
+        resueltas + ' de 6 estaciones resueltas en ' + usado + ' de tiempo.';
+    document.getElementById('nombreFinal').textContent = estado.equipo;
+    document.getElementById('puntajeFinal').textContent = puntajeTotal();
+
+    const tbody = document.getElementById('cuerpoResumen');
+    tbody.innerHTML = '';
+    ESTACIONES.forEach(est=>{
+        const hecha = estado.completadas[est.id];
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td class="est"><span class="mini-ico" aria-hidden="true">'+(ICONOS[est.id]||est.icono)+'</span>' + est.nombre + '</td>' +
+            '<td class="resp">'+(hecha ? hecha.respuesta : '—')+'</td>' +
+            '<td class="pts">'+(hecha ? hecha.pts : 0)+'</td>';
+        tbody.appendChild(tr);
+    });
+    guardar();
+    mostrarPantalla('pantallaFinal');
+}
+function copiarResultados(){
+    let txt = 'CTF Telemática — equipo ' + estado.equipo + '\n';
+    txt += 'Tiempo usado: ' + mmss(DURACION - estado.restante) + '\n';
+    ESTACIONES.forEach(est=>{
+        const h = estado.completadas[est.id];
+        if(!h){ txt += est.id + '. ' + est.nombre + ': sin resolver (0 pts)\n'; }
+        else if(h.detalle && h.detalle.length){
+            txt += est.id + '. ' + est.nombre + ' (' + h.pts + ' pts):\n';
+            h.detalle.forEach(d=>{ txt += '   - ' + d + '\n'; });
+        }
+        else { txt += est.id + '. ' + est.nombre + ': ' + h.respuesta + ' (' + h.pts + ' pts)\n'; }
+    });
+    txt += 'TOTAL: ' + puntajeTotal() + ' puntos';
+
+    const ok = ()=>avisar('avisoCopia', true, 'Resultados copiados al portapapeles.');
+    const falla = ()=>{
+        const area = document.createElement('textarea');
+        area.value = txt; area.style.position='fixed'; area.style.opacity='0';
+        document.body.appendChild(area); area.select();
+        try{ document.execCommand('copy'); ok(); }
+        catch(e){ avisar('avisoCopia', false, 'No se pudo copiar automáticamente. Selecciona la tabla y cópiala a mano.'); }
+        document.body.removeChild(area);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(ok).catch(falla);
+    } else falla();
+}
+function rangoEquipo(pts){
+    if(pts >= 680) return 'Rango: Maquinista Mayor';
+    if(pts >= 520) return 'Rango: Ingeniero de a bordo';
+    if(pts >= 340) return 'Rango: Operario calificado';
+    return 'Rango: Aprendiz de taller';
+}
+function generarCertificado(){
+    const resueltas = Object.keys(estado.completadas).length;
+    const pts = puntajeTotal();
+    const usado = mmss(Math.max(0, DURACION - estado.restante));
+    document.getElementById('certEquipo').textContent = estado.equipo || 'Equipo';
+    document.getElementById('certRango').textContent = rangoEquipo(pts);
+    document.getElementById('certTabla').innerHTML = ESTACIONES.map(est=>{
+        const h = estado.completadas[est.id];
+        if(!h) return '<tr><td>' + est.nombre + '<span class="cert-resp">— sin resolver —</span></td><td class="pts">—</td></tr>';
+        const partes = (h.detalle && h.detalle.length) ? h.detalle : [h.respuesta];
+        const respHtml = '<span class="cert-resp">' + partes.map(p=>'<div>• ' + p + '</div>').join('') + '</span>';
+        return '<tr><td>' + est.nombre + respHtml + '</td><td class="pts">' + h.pts + ' pts</td></tr>';
+    }).join('');
+    document.getElementById('certDetalle').textContent = 'Total ' + pts + ' pts · ' + resueltas + ' de 6 estaciones en equipo · ' + usado;
+    document.getElementById('certFecha').textContent = 'Santiago, ' + new Date().toLocaleDateString('es-CL', {day:'numeric', month:'long', year:'numeric'});
+    document.getElementById('certFolio').textContent = 'Folio CTF-' + pts + '-' + resueltas + '×6';
+    const cert = document.getElementById('certificado');
+    cert.hidden = false;
+    cert.scrollIntoView({behavior:'smooth', block:'center'});
+    avisar('avisoCopia', true, 'Certificado generado. Puedes imprimirlo o guardarlo en PDF.');
+}
+function imprimirCertificado(){
+    let zona = document.getElementById('printCert');
+    if(!zona){
+        zona = document.createElement('div');
+        zona.id = 'printCert';
+        document.body.appendChild(zona);
+    }
+    zona.innerHTML = document.getElementById('certificado').outerHTML;
+    window.print();
+}
+function reiniciar(){
+    borrarGuardado();
+    location.reload();
+}
+</script>
+<script>
+/* =======================================================
+   ESTACIÓN 1 — CRIPTOGRAFÍA CÉSAR (rueda original)
+   ======================================================= */
+const datos = {
+    1: { enc: 'UHGHV', shift: 3, outer: 'outer1', inner: 'inner1', result: 'result1', feedback: 'feedback1' },
+    2: { enc: 'ZWPKO YEBNWZKO', shift: 22, outer: 'outer2', inner: 'inner2', result: 'result2', feedback: 'feedback2' },
+    3: { enc: 'BQ QDJUDQ HUSYRU FKBIEI', shift: 16, outer: 'outer3', inner: 'inner3', result: 'result3', feedback: 'feedback3' }
+};
+let nivelCripto = 0;
+
+function abrirCripto(){ ir(nivelCripto); }
+
+function ir(nivel) {
+    nivelCripto = nivel;
+    document.querySelectorAll('#modalCripto .stage').forEach(s => s.classList.remove('active'));
+    if (nivel === 0) {
+        document.getElementById('introStage').classList.add('active');
+    } else {
+        document.getElementById('nivel' + nivel).classList.add('active');
+        document.getElementById(datos[nivel].feedback).className = 'feedback';
+        setTimeout(() => dibujarRueda(nivel), 100);
+    }
+}
+
+function dibujarRueda(nivel) {
+    const data = datos[nivel];
+    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    // Letras exteriores
+    const outer = document.getElementById(data.outer);
+    outer.innerHTML = '';
+
+    for (let i = 0; i < 26; i++) {
+        const ang = (i * 360 / 26) - 90;
+        const rad = ang * Math.PI / 180;
+        const x = 200 + 160 * Math.cos(rad);
+        const y = 200 + 160 * Math.sin(rad);
+
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', x);
+        txt.setAttribute('y', y);
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('dominant-baseline', 'central');
+        txt.setAttribute('font-size', '14');
+        txt.setAttribute('font-weight', 'bold');
+        txt.setAttribute('fill', '#0a2340');
+        txt.textContent = abc[i];
+        outer.appendChild(txt);
+    }
+
+    // Letras interiores
+    const inner = document.getElementById(data.inner);
+    inner.innerHTML = '';
+
+    for (let i = 0; i < 26; i++) {
+        const ang = (i * 360 / 26) - 90;
+        const rad = ang * Math.PI / 180;
+        const x = 200 + 85 * Math.cos(rad);
+        const y = 200 + 85 * Math.sin(rad);
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('transform', `translate(${x},${y}) rotate(${ang + 90})`);
+
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', '0');
+        txt.setAttribute('y', '0');
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('dominant-baseline', 'central');
+        txt.setAttribute('font-size', '14');
+        txt.setAttribute('font-weight', 'bold');
+        txt.setAttribute('fill', '#7a5f26');
+        txt.textContent = abc[i];
+
+        g.appendChild(txt);
+        inner.appendChild(g);
+    }
+
+    decodificar(nivel, data.enc);
+}
+
+function decodificar(nivel, enc) {
+    const shift = parseInt(document.getElementById('shift' + nivel).value);
+    document.getElementById('shift' + nivel + 'val').textContent = shift;
+
+    const inner = document.getElementById(datos[nivel].inner);
+    const rot = (shift * 360 / 26);
+    inner.style.transform = `rotate(${rot}deg)`;
+    inner.style.transformOrigin = '200px 200px';
+
+    let dec = '';
+    for (let c of enc) {
+        if (/[A-Z]/.test(c)) {
+            let code = c.charCodeAt(0) - 65;
+            code = (code - shift + 26) % 26;
+            dec += String.fromCharCode(code + 65);
+        } else {
+            dec += c;
+        }
+    }
+
+    document.getElementById(datos[nivel].result).textContent = dec;
+}
+
+function verificar(nivel) {
+    const shift = parseInt(document.getElementById('shift' + nivel).value);
+    const fb = document.getElementById(datos[nivel].feedback);
+    const descifrado = cesarDescifrar(datos[nivel].enc, datos[nivel].shift);
+
+    if (shift === datos[nivel].shift) {
+        fb.className = 'feedback correct';
+        if (nivel < 3) {
+            fb.textContent = '✓ ¡Correcto! Pasando al siguiente nivel...';
+            setTimeout(() => ir(nivel + 1), 1500);
+        } else {
+            fb.textContent = '✓ Mensaje descifrado: ' + descifrado;
+            const detalleCripto = [1, 2, 3].map(k => cesarDescifrar(datos[k].enc, datos[k].shift));
+            resolverEstacion(1, 'Rueda 1: ' + detalleCripto[0] + ' · Rueda 2: ' + detalleCripto[1] + ' · Rueda 3: ' + detalleCripto[2], undefined, detalleCripto);
+        }
+    } else {
+        fb.className = 'feedback incorrect';
+        fb.textContent = '✗ Con ese desplazamiento el texto no se lee. Prueba otro valor.';
+    }
+}
+
+/* =======================================================
+   ESTACIÓN 2 — GEOLOCALIZACIÓN
+   ======================================================= */
+const NODOS = [
+    {letra:'F', frag:'LA',    lat:-33.3712, lon:-70.6020},
+    {letra:'O', frag:null,    lat:-33.3550, lon:-70.6350},
+    {letra:'I', frag:'LUZ',   lat:-33.4250, lon:-70.6506},
+    {letra:'B', frag:'VIAJA', lat:-33.3320, lon:-70.6810},
+    {letra:'S', frag:null,    lat:-33.4300, lon:-70.6900},
+    {letra:'R', frag:'EN',    lat:-33.4180, lon:-70.5720},
+    {letra:'A', frag:'FIBRA', lat:-33.3905, lon:-70.7095}
+];
+const RUTA = ['F','I','B','R','A'];
+/* La frase se arma con los fragmentos de la ruta: nunca queda en texto plano. */
+const FRASE_GEO_HASH = '7fea7362cd462e07';
+function fraseGeo(){ return RUTA.map(l => (NODOS.find(n=>n.letra===l) || {}).frag).join(' '); }
+let pasoGeo = 0;
+let geoListo = false;
+
+const LAT_TOP=-33.32, LAT_BOT=-33.45, LON_IZQ=-70.72, LON_DER=-70.56;
+const px = lon => 60 + (lon - LON_IZQ)/(LON_DER - LON_IZQ) * 500;
+const py = lat => 50 + (LAT_TOP - lat)/(LAT_TOP - LAT_BOT) * 320;
+const coord = n => n.lat.toFixed(4) + ', ' + n.lon.toFixed(4);
+/* Malla metropolitana (topología de fondo; el tendido del juego es un bus F→I→B→R→A) */
+const TOPO = [['F','O'],['O','B'],['B','A'],['A','I'],['I','S'],['R','F']];
+const porLetra = l => NODOS.find(x=>x.letra===l);
+
+function prepararGeo(){
+    if(geoListo) return;
+    geoListo = true;
+    const svg = document.getElementById('mapa');
+    let h = '<defs>' +
+        '<radialGradient id="haloMapa" cx="50%" cy="0%" r="90%">' +
+        '<stop offset="0%" stop-color="#e8cf8b" stop-opacity=".10"/>' +
+        '<stop offset="55%" stop-color="#e8cf8b" stop-opacity="0"/>' +
+        '</radialGradient>' +
+        '<linearGradient id="terreno" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#14384a"/>' +
+        '<stop offset="55%" stop-color="#0f2f42"/>' +
+        '<stop offset="100%" stop-color="#0b2334"/>' +
+        '</linearGradient>' +
+        '<clipPath id="recorteMapa"><rect x="60" y="50" width="500" height="320" rx="4"/></clipPath></defs>';
+    h += '<rect x="0" y="0" width="600" height="430" rx="8" fill="#0d2b46"/>';
+    h += '<rect x="60" y="50" width="500" height="320" rx="4" fill="url(#terreno)"/>';
+    h += '<g clip-path="url(#recorteMapa)">';
+    for(let gi=0;gi<=8;gi++){
+        const gx = 60 + gi*500/8;
+        h += '<line x1="'+gx+'" y1="50" x2="'+gx+'" y2="370" stroke="#274d6e" stroke-width=".75" opacity=".55"/>';
+    }
+    for(let gj=0;gj<=6;gj++){
+        const gy = 50 + gj*320/6;
+        h += '<line x1="60" y1="'+gy+'" x2="560" y2="'+gy+'" stroke="#274d6e" stroke-width=".75" opacity=".55"/>';
+    }
+    /* textura satelital dibujada: punteado leve + una curva de nivel */
+    for(let k=0;k<14;k++){
+        const dx = 80 + ((k*167)%460), dy = 70 + ((k*89)%280);
+        h += '<circle cx="'+dx+'" cy="'+dy+'" r="1" fill="#9db9d2" opacity=".12"/>';
+    }
+    h += '<path d="M60 260 C 160 245, 260 285, 370 265 S 490 250, 560 270" fill="none" stroke="#1e5a4a" stroke-width="1" opacity=".3"/>';
+    /* geografía verificada: río por Est. Mapocho (-33.4322,-70.6539), cerro (-33.4253,-70.6333) */
+    const GEO = (lat,lon)=>[px(lon).toFixed(1),py(lat).toFixed(1)];
+    let r = GEO(-33.362,-70.565), r2 = GEO(-33.388,-70.60), r3 = GEO(-33.426,-70.63), r4 = GEO(-33.4315,-70.67), r5 = GEO(-33.438,-70.705);
+    h += '<path d="M'+r[0]+' '+r[1]+' C 505 175, 470 195, '+r2[0]+' '+r2[1]+' S 375 285, '+r3[0]+' '+r3[1]+' S 270 318, '+r4[0]+' '+r4[1]+' S 150 336, '+r5[0]+' '+r5[1]+'" fill="none" stroke="#c9a24a" stroke-width="2.5" opacity=".45"/>';
+    h += '<text x="458" y="192" fill="#d9c48a" font-size="11" font-style="italic">río Mapocho</text>';
+    /* relieve: solo cerros verificados (San Cristóbal -33.4253,-70.6333; Santa Lucía aprox.) */
+    let cs = GEO(-33.425,-70.632);
+    h += '<ellipse cx="'+cs[0]+'" cy="290" rx="52" ry="20" fill="none" stroke="#2e7d5b" stroke-width="1" opacity=".35"/>';
+    h += '<ellipse cx="'+cs[0]+'" cy="290" rx="38" ry="13" fill="#2e7d5b" opacity=".4"/>';
+    h += '<ellipse cx="'+cs[0]+'" cy="290" rx="22" ry="7" fill="#3a9a6c" opacity=".45"/>';
+    h += '<text x="'+cs[0]+'" y="275" fill="#bfe3cf" font-size="8.5" text-anchor="middle" font-style="italic">Cerro San Cristóbal · 880 m</text>';
+    let sl = GEO(-33.4399,-70.6440);
+    h += '<ellipse cx="'+sl[0]+'" cy="'+sl[1]+'" rx="14" ry="8" fill="#2e7d5b" opacity=".4"/>';
+    h += '<ellipse cx="'+sl[0]+'" cy="'+sl[1]+'" rx="6" ry="3.5" fill="#3a9a6c" opacity=".5"/>';
+    h += '<text x="'+(+sl[0]+34)+'" y="'+(+sl[1]+3)+'" fill="#bfe3cf" font-size="8" font-style="italic">Sta. Lucía</text>';
+    /* malla de topología */
+    TOPO.forEach(par=>{
+        const a = porLetra(par[0]), b = porLetra(par[1]);
+        if(a && b) h += '<line class="enlace" x1="'+px(a.lon).toFixed(1)+'" y1="'+py(a.lat).toFixed(1)+'" x2="'+px(b.lon).toFixed(1)+'" y2="'+py(b.lat).toFixed(1)+'"/>';
+    });
+    h += '<polyline id="lineaRuta" points="" fill="none" stroke="#ff9d5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>';
+    h += '</g>';
+    h += '<rect x="60" y="50" width="500" height="320" rx="4" fill="none" stroke="#c9a24a" stroke-width="1.5" opacity=".7"/>';
+    h += '<rect x="64" y="54" width="492" height="312" fill="none" stroke="#c9a24a" stroke-width=".75" opacity=".35"/>';
+
+    for(let i=0;i<=8;i++){
+        const x = 60 + i*500/8;
+        h += '<text x="'+x+'" y="392" fill="#9db9d2" font-size="10" text-anchor="middle">'+(LON_IZQ + i*(LON_DER-LON_IZQ)/8).toFixed(3)+'</text>';
+    }
+    for(let j=0;j<=6;j++){
+        const y = 50 + j*320/6;
+        h += '<text x="54" y="'+(y+4)+'" fill="#9db9d2" font-size="10" text-anchor="end">'+(LAT_TOP - j*(LAT_TOP-LAT_BOT)/6).toFixed(3)+'</text>';
+    }
+    h += '<text x="470" y="140" fill="#d9c48a" font-size="11" font-style="italic">río Mapocho</text>';
+    h += '<text x="60" y="30" fill="#f0e2ae" font-size="15" font-weight="bold" font-family="Georgia,serif">Nodos de la red metropolitana</text>';
+    h += '<line x1="60" y1="36" x2="330" y2="36" stroke="#c9a24a" stroke-width="1" opacity=".6"/>';
+    h += '<text x="300" y="414" fill="#9db9d2" font-size="10" text-anchor="middle">longitud (°)</text>';
+    h += '<g opacity=".9"><circle cx="528" cy="92" r="20" fill="none" stroke="#c9a24a" stroke-width="1.5"/>' +
+         '<circle cx="528" cy="92" r="14" fill="none" stroke="#c9a24a" stroke-width=".75" stroke-dasharray="3 3"/>' +
+         '<path d="M528 78 L532 92 L528 106 L524 92 Z" fill="#e8cf8b"/>' +
+         '<text x="528" y="74" fill="#e8cf8b" font-size="10" font-weight="bold" text-anchor="middle">N</text></g>';
+
+    NODOS.forEach((n,i)=>{
+        const x = px(n.lon), y = py(n.lat);
+        h += '<g class="nodo" data-i="'+i+'" tabindex="0" role="button" aria-label="Nodo en '+coord(n)+'">' +
+             '<circle class="halo" cx="'+x+'" cy="'+y+'" r="15" stroke-dasharray="4 3"/>' +
+             '<circle class="punto" cx="'+x+'" cy="'+y+'" r="9" fill="#e8cf8b" stroke="#5f4719" stroke-width="2.5"/>' +
+             '<circle cx="'+x+'" cy="'+y+'" r="3" fill="#0a2340"/>' +
+             '<circle cx="'+x+'" cy="'+y+'" r="20" fill="transparent"/>' +
+             '<text id="letraNodo'+i+'" x="'+x+'" y="'+(y-18)+'" fill="#ffd97a" font-size="17" font-weight="bold" text-anchor="middle" font-family="Georgia,serif"></text>' +
+             '<text x="'+x+'" y="'+(y+27)+'" fill="#f2e3b0" font-size="10.5" text-anchor="middle">'+coord(n)+'</text>' +
+             '</g>';
+    });
+    svg.innerHTML = h;
+    svg.querySelectorAll('.nodo').forEach(g=>{
+        const i = parseInt(g.dataset.i);
+        g.addEventListener('click', ()=>clicNodo(i));
+        g.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); clicNodo(i); }});
+        g.addEventListener('mouseenter', ()=>medirSenal(i));
+        g.addEventListener('mouseleave', resetSenal);
+        g.addEventListener('focus', ()=>medirSenal(i));
+        g.addEventListener('blur', resetSenal);
+    });
+    svg.addEventListener('mousemove', ev=>{
+        const r = svg.getBoundingClientRect();
+        const sx = 600 / r.width, sy = 430 / r.height;
+        const mx = (ev.clientX - r.left) * sx, my = (ev.clientY - r.top) * sy;
+        if(mx >= 60 && mx <= 560 && my >= 50 && my <= 370){
+            const lon = (LON_IZQ + (mx - 60) / 500 * (LON_DER - LON_IZQ)).toFixed(4);
+            const lat = (LAT_TOP - (my - 50) / 320 * (LAT_TOP - LAT_BOT)).toFixed(4);
+            document.getElementById('lectLat').textContent = lat;
+            document.getElementById('lectLon').textContent = lon;
+        }
+    });
+    svg.addEventListener('mouseleave', ()=>{
+        document.getElementById('lectLat').textContent = '—';
+        document.getElementById('lectLon').textContent = '—';
+    });
+
+    const lista = document.getElementById('rutaLista');
+    lista.innerHTML = RUTA.map((L,k)=>{
+        const n = NODOS.find(x=>x.letra===L);
+        return '<div class="ruta-item" id="ruta'+k+'"><span class="orden">'+(k+1)+'</span>' +
+               '<code>'+coord(n)+'</code><span class="letra" id="letraRuta'+k+'">?</span></div>';
+    }).join('');
+
+    document.getElementById('slotsGeo').innerHTML =
+        RUTA.map((_,k)=>'<div class="slot" id="slot'+k+'"></div>').join('');
+    document.getElementById('fraseGeo').innerHTML =
+        RUTA.map((L,k)=>{
+            const n = NODOS.find(x=>x.letra===L);
+            return '<span id="frag'+k+'" title="Palabra '+(k+1)+'">···</span>';
+        }).join('');
+    actualizarObjetivoGeo();
+    logGeo('— telégrafo listo — 7 nodos en el plano, 5 forman el tendido —');
+}
+
+function logGeo(msg, cls){
+    const log = document.getElementById('logGeo');
+    if(!log) return;
+    const d = document.createElement('div');
+    if(cls) d.className = cls;
+    d.textContent = msg;
+    log.prepend(d);
+    while(log.children.length > 3) log.removeChild(log.lastChild);
+}
+
+function medirSenal(i){
+    if(pasoGeo >= RUTA.length) return;
+    const objetivo = NODOS.find(x=>x.letra===RUTA[pasoGeo]);
+    const n = NODOS[i];
+    if(!objetivo || !n) return;
+    if(n.letra === objetivo.letra){
+        setSenal('Señal máxima', 100);
+        return;
+    }
+    const d = Math.abs(n.lat - objetivo.lat) + Math.abs(n.lon - objetivo.lon);
+    if(d < 0.03) setSenal('Señal caliente', 78);
+    else if(d < 0.06) setSenal('Señal templada', 52);
+    else if(d < 0.10) setSenal('Señal fría', 28);
+    else setSenal('Solo estática', 12);
+}
+
+function setSenal(txt, pct){
+    const t = document.getElementById('senalTxt');
+    const b = document.getElementById('senalBarra');
+    if(t){
+        t.textContent = txt;
+        t.classList.toggle('max', txt === 'Señal máxima');
+    }
+    if(b) b.style.width = pct + '%';
+    const wrap = t ? t.closest('.senal') : null;
+    if(wrap) wrap.classList.toggle('max', txt === 'Señal máxima');
+}
+
+function resetSenal(){
+    if(pasoGeo >= RUTA.length) return;
+    setSenal('Señal —', 0);
+}
+
+function actualizarObjetivoGeo(){
+    const obj = document.getElementById('coordObjetivo');
+    const cuenta = document.getElementById('contadorGeo');
+    const barra = document.getElementById('barraGeo');
+    const num = document.getElementById('numTx');
+    if(pasoGeo >= RUTA.length){
+        if(obj) obj.textContent = 'Ruta completa ✓';
+        if(cuenta) cuenta.textContent = '5 de 5 · escribe la palabra';
+    } else {
+        const n = NODOS.find(x=>x.letra===RUTA[pasoGeo]);
+        if(obj) obj.textContent = coord(n);
+        if(cuenta) cuenta.textContent = 'Letra ' + (pasoGeo+1) + ' de ' + RUTA.length;
+    }
+    if(barra) barra.style.width = (pasoGeo / RUTA.length * 100) + '%';
+    if(num) num.textContent = (pasoGeo >= RUTA.length ? '05/05' : '0' + (pasoGeo+1) + '/05');
+    resetSenal();
+    RUTA.forEach((_,k)=>{
+        const item = document.getElementById('ruta'+k);
+        if(item) item.classList.toggle('activa', k === pasoGeo);
+        const slot = document.getElementById('slot'+k);
+        if(slot) slot.classList.toggle('siguiente', k === pasoGeo);
+    });
+    ['pasoGeo1','pasoGeo2','pasoGeo3'].forEach((id,i)=>{
+        const el = document.getElementById(id);
+        if(el) el.classList.toggle('activo',
+            (i===0 && pasoGeo < RUTA.length) ||
+            (i===1 && pasoGeo > 0 && pasoGeo < RUTA.length) ||
+            (i===2 && pasoGeo >= RUTA.length));
+    });
+}
+
+function dibujarRutaGeo(){
+    const linea = document.getElementById('lineaRuta');
+    if(!linea) return;
+    const pts = [];
+    for(let k=0;k<pasoGeo;k++){
+        const n = NODOS.find(x=>x.letra===RUTA[k]);
+        pts.push(px(n.lon).toFixed(1) + ',' + py(n.lat).toFixed(1));
+    }
+    linea.setAttribute('points', pts.join(' '));
+}
+
+function reiniciarGeo(){
+    pasoGeo = 0;
+    NODOS.forEach((_,i)=>{
+        const t = document.getElementById('letraNodo'+i);
+        if(t) t.textContent = '';
+    });
+    const svg = document.getElementById('mapa');
+    if(svg) svg.querySelectorAll('.nodo').forEach(g=>g.classList.remove('encontrado'));
+    RUTA.forEach((_,k)=>{
+        const lr = document.getElementById('letraRuta'+k);
+        if(lr) lr.textContent = '?';
+        const item = document.getElementById('ruta'+k);
+        if(item) item.classList.remove('lista-ok');
+        const slot = document.getElementById('slot'+k);
+        if(slot){ slot.textContent = ''; slot.classList.remove('lleno'); }
+        const fg = document.getElementById('frag'+k);
+        if(fg){ fg.textContent = '···'; fg.classList.remove('visto'); }
+    });
+    dibujarRutaGeo();
+    actualizarObjetivoGeo();
+    logGeo('— línea cortada — reiniciando tendido…');
+    avisar('fbGeo', true, 'Ruta reiniciada. Busca la coordenada 1.');
+    setTimeout(()=>{ document.getElementById('fbGeo').className = 'feedback'; }, 1500);
+}
+
+function clicNodo(i){
+    if(pasoGeo >= RUTA.length) return;
+    const n = NODOS[i];
+    if(n.letra === RUTA[pasoGeo]){
+        document.getElementById('letraNodo'+i).textContent = n.letra;
+        document.getElementById('letraRuta'+pasoGeo).textContent = n.letra + ' · ' + n.frag;
+        document.getElementById('ruta'+pasoGeo).classList.add('lista-ok');
+        document.getElementById('ruta'+pasoGeo).classList.remove('activa');
+        const slot = document.getElementById('slot'+pasoGeo);
+        slot.textContent = n.letra;
+        slot.classList.add('lleno');
+        const fg = document.getElementById('frag'+pasoGeo);
+        if(fg){ fg.textContent = n.frag; fg.classList.add('visto'); }
+        const g = document.querySelector('.nodo[data-i="'+i+'"]');
+        if(g) g.classList.add('encontrado');
+        pasoGeo++;
+        dibujarRutaGeo();
+        actualizarObjetivoGeo();
+        logGeo('· · — nodo sintonizado: "' + n.frag + '" (' + coord(n) + ')', 'ok');
+        if(pasoGeo === RUTA.length){
+            logGeo('— — · mensaje completo: "' + fraseGeo() + '"', 'ok');
+            avisar('fbGeo', true, 'Mensaje completo: "' + fraseGeo() + '". Escríbelo abajo tal cual.');
+        } else {
+            const sig = NODOS.find(x=>x.letra===RUTA[pasoGeo]);
+            avisar('fbGeo', true, '✓ "' + n.frag + '" recibido. Siguiente objetivo: ' + coord(sig));
+        }
+    } else {
+        logGeo('· — · interferencia: ese nodo no es el ' + (pasoGeo+1) + 'º del tendido', 'mal');
+        avisar('fbGeo', false, 'Ese nodo no corresponde a la coordenada ' + (pasoGeo+1) + ' de la ruta. Revisa latitud y longitud.');
+    }
+}
+
+function revisarGeo(){
+    const r = normaliza(document.getElementById('respGeo').value);
+    if(cyrb53(r) === FRASE_GEO_HASH){
+        logGeo('· · · mensaje confirmado: "' + r + '"', 'ok');
+        resolverEstacion(2, r, 'fbGeo');
+    } else {
+        logGeo('· — · la central no reconoce "' + (r || '—') + '"', 'mal');
+        avisar('fbGeo', false, r ? '✗ "' + r + '" no es el mensaje. Completa los 5 nodos y copia la cinta tal cual.' : 'Escribe el mensaje completo antes de validar.');
+    }
+}
+</script>
+<script>
+/* =======================================================
+   ESTACIÓN 3 — ELECTRÓNICA (ley de Ohm)
+   ======================================================= */
+const CASOS_ELEC = {
+    1:{R:440, obj:0.50, resp:'220', pregunta:'V', unidad:'V',  nombre:'Repetidor I'},
+    2:{R:400, obj:0.45, resp:'400', pregunta:'R', unidad:'Ω', Vlock:180, nombre:'Repetidor II'}
+};
+let casoElec = 1;
+const solvedElec = {};
+function irCasoElec(n){
+    casoElec = n;
+    const c = CASOS_ELEC[n];
+    document.getElementById('tabElec1').classList.toggle('activa', n===1);
+    document.getElementById('tabElec2').classList.toggle('activa', n===2);
+    document.getElementById('etiquetaR').textContent = c.pregunta === 'R' ? '? Ω' : c.R + ' Ω';
+    document.getElementById('objetivoI').textContent = c.obj.toFixed(2);
+    const slider = document.getElementById('sliderV');
+    if(c.pregunta === 'R'){ slider.value = c.Vlock; slider.disabled = true; }
+    else { slider.disabled = false; }
+    document.getElementById('lockV').hidden = c.pregunta !== 'R';
+    document.getElementById('respElec').placeholder = c.pregunta === 'R' ? 'Resistencia en ohms' : 'Voltaje en volts';
+    document.getElementById('respElec').value = '';
+    const p1 = document.getElementById('pasoElec1'), p2 = document.getElementById('pasoElec2'), p3 = document.getElementById('pasoElec3');
+    if(c.pregunta === 'R'){
+        if(p1) p1.innerHTML = '<b>Paso 1 · Observa</b>Fuente fijada en 180 V: mira la corriente que circula.';
+        if(p2) p2.innerHTML = '<b>Paso 2 · Despeja</b>Con V = 180 e I = 0,45 A, calcula qué R lo permite (R = V ÷ I).';
+        if(p3) p3.innerHTML = '<b>Paso 3 · Registra</b>Escribe la resistencia y valida.';
+    } else {
+        if(p1) p1.innerHTML = '<b>Paso 1 · Energía</b>Sube el voltaje con el deslizador y mira correr la corriente.';
+        if(p2) p2.innerHTML = '<b>Paso 2 · Punto exacto</b>Clava el amperímetro en el objetivo hasta que encienda la lámpara.';
+        if(p3) p3.innerHTML = '<b>Paso 3 · Registra</b>Anota el voltaje que lo logró y valida. Repite con el segundo repetidor.';
+    }
+    const angC = -60 + Math.min(c.obj, 0.8)/0.8*120;
+    const a1 = (angC-10)*Math.PI/180, a2 = (angC+10)*Math.PI/180;
+    const zv = document.getElementById('zonaVerde');
+    if(zv) zv.setAttribute('d', 'M'+(260+28*Math.sin(a1)).toFixed(1)+' '+(40-28*Math.cos(a1)).toFixed(1)+' A28 28 0 0 1 '+(260+28*Math.sin(a2)).toFixed(1)+' '+(40-28*Math.cos(a2)).toFixed(1));
+    document.getElementById('fbElec').className = 'feedback';
+    actualizarCircuito();
+}
+let velElec = 0, posElec = 0, ultimoT = 0, puntosElec = [];
+function puntoCircuito(d){
+    const x0=70, y0=50, x1=450, y1=210, r=10;
+    const rectoH = (x1-x0) - 2*r, rectoV = (y1-y0) - 2*r, arco = Math.PI*r/2;
+    const per = 2*(rectoH+rectoV) + 4*arco;
+    let t = ((d % per) + per) % per;
+    const seg = (len)=>{ if(t < len){ return t/len; } t -= len; return -1; };
+    let f;
+    f = seg(rectoH); if(f>=0) return [x0+r+f*rectoH, y0];
+    f = seg(arco); if(f>=0){ const a=f*Math.PI/2; return [x1-r+Math.sin(a)*r, y0+r-Math.cos(a)*r]; }
+    f = seg(rectoV); if(f>=0) return [x1, y0+r+f*rectoV];
+    f = seg(arco); if(f>=0){ const a=f*Math.PI/2; return [x1-r+Math.cos(a)*r, y1-r+Math.sin(a)*r]; }
+    f = seg(rectoH); if(f>=0) return [x1-r-f*rectoH, y1];
+    f = seg(arco); if(f>=0){ const a=f*Math.PI/2; return [x0+r-Math.sin(a)*r, y1-r+Math.cos(a)*r]; }
+    f = seg(rectoV); if(f>=0) return [x0, y1-r-f*rectoV];
+    const a=(t/arco)*Math.PI/2; return [x0+r-Math.cos(a)*r, y0+r-Math.sin(a)*r];
+}
+function animElec(ts){
+    requestAnimationFrame(animElec);
+    if(!document.getElementById('modalElec').classList.contains('active')){ ultimoT = ts; return; }
+    const dt = Math.min((ts - ultimoT)/1000, 0.05);
+    ultimoT = ts;
+    if(velElec > 0.001 && puntosElec.length){
+        posElec += dt * (60 + velElec*900);
+        const per = 1063;
+        puntosElec.forEach((c,k)=>{
+            const p = puntoCircuito(posElec + k*per/6);
+            c.setAttribute('cx', p[0].toFixed(1));
+            c.setAttribute('cy', p[1].toFixed(1));
+        });
+    }
+}
+function prepararElectrones(){
+    const g = document.getElementById('electrones');
+    if(!g || puntosElec.length) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    for(let k=0;k<6;k++){
+        const c = document.createElementNS(NS,'circle');
+        c.setAttribute('r','4.2');
+        c.setAttribute('fill','#ffe6a3');
+        c.setAttribute('stroke','#b4410f');
+        c.setAttribute('stroke-width','1');
+        c.setAttribute('opacity','0');
+        g.appendChild(c);
+        puntosElec.push(c);
+    }
+    requestAnimationFrame(animElec);
+}
+function actualizarCircuito(){
+    const c = CASOS_ELEC[casoElec];
+    const R = c.R, OBJ = c.obj;
+    const v = parseInt(document.getElementById('sliderV').value);
+    const i = v / R;
+    velElec = i;
+    prepararElectrones();
+    document.getElementById('vVal').textContent = v;
+    document.getElementById('etiquetaV').textContent = v + ' V';
+    document.getElementById('lecturaI').textContent = i.toFixed(2);
+    const ang = -60 + Math.min(i, 0.8) / 0.8 * 120;
+    document.getElementById('aguja').setAttribute('transform', 'rotate(' + ang.toFixed(1) + ' 260 40)');
+    document.getElementById('formulaOhm').innerHTML = c.pregunta === 'R'
+        ? 'R = V ÷ I → <span>? Ω</span> = ' + v + ' V ÷ ' + i.toFixed(2).replace('.', ',') + ' A'
+        : 'V = I × R → <span>' + v + ' V</span> = ' + i.toFixed(2).replace('.', ',') + ' A × ' + R + ' Ω';
+    const exacto = Math.abs(i - OBJ) < 0.006;
+    const cerca = Math.abs(i - OBJ) < 0.06;
+    const halo = document.getElementById('haloBulbo');
+    if(halo) halo.setAttribute('opacity', exacto ? '0.95' : (cerca ? (0.5*(1-Math.abs(i-OBJ)/0.06)).toFixed(2) : '0'));
+    const fil = document.getElementById('filamento');
+    if(fil) fil.setAttribute('stroke', exacto ? '#ffd97a' : (i > 0.02 ? '#c98a3d' : '#8a7a5a'));
+    const est = document.getElementById('estadoRep');
+    if(est){
+        est.textContent = exacto ? '● ENCENDIDO' : '○ APAGADO';
+        est.setAttribute('class', 'estado-rep ' + (exacto ? 'on' : 'off'));
+    }
+    const lec = document.getElementById('lecturaI');
+    if(lec) lec.parentElement.classList.toggle('ok', exacto);
+    const ch = document.getElementById('chispa');
+    if(ch){
+        if(i <= 0.001){ ch.style.animationPlayState = 'paused'; ch.setAttribute('opacity','0.25'); }
+        else { ch.style.animationPlayState = 'running'; ch.setAttribute('opacity','0.9'); ch.style.animationDuration = Math.max(0.25, 1.6 - i*1.9).toFixed(2) + 's'; }
+    }
+    puntosElec.forEach(c=>c.setAttribute('opacity', i > 0.001 ? '1' : '0'));
+    const p1 = document.getElementById('pasoElec1'), p2 = document.getElementById('pasoElec2'), p3 = document.getElementById('pasoElec3');
+    if(p1) p1.classList.toggle('activo', v > 0 && !exacto);
+    if(p2) p2.classList.toggle('activo', (v > 0 && !exacto) || (cerca && !exacto));
+    if(p3) p3.classList.toggle('activo', exacto);
+}
+function revisarElec(){
+    const c = CASOS_ELEC[casoElec];
+    const v = document.getElementById('respElec').value.trim();
+    if(v !== '' && parseFloat(v) === parseFloat(c.resp)){
+        solvedElec[casoElec] = c.resp + ' ' + c.unidad;
+        document.getElementById('tabElec'+casoElec).classList.add('lista');
+        const otro = casoElec === 1 ? 2 : 1;
+        if(solvedElec[1] && solvedElec[2]){
+            document.getElementById('tabElec'+casoElec).textContent = c.nombre + ' ✓ ' + c.resp + ' ' + c.unidad;
+            resolverEstacion(3, 'Repetidor I: ' + solvedElec[1] + ' · Repetidor II: ' + solvedElec[2], 'fbElec', ['Repetidor I (halla V): ' + solvedElec[1], 'Repetidor II (halla R): ' + solvedElec[2]]);
+        } else {
+            document.getElementById('tabElec'+casoElec).textContent = c.nombre + ' ✓ ' + c.resp + ' ' + c.unidad;
+            avisar('fbElec', true, '✓ ' + c.nombre + ': ' + c.resp + ' ' + c.unidad + ' correctos. Ahora resuelve el otro repetidor.');
+            setTimeout(()=>irCasoElec(otro), 1400);
+        }
+    } else {
+        avisar('fbElec', false, v
+            ? (c.pregunta === 'R'
+                ? '✗ Con ' + v + ' Ω no circularían 0,45 A a 180 V. Despeja R = V ÷ I.'
+                : '✗ Con ' + v + ' V el amperímetro no marca ' + c.obj.toFixed(2).replace('.', ',') + ' A. Mueve el deslizador y observa.')
+            : (c.pregunta === 'R' ? 'Escribe la resistencia antes de validar.' : 'Escribe el voltaje antes de validar.'));
+    }
+}
+
+
+/* =======================================================
+   ESTACIÓN 4 — TELECOMUNICACIONES (Morse)
+   ======================================================= */
+const ALFABETO_MORSE = {
+    A:'.-', B:'-...', C:'-.-.', D:'-..', E:'.', F:'..-.', G:'--.', H:'....', I:'..',
+    J:'.---', K:'-.-', L:'.-..', M:'--', N:'-.', O:'---', P:'.--.', Q:'--.-', R:'.-.',
+    S:'...', T:'-', U:'..-', V:'...-', W:'.--', X:'-..-', Y:'-.--', Z:'--..'
+};
+const CASOS_MORSE = {
+    1:{palabra:'ANTENA', hash:'30d5e9c98868f713', pista:'Convierte la señal eléctrica en ondas que viajan por el aire, y viceversa.', titulo:'Señal I · 6 letras'},
+    2:{palabra:'DELTA DE DIRAC', hash:'ead6f93900e78b77', pista:'El impulso perfecto: dura un instante, área uno, y contiene todas las frecuencias. Honra a un físico.', titulo:'Señal II · frase'},
+    3:{palabra:'PULSE CODE MODULATION', hash:'0267b6faa794a941', pista:'La técnica que digitaliza tu voz: muestrea, cuantiza y codifica en bits. En siglas es PCM.', titulo:'Señal III · frase larga'}
+};
+let casoMorse = 1;
+const solvedMorse = {};
+let senalVisible = false, audioCtx = null, temporizadoresMorse = [], morseListo = false;
+function secretoActual(){
+    return CASOS_MORSE[casoMorse].palabra.split('').map(ch=> ch===' ' ? null : ALFABETO_MORSE[ch]);
+}
+function irCasoMorse(n){
+    casoMorse = n;
+    detenerMorse();
+    [1,2,3].forEach(k=>{
+        const t = document.getElementById('tabMorse'+k);
+        if(t) t.classList.toggle('activa', k===n);
+    });
+    senalVisible = false;
+    const btn = document.getElementById('btnVerSenal');
+    if(btn) btn.textContent = 'Ver la señal escrita';
+    construirLetrasMorse();
+    document.getElementById('pistaMorse').textContent = CASOS_MORSE[n].pista;
+    document.getElementById('contadorMorse').textContent = CASOS_MORSE[n].titulo;
+    document.getElementById('respMorse').value = '';
+    document.getElementById('fbMorse').className = 'feedback';
+}
+function construirLetrasMorse(){
+    document.getElementById('morseLetras').innerHTML = secretoActual().map((s,i)=>
+        s === null ? '<div class="morse-sep" aria-hidden="true">/</div>'
+        : '<div class="morse-letra" id="ml'+i+'"><span class="oculto" id="ms'+i+'">•••</span></div>').join('');
+}
+
+function prepararMorse(){
+    if(morseListo) return;
+    morseListo = true;
+    document.getElementById('tablaMorse').innerHTML = Object.keys(ALFABETO_MORSE).map(k=>
+        '<div><b>'+k+'</b> '+ALFABETO_MORSE[k]+'</div>').join('');
+    construirLetrasMorse();
+}
+function alternarSenal(){
+    senalVisible = !senalVisible;
+    secretoActual().forEach((s,i)=>{
+        if(s === null) return;
+        const el = document.getElementById('ms'+i);
+        el.textContent = senalVisible ? s : '•••';
+        el.classList.toggle('oculto', !senalVisible);
+    });
+    document.getElementById('btnVerSenal').textContent = senalVisible ? 'Ocultar la señal escrita' : 'Ver la señal escrita';
+}
+function detenerMorse(){
+    temporizadoresMorse.forEach(clearTimeout);
+    try{ if(audioCtx && audioCtx.state === 'running') audioCtx.suspend(); }catch(e){}
+    temporizadoresMorse = [];
+    const p = document.getElementById('pulso');
+    if(p) p.classList.remove('on');
+    document.querySelectorAll('.morse-letra').forEach(el=>el.classList.remove('sonando'));
+    const b = document.getElementById('btnMorse');
+    if(b) b.textContent = '▶ Reproducir señal';
+}
+function reproducirMorse(){
+    detenerMorse();
+    let ctx;
+    try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        ctx = audioCtx;
+        if(ctx.state === 'suspended') ctx.resume();
+    }catch(e){
+        avisar('fbMorse', false, 'Este navegador bloqueó el audio. Usa el botón "Ver la señal escrita" y la tabla.');
+        return;
+    }
+    document.getElementById('btnMorse').textContent = '♪ Transmitiendo...';
+
+    const U = 0.13;                    // duración de un punto en segundos
+    let t = ctx.currentTime + 0.25;
+    let ms = 250;                      // desfase visual en milisegundos
+
+    secretoActual().forEach((letra, idx)=>{
+        if(letra === null){ t += 4 * U; ms += 4 * U * 1000; return; }
+        temporizadoresMorse.push(setTimeout(()=>{
+            document.querySelectorAll('.morse-letra').forEach(el=>el.classList.remove('sonando'));
+            document.getElementById('ml'+idx).classList.add('sonando');
+        }, ms));
+
+        letra.split('').forEach(sim=>{
+            const dur = (sim === '.' ? 1 : 3) * U;
+            const osc = ctx.createOscillator(), gan = ctx.createGain();
+            osc.type = 'sine'; osc.frequency.value = 620;
+            gan.gain.setValueAtTime(0, t);
+            gan.gain.linearRampToValueAtTime(0.28, t + 0.01);
+            gan.gain.setValueAtTime(0.28, t + dur - 0.01);
+            gan.gain.linearRampToValueAtTime(0, t + dur);
+            osc.connect(gan); gan.connect(ctx.destination);
+            osc.start(t); osc.stop(t + dur + 0.02);
+
+            const encendido = ms;
+            temporizadoresMorse.push(setTimeout(()=>document.getElementById('pulso').classList.add('on'), encendido));
+            temporizadoresMorse.push(setTimeout(()=>document.getElementById('pulso').classList.remove('on'), encendido + dur*1000));
+
+            t += dur + U;            // silencio entre símbolos
+            ms += (dur + U) * 1000;
+        });
+        t += 2 * U;                  // silencio entre letras
+        ms += 2 * U * 1000;
+    });
+    temporizadoresMorse.push(setTimeout(detenerMorse, ms + 300));
+}
+function revisarMorse(){
+    const ROM = ['I','II','III'];
+    const c = CASOS_MORSE[casoMorse];
+    const r = normaliza(document.getElementById('respMorse').value);
+    if(cyrb53(r) === c.hash){
+        solvedMorse[casoMorse] = r;
+        document.getElementById('tabMorse'+casoMorse).classList.add('lista');
+        const otro = [1,2,3].find(k=>!solvedMorse[k]);
+        const corto = r.length > 8 ? 'FRASE' : r;
+        if(!otro){
+            document.getElementById('tabMorse'+casoMorse).textContent = 'Señal ' + ROM[casoMorse-1] + ' ✓ ' + corto;
+            resolverEstacion(4, 'Señal I: ' + solvedMorse[1] + ' · Señal II: ' + solvedMorse[2] + ' · Señal III: ' + solvedMorse[3], 'fbMorse', ['Señal I: ' + solvedMorse[1], 'Señal II: ' + solvedMorse[2], 'Señal III: ' + solvedMorse[3]]);
+        } else {
+            document.getElementById('tabMorse'+casoMorse).textContent = 'Señal ' + ROM[casoMorse-1] + ' ✓ ' + corto;
+            avisar('fbMorse', true, '✓ "' + r + '" correcta. Sintoniza la siguiente señal.');
+            setTimeout(()=>irCasoMorse(otro), 1400);
+        }
+    } else {
+        avisar('fbMorse', false, r ? '✗ "' + r + '" no coincide con la señal. Son ' + c.palabra.length + ' caracteres.' : 'Escribe la palabra antes de validar.');
+    }
+}
+
+/* =======================================================
+   ESTACIÓN 5 — ESTRUCTURAS DE DATOS (árbol binario de búsqueda)
+   ======================================================= */
+const RESP_ARBOL = {LLR:25, LRL:35, LRR:45, RLL:55, RLR:65, RRR:90};
+const INORDEN_ARBOL = [10,20,25,30,35,40,45,50,55,60,65,70,75,80,90];
+const PISTA_ARBOL = {
+    LLR:'Revisa la rama bajo el 20 y el 30.',
+    LRL:'Revisa la rama bajo el 30 y el 40.',
+    LRR:'Revisa la rama bajo el 40 y el 50.',
+    RLL:'Revisa la rama bajo el 50 y el 60.',
+    RLR:'Revisa la rama bajo el 60 y el 70.',
+    RRR:'Revisa la rama bajo el 70 y el 80.'
+};
+let fichaSel = null;
+const colocaArbol = {LLR:null, LRL:null, LRR:null, RLL:null, RLR:null, RRR:null};
+let arbolListo = false;
+let arrastre = null, movidoArrastrar = false, suprimirClick = false, recienSel = null;
+
+function colocarFicha(slot, v){
+    Object.keys(colocaArbol).forEach(k=>{ if(colocaArbol[k] === v) colocaArbol[k] = null; });
+    colocaArbol[slot] = v;
+    fichaSel = null;
+    pintarArbol();
+}
+function moverFantasma(x, y){
+    if(arrastre){ arrastre.fant.style.left = x + 'px'; arrastre.fant.style.top = y + 'px'; }
+}
+function moverArrastre(ev){
+    if(!arrastre) return;
+    movidoArrastrar = true;
+    moverFantasma(ev.clientX, ev.clientY);
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    const nodo = el && el.closest ? el.closest('.nodo-arbol') : null;
+    document.querySelectorAll('.nodo-arbol').forEach(g=>g.classList.toggle('sobre', g === nodo));
+    arrastre.destino = nodo ? nodo.dataset.slot : null;
+}
+function soltarArrastre(){
+    window.removeEventListener('pointermove', moverArrastre);
+    if(!arrastre) return;
+    suprimirClick = movidoArrastrar;
+    if(arrastre.destino) colocarFicha(arrastre.destino, arrastre.v);
+    else if(movidoArrastrar){ fichaSel = null; pintarArbol(); }
+    arrastre.fant.remove();
+    document.querySelectorAll('.nodo-arbol').forEach(g=>g.classList.remove('sobre'));
+    arrastre = null;
+    movidoArrastrar = false;
+}
+function iniciarArrastre(ev, v){
+    ev.preventDefault();
+    recienSel = (fichaSel === v) ? null : v;
+    fichaSel = v;
+    pintarArbol();
+    const fant = document.createElement('div');
+    fant.className = 'ficha-flotante';
+    fant.textContent = v;
+    document.body.appendChild(fant);
+    arrastre = {v:v, fant:fant, destino:null};
+    movidoArrastrar = false;
+    moverFantasma(ev.clientX, ev.clientY);
+    window.addEventListener('pointermove', moverArrastre);
+    window.addEventListener('pointerup', soltarArrastre, {once:true});
+    window.addEventListener('pointercancel', soltarArrastre, {once:true});
+}
+
+function pintarArbol(){
+    Object.keys(RESP_ARBOL).forEach(slot=>{
+        const v = colocaArbol[slot];
+        const txt = document.getElementById('txt'+slot);
+        const cir = document.getElementById('cir'+slot);
+        const g = document.querySelector('.nodo-arbol[data-slot="'+slot+'"]');
+        if(txt) { txt.textContent = v === null ? '?' : v; txt.setAttribute('fill', v === null ? '#e8cf8b' : '#3a2a12'); }
+        if(cir) {
+            cir.setAttribute('fill', v === null ? 'rgba(232,207,139,.12)' : '#c9a24a');
+            cir.setAttribute('stroke', v === null ? '#e8cf8b' : '#3a2a12');
+            if(v === null) cir.setAttribute('stroke-dasharray','6 5'); else cir.removeAttribute('stroke-dasharray');
+        }
+        if(g) g.classList.toggle('ocupado', v !== null);
+    });
+    document.querySelectorAll('#bancoArbol .ficha').forEach(f=>{
+        const v = parseInt(f.dataset.v);
+        f.classList.toggle('sel', v === fichaSel);
+        f.classList.toggle('usada', Object.values(colocaArbol).includes(v));
+    });
+}
+function prepararArbol(){
+    if(arbolListo) return;
+    arbolListo = true;
+    document.querySelectorAll('#bancoArbol .ficha').forEach(f=>{
+        const v = parseInt(f.dataset.v);
+        f.addEventListener('click', ()=>{
+            if(suprimirClick){ suprimirClick = false; recienSel = null; return; }
+            if(recienSel === v){ recienSel = null; return; }
+            fichaSel = (fichaSel === v) ? null : v;
+            pintarArbol();
+        });
+        f.addEventListener('pointerdown', ev=>iniciarArrastre(ev, v));
+    });
+    document.querySelectorAll('.nodo-arbol').forEach(g=>{
+        const slot = g.dataset.slot;
+        const poner = ()=>{
+            if(fichaSel !== null){
+                colocarFicha(slot, fichaSel);
+            } else if(colocaArbol[slot] !== null){
+                colocaArbol[slot] = null;
+                pintarArbol();
+            }
+        };
+        g.addEventListener('click', poner);
+        g.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); poner(); }});
+    });
+    pintarArbol();
+}
+function limpiarArbol(){
+    Object.keys(colocaArbol).forEach(k=>{ colocaArbol[k] = null; });
+    fichaSel = null;
+    pintarArbol();
+    document.getElementById('fbArbol').className = 'feedback';
+    document.getElementById('faseArbol2').hidden = true;
+    document.getElementById('fbInorden').className = 'feedback';
+}
+function revisarArbol(){
+    const slots = Object.keys(RESP_ARBOL);
+    const vacios = slots.filter(s=>colocaArbol[s] === null);
+    if(vacios.length){
+        avisar('fbArbol', false, 'Faltan ' + vacios.length + ' nodos: coloca una ficha en cada “?” (arrastra o toca).');
+        return;
+    }
+    const mal = slots.filter(s=>colocaArbol[s] !== RESP_ARBOL[s]);
+    if(!mal.length){
+        avisar('fbArbol', true, '✓ Estructura válida. Ahora demuestra el recorrido inorden abajo.');
+        document.getElementById('faseArbol2').hidden = false;
+        document.getElementById('respInorden').focus();
+    } else if(mal.length >= 3){
+        avisar('fbArbol', false, mal.length + ' nodos rompen la regla: izquierda < padre < derecha (estricto). Ojo con los valores iguales a un padre.');
+    } else {
+        avisar('fbArbol', false, PISTA_ARBOL[mal[0]] + (mal.length > 1 ? ' Otro hueco también falla.' : ''));
+    }
+}
+function verificarInorden(){
+    const nums = (document.getElementById('respInorden').value.match(/\d+/g) || []).map(Number);
+    const ok = nums.length === INORDEN_ARBOL.length && nums.every((v,i)=>v === INORDEN_ARBOL[i]);
+    if(ok){
+        const inordenTxt = INORDEN_ARBOL.join(', ');
+        const nodosTxt = '25·35·45·55·65·90';
+        resolverEstacion(5, 'Nodos: ' + nodosTxt + ' · Inorden: ' + inordenTxt, 'fbInorden', ['Nodos repuestos: ' + nodosTxt, 'Inorden (15): ' + inordenTxt]);
+    } else if(!nums.length){
+        avisar('fbInorden', false, 'Escribe los 15 valores del recorrido antes de validar.');
+    } else if(nums.length !== 15){
+        avisar('fbInorden', false, 'Llevas ' + nums.length + ' valores y son 15. Recorre: izquierda → nodo → derecha.');
+    } else {
+        const k = nums.findIndex((v,i)=>v !== INORDEN_ARBOL[i]);
+        avisar('fbInorden', false, 'Falla en la posición ' + (k+1) + ': revisa ese tramo del recorrido.');
+    }
+}
+
+/* =======================================================
+   ESTACIÓN 6 — REDES
+   ======================================================= */
+/* =======================================================
+   ESTACIÓN 6 — REDES (clasificador + subred CIDR)
+   ======================================================= */
+let fichasRed = [], selFichaIP = null, redesListo = false;
+let subRed = null;
+let resumenFase1Red = null;
+
+function categoriaIP(ip){
+    const o = ip.split('.').map(Number);
+    if(o[0] === 10 || (o[0] === 172 && o[1] >= 16 && o[1] <= 31) || (o[0] === 192 && o[1] === 168)) return 'privada';
+    if(o[0] === 127 || ip === '255.255.255.255' || (o[0] >= 224 && o[0] <= 239) ||
+       (o[0] === 169 && o[1] === 254) || (o[0] === 192 && o[1] === 0 && o[2] === 2)) return 'especial';
+    return 'publica';
+}
+function genPrivada(){
+    const t = Math.floor(Math.random()*3), r = ()=>Math.floor(Math.random()*256);
+    if(t === 0) return '10.'+r()+'.'+r()+'.'+r();
+    if(t === 1) return '172.'+(16+Math.floor(Math.random()*16))+'.'+r()+'.'+r();
+    return '192.168.'+r()+'.'+r();
+}
+function genPublica(){
+    const r = ()=>Math.floor(Math.random()*256);
+    const o0s = [];
+    for(let o=11; o<=99; o++) o0s.push(o);
+    for(let o=103; o<=126; o++) o0s.push(o);
+    return o0s[Math.floor(Math.random()*o0s.length)]+'.'+r()+'.'+r()+'.'+r();
+}
+function genEspecial(){
+    const pool = ['127.0.0.1','255.255.255.255','224.0.0.251','169.254.13.7','192.0.2.44'];
+    return pool[Math.floor(Math.random()*pool.length)];
+}
+function mezclar(a){
+    for(let i=a.length-1; i>0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+    return a;
+}
+function irRedes(n){
+    document.getElementById('faseRed1').classList.toggle('active', n === 1);
+    document.getElementById('faseRed2').classList.toggle('active', n === 2);
+}
+function prepararRedes(){
+    if(redesListo) return;
+    redesListo = true;
+    repartirIPs();
+    generarSubred();
+    irRedes(1);
+}
+function repartirIPs(manual){
+    if(estado.completadas[6]) return;
+    const set = new Set();
+    const toma = (gen)=>{ let ip = gen(), guard = 0; while(set.has(ip) && guard++ < 50) ip = gen(); set.add(ip); return ip; };
+    fichasRed = mezclar([
+        {ip:toma(genPrivada), en:null},{ip:toma(genPrivada), en:null},
+        {ip:toma(genPublica), en:null},{ip:toma(genPublica), en:null},
+        {ip:toma(genEspecial), en:null},{ip:toma(genEspecial), en:null}
+    ]);
+    selFichaIP = null;
+    pintarFichasIP();
+    ['privada','publica','especial'].forEach(c=>{ document.getElementById('cj-'+c).innerHTML = ''; });
+    if(!manual) document.getElementById('fbFase1').className = 'feedback';
+}
+function pintarFichasIP(){
+    document.getElementById('fichasIP').innerHTML = '<span class="banco-titulo">Fichas: arrastra o toca</span>' + fichasRed.map((f,i)=>
+        f.en !== null ? '' : '<button class="ficha-ip'+(selFichaIP===i?' sel':'')+'" onclick="selFichaRed('+i+')" onpointerdown="iniciarArrastreIP(event,'+i+')">'+f.ip+'</button>').join('');
+    ['privada','publica','especial'].forEach(c=>{
+        document.getElementById('cj-'+c).innerHTML = fichasRed.map((f,i)=>
+            f.en === c ? '<div class="ip-chip" onclick="sacarFichaRed('+i+')">'+f.ip+'</div>' : '').join('');
+    });
+    document.querySelectorAll('.cajon').forEach(cj=>cj.classList.toggle('sel', false));
+}
+let arrastreIP = null, movIP = false, suprClickIP = false, recienIP = null;
+function selFichaRed(i){
+    if(suprClickIP){ suprClickIP = false; recienIP = null; return; }
+    if(recienIP === i){ recienIP = null; return; }
+    selFichaIP = (selFichaIP === i) ? null : i;
+    pintarFichasIP();
+}
+function iniciarArrastreIP(ev, i){
+    ev.preventDefault();
+    recienIP = (selFichaIP === i) ? null : i;
+    selFichaIP = i;
+    const btn = ev.currentTarget;
+    if(btn && btn.classList){
+        document.querySelectorAll('#fichasIP .ficha-ip').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+    }
+    const fant = document.createElement('div');
+    fant.className = 'ficha-flotante';
+    fant.textContent = fichasRed[i].ip;
+    fant.style.fontSize = '1rem';
+    document.body.appendChild(fant);
+    arrastreIP = {i:i, fant:fant, destino:null};
+    movIP = false;
+    fant.style.left = ev.clientX + 'px';
+    fant.style.top = ev.clientY + 'px';
+    window.addEventListener('pointermove', moverArrastreIP);
+    window.addEventListener('pointerup', soltarArrastreIP, {once:true});
+    window.addEventListener('pointercancel', soltarArrastreIP, {once:true});
+}
+function moverArrastreIP(ev){
+    if(!arrastreIP) return;
+    movIP = true;
+    arrastreIP.fant.style.left = ev.clientX + 'px';
+    arrastreIP.fant.style.top = ev.clientY + 'px';
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    const cj = el && el.closest ? el.closest('.cajon') : null;
+    document.querySelectorAll('.cajon').forEach(c=>c.classList.toggle('sobre', c === cj));
+    arrastreIP.destino = cj ? cj.dataset.cat : null;
+}
+function soltarArrastreIP(){
+    window.removeEventListener('pointermove', moverArrastreIP);
+    if(!arrastreIP) return;
+    suprClickIP = movIP;
+    if(arrastreIP.destino && !estado.completadas[6]){
+        fichasRed[arrastreIP.i].en = arrastreIP.destino;
+        selFichaIP = null;
+        pintarFichasIP();
+    } else if(movIP){
+        selFichaIP = null;
+        pintarFichasIP();
+    }
+    arrastreIP.fant.remove();
+    document.querySelectorAll('.cajon').forEach(c=>c.classList.remove('sobre'));
+    arrastreIP = null;
+    movIP = false;
+}
+function sacarFichaRed(i){
+    fichasRed[i].en = null;
+    pintarFichasIP();
+}
+document.addEventListener('click', ev=>{
+    const cj = ev.target.closest ? ev.target.closest('.cajon') : null;
+    if(cj && selFichaIP !== null && !estado.completadas[6]){
+        fichasRed[selFichaIP].en = cj.dataset.cat;
+        selFichaIP = null;
+        pintarFichasIP();
+    }
+});
+function validarFase1Red(){
+    const sinUbicar = fichasRed.filter(f=>f.en === null).length;
+    if(sinUbicar){
+        avisar('fbFase1', false, 'Faltan ' + sinUbicar + ' fichas por ubicar: toca ficha y luego cajón.');
+        return;
+    }
+    const malFichas = fichasRed.filter(f=>categoriaIP(f.ip) !== f.en);
+    if(!malFichas.length){
+        const por = c => fichasRed.filter(f=>f.en===c).map(f=>f.ip).join(', ');
+        resumenFase1Red = ['Privada: ' + por('privada'), 'Pública: ' + por('publica'), 'Especial: ' + por('especial')];
+        avisar('fbFase1', true, '✓ Clasificación perfecta. Ahora calcula la subred asignada.');
+        setTimeout(()=>irRedes(2), 1400);
+    } else {
+        const ej = malFichas[0];
+        const real = categoriaIP(ej.ip);
+        const o = ej.ip.split('.')[0] + '.' + ej.ip.split('.')[1];
+        avisar('fbFase1', false, malFichas.length + ' ficha(s) en cajón equivocado. Ej: ' + ej.ip + ' empieza en ' + o + ' → es ' + real.toUpperCase() + '. Repasa los pasos 1-2-3 de arriba.');
+    }
+}
+function ipAInt(ip){ return ip.split('.').reduce((a,p)=>(a*256)+parseInt(p), 0) >>> 0; }
+function intAIP(n){ return [(n>>>24)&255, (n>>>16)&255, (n>>>8)&255, n&255].join('.'); }
+function aBin8(n){ return n.toString(2).padStart(8,'0'); }
+function ipABin(ip){ return ip.split('.').map(p=>aBin8(parseInt(p))).join(' '); }
+function ipABinColor(ip, mask){
+    const bits = ip.split('.').map(p=>aBin8(parseInt(p))).join('').split('');
+    let h = '';
+    bits.forEach((b,i)=>{
+        const cls = i < mask ? 'bin-red' : 'bin-host';
+        h += '<span class="'+cls+'">'+b+'</span>';
+        if((i+1)%8===0 && i!==31) h += '<span class="bin-sep"> </span>';
+    });
+    return h;
+}
+function generarSubred(){
+    if(estado.completadas[6]) return;
+    const masks = [24,24,25,25,26];
+    const mask = masks[Math.floor(Math.random()*masks.length)];
+    const s = 1 + Math.floor(Math.random()*20);
+    const h = 1 + Math.floor(Math.random()*254);
+    const ip = '192.168.' + s + '.' + h;
+    const mInt = mask === 0 ? 0 : (0xFFFFFFFF << (32-mask)) >>> 0;
+    const red = intAIP(ipAInt(ip) & mInt);
+    const bc = intAIP((ipAInt(ip) & mInt) | (~mInt >>> 0));
+    const hosts = Math.pow(2, 32-mask) - 2;
+    const bloque = Math.pow(2, 32-mask);
+    const ultimo = parseInt(ip.split('.')[3]);
+    const inicioBarrio = Math.floor(ultimo/bloque)*bloque;
+    const finBarrio = inicioBarrio + bloque - 1;
+    subRed = {ip:ip, mask:mask, red:red, bc:bc, hosts:hosts, bloque:bloque};
+    document.getElementById('subIP').textContent = ip + ' /' + mask;
+    const bi = document.getElementById('bloqueInfo');
+    if(bi) bi.innerHTML = 'Bloque de <b>' + bloque + '</b> direcciones · tu último número <b>' + ultimo + '</b> cae en el barrio <b>.' + inicioBarrio + ' – .' + finBarrio + '</b> · hosts útiles: <b>' + hosts + '</b>';
+    document.getElementById('binSub').innerHTML =
+        '<div><b>IP&nbsp;&nbsp;&nbsp;:</b> ' + ipABinColor(ip, mask) + '</div>' +
+        '<div><b>Máscara:</b> ' + ipABinColor(intAIP(mInt), mask) + ' (/' + mask + ')</div>' +
+        '<div style="margin-top:.3rem;color:#c6d4e3;">Los <b style="color:#ffd97a;">' + mask + ' primeros bits</b> son red, los <b style="color:#9ff5c4;">' + (32-mask) + ' últimos</b> son host.</div>';
+    document.querySelectorAll('#tablaBloques tr').forEach(tr=>tr.classList.toggle('destaca', parseInt(tr.dataset.m)===mask));
+    ['inpRed','inpBc','inpHosts'].forEach(id=>{ document.getElementById(id).value = ''; });
+    document.getElementById('fbRedes').className = 'feedback';
+}
+function validarFase2Red(){
+    if(!subRed) return;
+    const r = document.getElementById('inpRed').value.trim();
+    const b = document.getElementById('inpBc').value.trim();
+    const h = document.getElementById('inpHosts').value.trim();
+    const okR = r === subRed.red, okB = b === subRed.bc, okH = h !== '' && parseInt(h) === subRed.hosts;
+    const mal = (!okR?1:0) + (!okB?1:0) + (!okH?1:0);
+    if(!mal){
+        const fase2Txt = subRed.ip + '/' + subRed.mask + ' → red ' + subRed.red + ' · broadcast ' + subRed.bc + ' · ' + subRed.hosts + ' hosts';
+        const fase1Txt = resumenFase1Red ? resumenFase1Red.join(' · ') : 'Clasificación OK';
+        resolverEstacion(6, fase1Txt + ' | ' + fase2Txt, 'fbRedes', [fase1Txt, fase2Txt]);
+    } else if(r === '' || b === '' || h === ''){
+        avisar('fbRedes', false, 'Completa los 3 campos: red (inicio del barrio), broadcast (fin del barrio) y hosts (bloque − 2).');
+    } else {
+        const pistas = [];
+        if(!okR) pistas.push('la red es .' + subRed.red.split('.')[3] + ' (inicio del barrio .' + Math.floor(parseInt(subRed.ip.split('.')[3])/subRed.bloque)*subRed.bloque + '–.' + (Math.floor(parseInt(subRed.ip.split('.')[3])/subRed.bloque)*subRed.bloque+subRed.bloque-1) + ')');
+        if(!okB) pistas.push('el broadcast es .' + subRed.bc.split('.')[3] + ' (red + ' + subRed.bloque + ' − 1)');
+        if(!okH) pistas.push('hosts = ' + subRed.bloque + ' − 2 = ' + subRed.hosts);
+        avisar('fbRedes', false, 'Fallan ' + mal + ' campo(s). ' + pistas.join(' · '));
+    }
+}
+
+/* =======================================================
+   INICIALIZACIÓN
+   ======================================================= */
+window.addEventListener('load', ()=>{
+    prepararRedes();
+    prepararMorse();
+
+    // Enter para validar
+    [['respGeo',revisarGeo],['respElec',revisarElec],['respMorse',revisarMorse],
+     ['respInorden',verificarInorden],['inpRed',validarFase2Red],['inpBc',validarFase2Red],['inpHosts',validarFase2Red]].forEach(([id,fn])=>{
+        document.getElementById(id).addEventListener('keydown', ev=>{ if(ev.key==='Enter') fn(); });
+    });
+    document.getElementById('nombreEquipo').addEventListener('keydown', ev=>{ if(ev.key==='Enter') comenzar(); });
+
+    // Cerrar modal con Escape o clic en el fondo
+    document.addEventListener('keydown', ev=>{
+        if(ev.key === 'Escape'){
+            const abierto = document.querySelector('.modal.active');
+            if(abierto) cerrarModal(abierto.id);
+        }
+    });
+    document.querySelectorAll('.modal').forEach(m=>{
+        m.addEventListener('click', ev=>{ if(ev.target === m) cerrarModal(m.id); });
+    });
+
+    // Partida guardada
+    const g = leerGuardado();
+    if(g && g.equipo && !g.terminado && g.restante > 0 && Object.keys(g.completadas||{}).length > 0){
+        document.getElementById('nombreEquipo').value = g.equipo;
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-fantasma';
+        btn.textContent = 'Continuar partida de ' + g.equipo;
+        btn.onclick = ()=>continuarPartida(g);
+        document.querySelector('#pantallaInicio .inicio-continuar').appendChild(btn);
+    }
+});
+</script>
+</body>
+</html>

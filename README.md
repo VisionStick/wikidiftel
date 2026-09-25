@@ -6,6 +6,8 @@ Portal estudiantil para **Ingeniería Civil Telemática USM, Campus San Joaquín
 
 Esta versión pública está pensada para funcionar en **GitHub Pages** como sitio estático.
 
+También despliega directo en **Vercel** (ver `vercel.json`): importar el repo, sin build command, dominio `diftel.cl`.
+
 La página actualmente separa claramente dos funciones:
 
 - **Biblioteca del ramo:** acceso a carpetas externas de material mediante enlaces por código de asignatura.
@@ -19,7 +21,9 @@ Los usuarios **no suben archivos directamente a la página**. La participación 
 - `/malla/` — Malla curricular y acceso a fichas de ramos.
 - `/ramo/` — Ficha individual de ramo, biblioteca externa y experiencia estudiantil.
 - `/proyectos/` — Archivo de proyectos de DIFTEL y estudiantes.
-- `/talleres/` — Talleres, charlas y actividades.
+- `/talleres/` — Talleres: CTF de Telemática y simulador interactivo de redes.
+  - `/talleres/Taller_ctf.html` — CTF Telemática de 6 estaciones (archivo autocontenido, conserva su estilo propio).
+  - `/talleres/diftel/` — Simulador interactivo de redes (mensajes, juego, topología).
 - `/comunidad/` — Archivo comunitario y directorio.
 - `/buscar/` — Página de búsqueda estática.
 - `/buzon/` — Página informativa sobre el nuevo flujo de participación.

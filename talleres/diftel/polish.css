@@ -1,0 +1,301 @@
+/* Ajustes finales de legibilidad y layout del simulador DIFTEL */
+
+/* Texto: más contraste sin perder el look plano */
+.panel-title,
+.select-label,
+.workspace-toolbar,
+.route-info small,
+.sim-telemetry small,
+.event small,
+.node small,
+.device-card small,
+.protocol-help,
+.message-protocol-note {
+  opacity: 1 !important;
+}
+
+.panel-title {
+  color: #49677c !important;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.select-label {
+  color: #536d81 !important;
+  font-weight: 600;
+}
+
+.device-card strong {
+  color: #173248 !important;
+  font-weight: 700;
+}
+
+.device-card small {
+  color: #5f788b !important;
+}
+
+.workspace-toolbar {
+  color: #4f687c !important;
+}
+
+.node strong {
+  color: #173248 !important;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255,255,255,.85);
+}
+
+.node small {
+  color: #587286 !important;
+  font-weight: 500;
+}
+
+.event strong {
+  color: #1d394f !important;
+}
+
+.event small {
+  color: #5c7486 !important;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* Panel izquierdo: un poco más respirable */
+.device-panel,
+.event-panel {
+  padding: 20px !important;
+}
+
+.device-card {
+  min-width: 0;
+}
+
+.device-card > span:last-child {
+  min-width: 0;
+}
+
+.device-card strong,
+.device-card small {
+  overflow-wrap: anywhere;
+}
+
+.route-chooser select,
+#protocol {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 38px 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.protocol-help {
+  margin-top: 10px !important;
+  color: #60788b !important;
+  font-size: 9.5px !important;
+  line-height: 1.55 !important;
+  overflow-wrap: anywhere;
+}
+
+.protocol-help strong {
+  color: #254d64 !important;
+}
+
+/* Zona de topología */
+.workspace {
+  min-height: 500px;
+}
+
+.workspace-toolbar {
+  min-height: 54px;
+  padding: 0 18px;
+}
+
+.mini-btn {
+  min-height: 36px;
+  padding: 8px 13px;
+}
+
+/* La franja inferior ya no intenta meter todo en una sola línea */
+.sim-controls {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "telemetry telemetry"
+    "route action" !important;
+  gap: 12px 16px !important;
+  align-items: center !important;
+  padding: 15px 18px !important;
+  min-height: 0 !important;
+}
+
+.sim-telemetry {
+  grid-area: telemetry !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.sim-telemetry > div {
+  min-width: 0;
+  min-height: 62px;
+  padding: 10px 12px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-color: #d6e2ea !important;
+  box-shadow: 0 2px 7px rgba(35,72,98,.035);
+}
+
+.sim-telemetry small {
+  color: #617a8e !important;
+  font-size: 7.5px !important;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.sim-telemetry strong {
+  color: #18364c !important;
+  font-size: 10.5px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.route-info {
+  grid-area: route !important;
+  margin: 0 !important;
+  min-width: 0;
+  display: flex !important;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 10px;
+  color: #203d53 !important;
+  font-size: 11px;
+}
+
+.route-info small {
+  color: #6a8193 !important;
+  font-size: 8px;
+  letter-spacing: .09em;
+}
+
+.route-info strong {
+  color: #17384f !important;
+  white-space: nowrap;
+}
+
+.route-info span {
+  color: #1697b9 !important;
+  font-weight: 700;
+}
+
+.send-btn {
+  grid-area: action !important;
+  min-width: 150px;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+/* Eventos */
+.event-panel {
+  min-width: 0;
+}
+
+.event-list {
+  max-height: 510px !important;
+}
+
+.event {
+  min-width: 0;
+  padding: 11px !important;
+  gap: 10px !important;
+}
+
+.event p {
+  min-width: 0;
+}
+
+/* Ajustes progresivos para evitar desbordes */
+@media (max-width: 1180px) {
+  .sim-shell {
+    grid-template-columns: 190px minmax(0,1fr) 205px !important;
+  }
+
+  .sim-telemetry {
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .sim-shell {
+    grid-template-columns: 180px minmax(0,1fr) !important;
+  }
+
+  .event-panel {
+    display: none !important;
+  }
+
+  .sim-telemetry {
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .sim-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .device-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+
+  .device-panel > .panel-title,
+  .device-panel > .panel-divider,
+  .device-panel > .select-label,
+  .device-panel > select,
+  .device-panel > .protocol-help,
+  .device-panel > .route-chooser {
+    grid-column: 1 / -1;
+  }
+
+  .device-card {
+    padding: 10px !important;
+  }
+
+  .sim-controls {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "telemetry"
+      "route"
+      "action" !important;
+  }
+
+  .sim-telemetry {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .send-btn {
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .sim-telemetry {
+    grid-template-columns: 1fr !important;
+  }
+
+  .route-info {
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+  }
+
+  .route-info span {
+    display: none;
+  }
+}
