@@ -93,23 +93,6 @@
     document.head.append(icon);
   }
 
-  function cleanObsoleteLinks(root = document) {
-    $$('a', root).forEach((link) => {
-      const text = (link.textContent || '').trim().toLowerCase();
-      const href = (link.getAttribute('href') || '').toLowerCase();
-      if (href.includes('wiki-diftel.josnic.cl') || text === 'wiki ↗' || text.includes('wiki / apuntes') || text.includes('wiki diftel')) {
-        link.remove();
-        return;
-      }
-      if (text.includes('subir material') || text.includes('aportar material') || text === 'aportar') {
-        link.textContent = 'Opinar en ramos';
-        link.href = `${base}malla/`;
-        link.removeAttribute('target');
-        link.removeAttribute('rel');
-      }
-    });
-  }
-
   function renderFooter() {
     const footer = $('.site-footer');
     if (!footer) return;
@@ -165,6 +148,5 @@
   ensureFavicon();
   revealContent();
   renderFooter();
-  cleanObsoleteLinks();
   setupGlobalSearchShortcut();
 })();
