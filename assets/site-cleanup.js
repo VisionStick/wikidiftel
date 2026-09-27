@@ -15,7 +15,6 @@
       .category-switch,.browser-toolbar,.section-heading.split{opacity:1!important;transform:none!important;visibility:visible!important;}
       .projects-wrap,.workshop-browser,#archivo,.people-section{margin-top:18px!important;}
       main.site-main{min-height:auto!important;}
-      .nav-link[href*='wiki-diftel'],.mobile-menu a[href*='wiki-diftel'],.footer-column a[href*='wiki-diftel'],.footer-links a[href*='wiki-diftel']{display:none!important;}
     `;
     document.head.append(style);
   }
@@ -31,16 +30,6 @@
     apple.rel='apple-touch-icon';
     apple.href=base+'icon.png';
     document.head.append(apple);
-  }
-
-  function removeObsoleteWikiLinks(root=document){
-    root.querySelectorAll('a').forEach(a=>{
-      const txt=(a.textContent||'').trim().toLowerCase();
-      const href=(a.getAttribute('href')||'').toLowerCase();
-      if(href.includes('wiki-diftel.josnic.cl')||txt==='wiki ↗'||txt.includes('wiki / apuntes')||txt.includes('wiki diftel')){
-        a.remove();
-      }
-    });
   }
 
   function cleanText(node){
@@ -65,11 +54,9 @@
   function applyCleanup(){
     injectPageFixes();
     forceIcon();
-    removeObsoleteWikiLinks(document);
     cleanText(document.querySelector('.site-footer'));
     cleanText(document.querySelector('#mobile-menu'));
     cleanText(document.querySelector('main'));
-    removeObsoleteWikiLinks(document);
   }
 
   injectPageFixes();
