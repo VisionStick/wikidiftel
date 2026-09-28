@@ -48,6 +48,13 @@ Para agregar una biblioteca nueva, se debe sumar el código de ramo y su URL ext
 
 La participación dentro de la página se realiza mediante comentarios/opiniones de cada ramo. En la versión estática actual, las opiniones pueden almacenarse en el navegador del usuario; para hacerlas compartidas entre toda la comunidad se recomienda conectar una base de datos externa como Firebase Firestore o Supabase.
 
+## Flujo de ramas
+
+- `main` es producción (`diftel.cl`, Vercel). `dev` es integración.
+- No se hace push directo a ninguna de las dos: rama de trabajo → PR a `dev` → PR de `dev` a `main`.
+- Cada PR necesita la aprobación de un codeowner (`.github/CODEOWNERS`: @craulii o @ChrisPsx).
+- Para cerrar un issue al mergear, poner `Closes #N` en el PR que llega a `main`.
+
 ## Criterio visual
 
 La interfaz busca sentirse estudiantil, cálida y clara: tonos azul oscuro/cyan, tarjetas simples, navegación directa, buen contraste, responsive y detalles visuales sin sobrecargar.
