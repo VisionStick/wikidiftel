@@ -2,6 +2,7 @@
   const cfg = window.WIKIDIFTEL_SUPABASE;
   const COURSE_SELECT = 'id,code,slug,name,sct,summary,description,sort_order,is_active,semester_number,semester_name,area_name,area_slug,area_color';
   const REVIEW_SELECT = 'id,course_id,course_code,course_slug,course_name,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,created_at,status';
+  const REVIEW_BASE_SELECT = 'id,course_id,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,created_at,status';
 
   async function request(path, params = {}, options = {}) {
     if (!cfg?.url || !cfg?.key) {
@@ -76,17 +77,59 @@
     return byCode[0] || null;
   }
 
+  async function getReviewLikeCounts(reviewIds = []) {
+    const ids = reviewIds.map(Number).filter(Number.isFinite);
+    if (!ids.length) return new Map();
+
+    try {
+      const likes = await request('course_review_likes', {
+        select: 'review_id',
+        review_id: `in.(${ids.join(',')})`
+      });
+      return likes.reduce((counts, item) => {
+        const id = String(item.review_id);
+        counts.set(id, (counts.get(id) || 0) + 1);
+        return counts;
+      }, new Map());
+    } catch (error) {
+      console.warn('No se pudieron cargar los Me gusta; se continúa sin contador.', error);
+      return new Map();
+    }
+  }
+
   async function getReviewsForCourse(slugOrCode) {
     const course = await getCourseBySlug(slugOrCode);
     if (!course) return { course: null, reviews: [] };
 
-    const reviews = await request('course_review_public_view', {
-      select: REVIEW_SELECT,
-      course_id: `eq.${course.id}`,
-      order: 'created_at.desc,id.desc'
-    });
+    try {
+      const reviews = await request('course_review_public_view', {
+        select: REVIEW_SELECT,
+        course_id: `eq.${course.id}`,
+        order: 'created_at.desc,id.desc'
+      });
+      return { course, reviews };
+    } catch (viewError) {
+      console.warn('La vista pública de comentarios no está disponible; usando lectura compatible.', viewError);
 
-    return { course, reviews };
+      const reviews = await request('course_reviews', {
+        select: REVIEW_BASE_SELECT,
+        course_id: `eq.${course.id}`,
+        status: 'eq.approved',
+        order: 'created_at.desc,id.desc'
+      });
+      const likeCounts = await getReviewLikeCounts(reviews.map((review) => review.id));
+
+      return {
+        course,
+        reviews: reviews.map((review) => ({
+          ...review,
+          course_code: course.code,
+          course_slug: course.slug,
+          course_name: course.name,
+          likes_count: likeCounts.get(String(review.id)) || 0
+        }))
+      };
+    }
   }
 
   async function submitCourseReview(slugOrCode, payload = {}) {
@@ -137,8 +180,7 @@
       usefulness: requireRange(payload.usefulness, 1, 5, 'Utilidad'),
       study_hours: studyHours,
       comment,
-      status: 'approved',
-      likes_count: 0
+      status: 'approved'
     };
 
     const inserted = await request('course_reviews', { select: '*' }, {
