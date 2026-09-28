@@ -14,8 +14,46 @@
     const style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = `
-      [data-hidden-legacy-review-form="true"]{display:none!important;}
-      .stable-reviews{max-width:1120px;margin:24px auto 34px;padding:0 18px}.stable-reviews-card{background:var(--surface,rgba(255,255,255,.92));border:1px solid var(--line,rgba(30,41,59,.14));border-radius:28px;padding:24px;box-shadow:var(--shadow,0 18px 50px rgba(15,23,42,.12))}.stable-reviews-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.stable-reviews-kicker{font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#64748b)}.stable-reviews-title{font-size:clamp(1.45rem,2vw,2rem);font-weight:900;margin:4px 0;color:var(--text-strong,#0f172a)}.stable-reviews-sub{margin:0;color:var(--muted,#64748b);max-width:740px}.stable-status{border-radius:16px;padding:10px 12px;font-weight:800;font-size:.92rem;background:rgba(14,165,233,.12);color:var(--text-strong,#0f172a);max-width:360px}.stable-status.error{background:rgba(239,68,68,.14)}.stable-toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:18px 0;flex-wrap:wrap}.stable-toolbar label{display:flex;gap:8px;align-items:center;font-weight:900;color:var(--text-strong,#0f172a)}.stable-toolbar select,.stable-form input,.stable-form select,.stable-form textarea{border:1px solid var(--line,rgba(30,41,59,.16));border-radius:16px;background:var(--surface-solid,#fff);color:var(--text-strong,#0f172a);padding:11px 12px;font:inherit;outline:none}.stable-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 8px}.stable-form label{display:flex;flex-direction:column;gap:6px;font-size:.9rem;font-weight:900;color:var(--text-strong,#0f172a)}.stable-form textarea{min-height:126px;resize:vertical}.stable-form .span-2{grid-column:span 2}.stable-form .span-4{grid-column:1/-1}.stable-actions{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.stable-help{margin:0;color:var(--muted,#64748b);font-size:.92rem}.stable-submit,.stable-like{border:0;border-radius:999px;padding:11px 16px;font-weight:900;cursor:pointer;background:var(--cyan,#38bdf8);color:#06121f}.stable-submit:disabled,.stable-like:disabled{opacity:.55;cursor:not-allowed}.stable-list{display:grid;gap:12px;margin-top:14px}.stable-empty{border:1px dashed var(--line-strong,rgba(30,41,59,.25));border-radius:20px;padding:18px;text-align:center;color:var(--muted,#64748b);font-weight:800}.stable-review{border:1px solid var(--line,rgba(30,41,59,.14));border-radius:20px;padding:16px;background:rgba(255,255,255,.56)}html[data-theme="dark"] .stable-review{background:rgba(15,23,42,.42)}.stable-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;color:var(--muted,#64748b);font-size:.9rem}.stable-author{font-weight:900;color:var(--text-strong,#0f172a)}.stable-pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;background:rgba(148,163,184,.16);font-weight:800;font-size:.82rem;color:var(--text-strong,#0f172a)}.stable-comment{white-space:pre-wrap;margin:9px 0 12px;color:var(--text-strong,#0f172a);line-height:1.55}.stable-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}@media(max-width:760px){.stable-reviews-head,.stable-actions{flex-direction:column;align-items:stretch}.stable-form{grid-template-columns:1fr}.stable-form .span-2,.stable-form .span-4{grid-column:auto}.stable-toolbar{align-items:stretch}.stable-toolbar label{justify-content:space-between}.stable-toolbar select{width:100%}}
+      [data-hidden-legacy-review-form="true"]{display:none!important}
+      .stable-reviews{max-width:1180px;margin:0 auto 76px;padding:0 20px}
+      .stable-reviews-card{background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);border-radius:26px;padding:clamp(20px,3vw,30px);box-shadow:var(--shadow)}
+      .stable-reviews-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+      .stable-reviews-kicker{font-size:.76rem;font-weight:1000;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+      .stable-reviews-title{font-size:clamp(1.65rem,3vw,2.35rem);line-height:1.08;font-weight:1000;margin:6px 0 8px;color:var(--text-strong)}
+      .stable-reviews-sub{margin:0;color:var(--muted);max-width:720px;line-height:1.65}
+      .stable-status{border-radius:14px;padding:10px 12px;font-weight:850;font-size:.88rem;background:color-mix(in srgb,var(--cyan) 13%,var(--surface));color:var(--text-strong);max-width:360px}
+      .stable-status.error{background:color-mix(in srgb,#ef4444 13%,var(--surface))}
+      .stable-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 20px}
+      .stable-summary-item{border:1px solid var(--line);border-radius:16px;background:var(--surface-solid);padding:14px}
+      .stable-summary-item small{display:block;color:var(--muted);font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+      .stable-summary-item strong{display:block;color:var(--text-strong);font-size:1.25rem;margin-top:5px}
+      .stable-toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:0 0 16px;flex-wrap:wrap}
+      .stable-toolbar>strong{color:var(--text-strong)}
+      .stable-toolbar label{display:flex;gap:9px;align-items:center;font-weight:900;color:var(--text-strong)}
+      .stable-toolbar select,.stable-form input,.stable-form select,.stable-form textarea{border:1px solid var(--line);border-radius:13px;background:var(--surface-solid);color:var(--text-strong);padding:11px 12px;font:inherit;outline:none;transition:border-color .18s,box-shadow .18s}
+      .stable-toolbar select:focus,.stable-form input:focus,.stable-form select:focus,.stable-form textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px color-mix(in srgb,var(--cyan) 13%,transparent)}
+      .stable-content-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:22px;align-items:start}
+      .stable-list{display:grid;gap:12px}
+      .stable-empty{border:1px dashed var(--line-strong);border-radius:18px;padding:24px;text-align:center;color:var(--muted);font-weight:800;background:color-mix(in srgb,var(--surface) 84%,transparent)}
+      .stable-review{border:1px solid var(--line);border-radius:18px;padding:17px;background:var(--surface-solid)}
+      .stable-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px;color:var(--muted);font-size:.86rem}
+      .stable-author{font-weight:1000;color:var(--text-strong)}
+      .stable-pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;background:var(--surface-2);border:1px solid var(--line);font-weight:850;font-size:.78rem;color:var(--text-strong)}
+      .stable-comment{white-space:pre-wrap;margin:10px 0 13px;color:var(--text);line-height:1.62}
+      .stable-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+      .stable-form-wrap{position:sticky;top:94px;border:1px solid var(--line);border-radius:20px;padding:18px;background:var(--surface-solid)}
+      .stable-form-title{margin:0 0 5px;color:var(--text-strong);font-size:1.15rem;font-weight:1000}
+      .stable-form-intro{margin:0 0 15px;color:var(--muted);font-size:.86rem;line-height:1.5}
+      .stable-form{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:0}
+      .stable-form label{display:flex;flex-direction:column;gap:6px;font-size:.82rem;font-weight:900;color:var(--text-strong)}
+      .stable-form textarea{min-height:118px;resize:vertical}
+      .stable-form .span-2{grid-column:1/-1}.stable-form .span-4{grid-column:1/-1}
+      .stable-actions{grid-column:1/-1;display:grid;gap:10px}
+      .stable-help{margin:0;color:var(--muted);font-size:.78rem;line-height:1.45}
+      .stable-submit,.stable-like{border:0;border-radius:999px;padding:11px 16px;font-weight:1000;cursor:pointer;background:var(--cyan);color:#06121f}
+      .stable-submit{width:100%}.stable-submit:disabled,.stable-like:disabled{opacity:.55;cursor:not-allowed}
+      @media(max-width:980px){.stable-content-grid{grid-template-columns:1fr}.stable-form-wrap{position:static}.stable-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media(max-width:620px){.stable-reviews{padding:0 14px;margin-bottom:52px}.stable-reviews-card{border-radius:20px;padding:17px}.stable-reviews-head{display:grid;gap:12px}.stable-summary{grid-template-columns:1fr 1fr}.stable-form{grid-template-columns:1fr}.stable-form .span-2,.stable-form .span-4{grid-column:auto}.stable-toolbar{align-items:stretch}.stable-toolbar label{display:grid;gap:6px}.stable-toolbar select{width:100%}.stable-footer{align-items:stretch}.stable-like{width:100%}}
     `;
     document.head.append(style);
   }
@@ -81,27 +119,55 @@
     `).join('');
   }
 
+  function summaryCards() {
+    const reviews = state.reviews;
+    const average = (key) => {
+      const values = reviews.map((review) => num(review[key])).filter((value) => value > 0);
+      return values.length ? (values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(1) : '—';
+    };
+    const hours = reviews.map((review) => num(review.study_hours)).filter((value) => value > 0);
+    const averageHours = hours.length ? `${Math.round(hours.reduce((sum, value) => sum + value, 0) / hours.length)} h` : '—';
+    return [
+      ['Dificultad', average('difficulty')],
+      ['Carga', average('workload')],
+      ['Utilidad', average('usefulness')],
+      ['Estudio semanal', averageHours]
+    ].map(([label, value]) => `<div class="stable-summary-item"><small>${label}</small><strong>${value}</strong></div>`).join('');
+  }
+
   function render() {
     const mount = mountRoot();
     const courseLabel = state.course ? `${state.course.code} · ${state.course.name}` : 'este ramo';
+    if (state.course) {
+      mount.dataset.courseId = String(state.course.id || '');
+      mount.dataset.courseCode = String(state.course.code || '');
+      mount.dataset.courseSlug = String(state.course.slug || '');
+    }
     const status = state.error ? `<div class="stable-status error">${esc(state.error)}</div>` : state.message ? `<div class="stable-status">${esc(state.message)}</div>` : '';
     mount.innerHTML = `
       <div class="stable-reviews-card">
-        <div class="stable-reviews-head"><div><div class="stable-reviews-kicker">Experiencia estudiantil</div><h2 class="stable-reviews-title">Comentarios de ${esc(courseLabel)}</h2><p class="stable-reviews-sub">Comparte tu experiencia de forma clara y respetuosa para orientar a futuras generaciones.</p></div>${status}</div>
+        <div class="stable-reviews-head"><div><div class="stable-reviews-kicker">Experiencia estudiantil</div><h2 class="stable-reviews-title">Lo que cuentan sobre ${esc(courseLabel)}</h2><p class="stable-reviews-sub">Lee experiencias reales y deja contexto útil para quienes tomarán el ramo después. Los comentarios de esta sección se cargan desde la base de datos del ramo.</p></div>${status}</div>
+        <div class="stable-summary">${summaryCards()}</div>
         <div class="stable-toolbar"><strong>${esc(state.reviews.length)} comentario${state.reviews.length === 1 ? '' : 's'}</strong><label>Ordenar por<select id="stable-review-sort"><option value="recent" ${state.sort === 'recent' ? 'selected' : ''}>Más recientes</option><option value="old" ${state.sort === 'old' ? 'selected' : ''}>Más antiguos</option><option value="popular" ${state.sort === 'popular' ? 'selected' : ''}>Más populares</option><option value="likes" ${state.sort === 'likes' ? 'selected' : ''}>Más Me gusta</option></select></label></div>
-        <div class="stable-list" id="stable-review-list">${renderReviews()}</div>
-        <form class="stable-form" id="stable-review-form" action="" method="post" novalidate>
-          <label class="span-2">Nombre o alias opcional<input name="student_name" maxlength="80" placeholder="Ej: estudiante anónimo"></label>
-          <label class="span-2">Profesor/a opcional<input name="professor_name" maxlength="120" placeholder="Nombre del profesor/a"></label>
-          <label>Año<input name="term_year" type="number" min="2020" max="2035" placeholder="2026"></label>
-          <label>Semestre cursado<select name="term_semester"><option value="">No indicar</option><option value="1">1</option><option value="2">2</option><option value="Verano">Verano</option></select></label>
-          <label>Dificultad<select name="difficulty" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
-          <label>Carga de trabajo<select name="workload" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
-          <label>Utilidad<select name="usefulness" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
-          <label>Horas/semana aprox.<input name="study_hours" type="number" min="0" max="80" placeholder="Ej: 6"></label>
-          <label class="span-4">Comentario<textarea name="comment" minlength="20" maxlength="1500" required placeholder="Cuenta tu experiencia: cómo estudiar, qué fue difícil, qué recomiendas, etc."></textarea></label>
-          <div class="stable-actions"><p class="stable-help">Evita publicar datos sensibles. Tu comentario será visible en la ficha de este ramo.</p><button class="stable-submit" type="submit" ${state.saving ? 'disabled' : ''}>${state.saving ? 'Publicando...' : 'Publicar comentario'}</button></div>
-        </form>
+        <div class="stable-content-grid">
+          <div class="stable-list" id="stable-review-list">${renderReviews()}</div>
+          <aside class="stable-form-wrap">
+            <h3 class="stable-form-title">Cuenta tu experiencia</h3>
+            <p class="stable-form-intro">Sé concreto y respetuoso. Tu opinión quedará asociada únicamente a <strong>${esc(courseLabel)}</strong>.</p>
+            <form class="stable-form" id="stable-review-form" action="" method="post" novalidate>
+              <label class="span-2">Nombre o alias opcional<input name="student_name" maxlength="80" placeholder="Puedes dejarlo vacío"></label>
+              <label class="span-2">Profesor/a opcional<input name="professor_name" maxlength="120" placeholder="Nombre del profesor/a"></label>
+              <label>Año<input name="term_year" type="number" min="2020" max="2035" placeholder="2026"></label>
+              <label>Semestre cursado<select name="term_semester"><option value="">No indicar</option><option value="1">1° semestre</option><option value="2">2° semestre</option><option value="Verano">Verano</option></select></label>
+              <label>Dificultad<select name="difficulty" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
+              <label>Carga<select name="workload" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
+              <label>Utilidad<select name="usefulness" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
+              <label>Horas/semana<input name="study_hours" type="number" min="0" max="80" placeholder="Ej: 6"></label>
+              <label class="span-4">Comentario<textarea name="comment" minlength="20" maxlength="1500" required placeholder="¿Cómo fue cursarlo? ¿Qué costó más? ¿Qué consejo dejarías?"></textarea></label>
+              <div class="stable-actions"><p class="stable-help">Evita datos sensibles. La opinión se guarda en la base comunitaria y se muestra solo en la ficha de este ramo.</p><button class="stable-submit" type="submit" ${state.saving ? 'disabled' : ''}>${state.saving ? 'Publicando...' : 'Publicar comentario'}</button></div>
+            </form>
+          </aside>
+        </div>
       </div>
     `;
   }
@@ -165,9 +231,12 @@
       state.error = '';
       state.message = 'Publicando comentario...';
       render();
-      await window.WikiDiftelDB.submitCourseReview(slug, data);
+      const inserted = await window.WikiDiftelDB.submitCourseReview(slug, data);
+      if (!inserted?.id || String(inserted.course_id) !== String(state.course?.id)) {
+        throw new Error('Supabase no confirmó correctamente la asociación del comentario con este ramo.');
+      }
       state.saving = false;
-      state.message = 'Comentario publicado correctamente.';
+      state.message = 'Comentario publicado y asociado correctamente a este ramo.';
       await refreshReviews(false);
       const currentForm = $('#stable-review-form');
       if (currentForm) currentForm.reset();
