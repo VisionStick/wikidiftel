@@ -103,21 +103,39 @@
       throw new Error('La opinión es muy larga. Máximo 1500 caracteres.');
     }
 
-    const cleanInt = (value) => {
+    const optionalInt = (value) => {
+      if (value === '' || value === null || value === undefined) return null;
       const n = Number(value);
       return Number.isFinite(n) ? Math.round(n) : null;
     };
+    const requireRange = (value, min, max, label) => {
+      const n = optionalInt(value);
+      if (n === null || n < min || n > max) throw new Error(`${label} debe estar entre ${min} y ${max}.`);
+      return n;
+    };
+    const termYear = optionalInt(payload.term_year);
+    if (termYear !== null && (termYear < 2020 || termYear > 2035)) {
+      throw new Error('El año cursado debe estar entre 2020 y 2035.');
+    }
+    const studyHours = optionalInt(payload.study_hours);
+    if (studyHours !== null && (studyHours < 0 || studyHours > 80)) {
+      throw new Error('Las horas de estudio deben estar entre 0 y 80.');
+    }
+    const termSemester = String(payload.term_semester || '').trim();
+    if (termSemester && !['1', '2', 'Verano'].includes(termSemester)) {
+      throw new Error('Semestre cursado inválido.');
+    }
 
     const review = {
       course_id: course.id,
       student_name: String(payload.student_name || '').trim() || null,
       professor_name: String(payload.professor_name || '').trim() || null,
-      term_year: cleanInt(payload.term_year),
-      term_semester: String(payload.term_semester || '').trim() || null,
-      difficulty: cleanInt(payload.difficulty),
-      workload: cleanInt(payload.workload),
-      usefulness: cleanInt(payload.usefulness),
-      study_hours: cleanInt(payload.study_hours),
+      term_year: termYear,
+      term_semester: termSemester || null,
+      difficulty: requireRange(payload.difficulty, 1, 5, 'Dificultad'),
+      workload: requireRange(payload.workload, 1, 5, 'Carga de trabajo'),
+      usefulness: requireRange(payload.usefulness, 1, 5, 'Utilidad'),
+      study_hours: studyHours,
       comment,
       status: 'approved',
       likes_count: 0
