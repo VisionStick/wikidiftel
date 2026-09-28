@@ -138,6 +138,11 @@
   function render() {
     const mount = mountRoot();
     const courseLabel = state.course ? `${state.course.code} · ${state.course.name}` : 'este ramo';
+    if (state.course) {
+      mount.dataset.courseId = String(state.course.id || '');
+      mount.dataset.courseCode = String(state.course.code || '');
+      mount.dataset.courseSlug = String(state.course.slug || '');
+    }
     const status = state.error ? `<div class="stable-status error">${esc(state.error)}</div>` : state.message ? `<div class="stable-status">${esc(state.message)}</div>` : '';
     mount.innerHTML = `
       <div class="stable-reviews-card">
@@ -226,9 +231,12 @@
       state.error = '';
       state.message = 'Publicando comentario...';
       render();
-      await window.WikiDiftelDB.submitCourseReview(slug, data);
+      const inserted = await window.WikiDiftelDB.submitCourseReview(slug, data);
+      if (!inserted?.id || String(inserted.course_id) !== String(state.course?.id)) {
+        throw new Error('Supabase no confirmó correctamente la asociación del comentario con este ramo.');
+      }
       state.saving = false;
-      state.message = 'Comentario publicado correctamente.';
+      state.message = 'Comentario publicado y asociado correctamente a este ramo.';
       await refreshReviews(false);
       const currentForm = $('#stable-review-form');
       if (currentForm) currentForm.reset();
