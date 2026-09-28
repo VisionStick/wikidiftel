@@ -56,11 +56,19 @@ create index if not exists idx_course_review_reactions_review_reaction
   on public.course_review_reactions(review_id, reaction);
 
 -- Si ya existían likes del sistema anterior, los conservamos.
-insert into public.course_review_reactions (review_id, client_token, reaction)
-select l.review_id, l.client_token, 'like'
-from public.course_review_likes l
-where to_regclass('public.course_review_likes') is not null
-on conflict (review_id, client_token) do nothing;
+-- El bloque dinámico evita fallar si course_review_likes nunca fue creada.
+do $
+begin
+  if to_regclass('public.course_review_likes') is not null then
+    execute $migrate$
+      insert into public.course_review_reactions (review_id, client_token, reaction)
+      select review_id, client_token, 'like'
+      from public.course_review_likes
+      on conflict (review_id, client_token) do nothing
+    $migrate$;
+  end if;
+end
+$;
 
 -- 3) RLS.
 alter table public.course_reviews enable row level security;
