@@ -50,10 +50,15 @@
       .stable-form .span-2{grid-column:1/-1}.stable-form .span-4{grid-column:1/-1}
       .stable-actions{grid-column:1/-1;display:grid;gap:10px}
       .stable-help{margin:0;color:var(--muted);font-size:.78rem;line-height:1.45}
-      .stable-submit,.stable-like{border:0;border-radius:999px;padding:11px 16px;font-weight:1000;cursor:pointer;background:var(--cyan);color:#06121f}
-      .stable-submit{width:100%}.stable-submit:disabled,.stable-like:disabled{opacity:.55;cursor:not-allowed}
+      .stable-submit{border:0;border-radius:999px;padding:11px 16px;font-weight:1000;cursor:pointer;background:var(--cyan);color:#06121f}
+      .stable-submit{width:100%}.stable-submit:disabled,.stable-reaction:disabled{opacity:.55;cursor:not-allowed}
+      .stable-reactions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+      .stable-reaction{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font:inherit;font-size:.82rem;font-weight:950;cursor:pointer;background:var(--surface-2);color:var(--text-strong);transition:transform .15s,border-color .15s,background .15s}
+      .stable-reaction:hover{transform:translateY(-1px);border-color:var(--line-strong)}
+      .stable-reaction.like:hover{background:color-mix(in srgb,var(--cyan) 12%,var(--surface-2))}
+      .stable-reaction.dislike:hover{background:color-mix(in srgb,#ef4444 10%,var(--surface-2))}
       @media(max-width:980px){.stable-content-grid{grid-template-columns:1fr}.stable-form-wrap{position:static}.stable-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media(max-width:620px){.stable-reviews{padding:0 14px;margin-bottom:52px}.stable-reviews-card{border-radius:20px;padding:17px}.stable-reviews-head{display:grid;gap:12px}.stable-summary{grid-template-columns:1fr 1fr}.stable-form{grid-template-columns:1fr}.stable-form .span-2,.stable-form .span-4{grid-column:auto}.stable-toolbar{align-items:stretch}.stable-toolbar label{display:grid;gap:6px}.stable-toolbar select{width:100%}.stable-footer{align-items:stretch}.stable-like{width:100%}}
+      @media(max-width:620px){.stable-reviews{padding:0 14px;margin-bottom:52px}.stable-reviews-card{border-radius:20px;padding:17px}.stable-reviews-head{display:grid;gap:12px}.stable-summary{grid-template-columns:1fr 1fr}.stable-form{grid-template-columns:1fr}.stable-form .span-2,.stable-form .span-4{grid-column:auto}.stable-toolbar{align-items:stretch}.stable-toolbar label{display:grid;gap:6px}.stable-toolbar select{width:100%}.stable-footer{align-items:stretch}.stable-reactions{width:100%}.stable-reaction{flex:1;justify-content:center}}
     `;
     document.head.append(style);
   }
@@ -114,7 +119,7 @@
         <div class="stable-meta"><span class="stable-author">${esc(review.student_name || 'Estudiante anónimo')}</span>${review.professor_name ? `<span>con ${esc(review.professor_name)}</span>` : ''}${review.term_year ? `<span>${esc(review.term_semester || 'Semestre')} ${esc(review.term_year)}</span>` : ''}${review.created_at ? `<span>${esc(formatDate(review.created_at))}</span>` : ''}</div>
         <div class="stable-meta">${pill('Dificultad', review.difficulty)}${pill('Carga', review.workload)}${pill('Utilidad', review.usefulness)}${review.study_hours ? `<span class="stable-pill">${esc(review.study_hours)} h/sem aprox.</span>` : ''}</div>
         <p class="stable-comment">${esc(review.comment)}</p>
-        <div class="stable-footer"><span class="stable-pill">${esc(review.course_code || state.course?.code || '')}</span><button class="stable-like" type="button" data-review-like="${esc(review.id)}">Me gusta · ${esc(review.likes_count || 0)}</button></div>
+        <div class="stable-footer"><span class="stable-pill">${esc(review.course_code || state.course?.code || '')}</span><div class="stable-reactions" aria-label="Reacciones al comentario"><button class="stable-reaction like" type="button" data-review-reaction="like" data-review-id="${esc(review.id)}" aria-label="Me gusta">👍 <span>${esc(review.likes_count || 0)}</span></button><button class="stable-reaction dislike" type="button" data-review-reaction="dislike" data-review-id="${esc(review.id)}" aria-label="No me gusta">👎 <span>${esc(review.dislikes_count || 0)}</span></button></div></div>
       </article>
     `).join('');
   }
@@ -249,19 +254,28 @@
     }
   }
 
-  async function likeReview(button) {
-    const reviewId = button.dataset.reviewLike;
-    if (!reviewId || !window.WikiDiftelDB?.likeCourseReview) return;
+  async function reactToReview(button) {
+    const reviewId = button.dataset.reviewId;
+    const reaction = button.dataset.reviewReaction;
+    if (!reviewId || !['like', 'dislike'].includes(reaction) || !window.WikiDiftelDB?.reactToCourseReview) return;
     try {
       button.disabled = true;
-      const result = await window.WikiDiftelDB.likeCourseReview(reviewId);
+      state.error = '';
+      const result = await window.WikiDiftelDB.reactToCourseReview(reviewId, reaction);
       const review = state.reviews.find((item) => String(item.id) === String(reviewId));
-      if (review && result?.likes_count !== undefined) review.likes_count = result.likes_count;
-      state.message = result?.inserted === false ? 'Ya habías marcado Me gusta en este comentario.' : '';
+      if (review) {
+        if (result?.likes_count !== undefined) review.likes_count = result.likes_count;
+        if (result?.dislikes_count !== undefined) review.dislikes_count = result.dislikes_count;
+      }
+      state.message = result?.action === 'changed'
+        ? 'Reacción actualizada.'
+        : result?.action === 'removed'
+          ? 'Reacción retirada.'
+          : '';
       render();
     } catch (error) {
       console.warn(error);
-      state.error = 'No pudimos registrar el Me gusta por ahora.';
+      state.error = 'No pudimos registrar la reacción por ahora.';
       render();
     }
   }
@@ -284,8 +298,8 @@
   });
 
   document.addEventListener('click', (event) => {
-    const button = event.target?.closest?.('[data-review-like]');
-    if (button) likeReview(button);
+    const button = event.target?.closest?.('[data-review-reaction]');
+    if (button) reactToReview(button);
   });
 
   document.addEventListener('DOMContentLoaded', () => {
