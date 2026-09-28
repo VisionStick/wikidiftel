@@ -130,6 +130,35 @@
       </div>`;
   }
 
+  function setupPreviewCards() {
+    $('[data-preview-card]').forEach((card) => {
+      let holdTimer = null;
+      let openedByHold = false;
+      const closeTimer = () => {
+        if (holdTimer) clearTimeout(holdTimer);
+        holdTimer = null;
+      };
+      card.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse') return;
+        openedByHold = false;
+        holdTimer = setTimeout(() => {
+          openedByHold = true;
+          $('.preview-open').forEach((other) => { if (other !== card) other.classList.remove('preview-open'); });
+          card.classList.add('preview-open');
+          if (navigator.vibrate) navigator.vibrate(18);
+        }, 550);
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => card.addEventListener(name, closeTimer));
+      card.addEventListener('click', (event) => {
+        if (openedByHold || card.classList.contains('preview-open')) {
+          event.preventDefault();
+          card.classList.remove('preview-open');
+          openedByHold = false;
+        }
+      });
+    });
+  }
+
   function setupGlobalSearchShortcut() {
     document.addEventListener('keydown', (event) => {
       const target = event.target;
@@ -149,5 +178,6 @@
   ensureFavicon();
   revealContent();
   renderFooter();
+  setupPreviewCards();
   setupGlobalSearchShortcut();
 })();
