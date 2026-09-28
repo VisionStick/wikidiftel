@@ -1,8 +1,8 @@
 (() => {
   const cfg = window.WIKIDIFTEL_SUPABASE;
   const COURSE_SELECT = 'id,code,slug,name,sct,summary,description,sort_order,is_active,semester_number,semester_name,area_name,area_slug,area_color';
-  const REVIEW_SELECT = 'id,course_id,course_code,course_slug,course_name,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,created_at,status';
-  const REVIEW_BASE_SELECT = 'id,course_id,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,created_at,status';
+  const REVIEW_SELECT = 'id,course_id,course_code,course_slug,course_name,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,created_at,status,dislikes_count';
+  const REVIEW_BASE_SELECT = 'id,course_id,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,dislikes_count,created_at,status';
 
   async function request(path, params = {}, options = {}) {
     if (!cfg?.url || !cfg?.key) {
@@ -77,26 +77,6 @@
     return byCode[0] || null;
   }
 
-  async function getReviewLikeCounts(reviewIds = []) {
-    const ids = reviewIds.map(Number).filter(Number.isFinite);
-    if (!ids.length) return new Map();
-
-    try {
-      const likes = await request('course_review_likes', {
-        select: 'review_id',
-        review_id: `in.(${ids.join(',')})`
-      });
-      return likes.reduce((counts, item) => {
-        const id = String(item.review_id);
-        counts.set(id, (counts.get(id) || 0) + 1);
-        return counts;
-      }, new Map());
-    } catch (error) {
-      console.warn('No se pudieron cargar los Me gusta; se continúa sin contador.', error);
-      return new Map();
-    }
-  }
-
   async function getReviewsForCourse(slugOrCode) {
     const course = await getCourseBySlug(slugOrCode);
     if (!course) return { course: null, reviews: [] };
@@ -117,8 +97,6 @@
         status: 'eq.approved',
         order: 'created_at.desc,id.desc'
       });
-      const likeCounts = await getReviewLikeCounts(reviews.map((review) => review.id));
-
       return {
         course,
         reviews: reviews.map((review) => ({
@@ -126,7 +104,8 @@
           course_code: course.code,
           course_slug: course.slug,
           course_name: course.name,
-          likes_count: likeCounts.get(String(review.id)) || 0
+          likes_count: Number(review.likes_count) || 0,
+          dislikes_count: Number(review.dislikes_count) || 0
         }))
       };
     }
@@ -202,14 +181,25 @@
     return token;
   }
 
-  async function likeCourseReview(reviewId) {
+  async function reactToCourseReview(reviewId, reaction) {
     const id = Number(reviewId);
     if (!Number.isFinite(id)) throw new Error('Comentario inválido.');
-    const result = await rpc('like_course_review', {
+    if (!['like', 'dislike'].includes(reaction)) throw new Error('Reacción inválida.');
+
+    const result = await rpc('set_course_review_reaction', {
       review_id_input: id,
-      client_token_input: getClientToken()
+      client_token_input: getClientToken(),
+      reaction_input: reaction
     });
     return Array.isArray(result) ? result[0] : result;
+  }
+
+  async function likeCourseReview(reviewId) {
+    return reactToCourseReview(reviewId, 'like');
+  }
+
+  async function dislikeCourseReview(reviewId) {
+    return reactToCourseReview(reviewId, 'dislike');
   }
 
   window.WikiDiftelDB = {
@@ -219,6 +209,8 @@
     getCourseBySlug,
     getReviewsForCourse,
     submitCourseReview,
-    likeCourseReview
+    reactToCourseReview,
+    likeCourseReview,
+    dislikeCourseReview
   };
 })();
