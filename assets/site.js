@@ -112,6 +112,7 @@
           <a href="${base}proyectos/">Proyectos</a>
           <a href="${base}talleres/">Talleres</a>
           <a href="${base}comunidad/">Comunidad</a>
+          <a href="${base}que-es-telematica/">Qué es telemática</a>
         </div>
         <div class="footer-column">
           <strong>Participar</strong>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="warm">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark">
+  <link rel="icon" type="image/png" href="../icon.png">
+  <link rel="shortcut icon" type="image/png" href="../icon.png">
+  <link rel="apple-touch-icon" href="../icon.png">
+  <title>¿Qué es la Telemática? · USM San Joaquín · DIFTEL SJ</title>
+  <meta name="description" content="Qué es la Ingeniería Civil Telemática, en qué se diferencia de Informática, su relación con el hacking y la ciberseguridad, y qué se estudia en la USM San Joaquín.">
+  <link rel="canonical" href="https://diftel.cl/que-es-telematica/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="es_CL">
+  <meta property="og:site_name" content="DIFTEL SJ">
+  <meta property="og:title" content="¿Qué es la Telemática? · USM San Joaquín">
+  <meta property="og:description" content="Qué es la Ingeniería Civil Telemática, en qué se diferencia de Informática y su relación con el hacking y la ciberseguridad.">
+  <meta property="og:url" content="https://diftel.cl/que-es-telematica/">
+  <meta property="og:image" content="https://diftel.cl/diftel.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="robots" content="index, follow">
+  <script>(function(){const saved=localStorage.getItem('diftel-theme');const theme=['warm','light','dark'].includes(saved)?saved:'warm';document.documentElement.setAttribute('data-theme',theme);})();</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Nunito Sans','Inter','sans-serif']}}}}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/landing.css">
+  <style>
+    .faq-section{padding-block:10px 70px}
+    .faq-list{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+    .faq-item{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+    .faq-item summary{cursor:pointer;list-style:none;padding:18px 22px;font-weight:850;font-size:16px;color:var(--text-strong);display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .faq-item summary::-webkit-details-marker{display:none}
+    .faq-item summary::after{content:'+';font-size:22px;font-weight:400;color:var(--blue);flex:0 0 auto}
+    .faq-item[open] summary::after{content:'–'}
+    .faq-item p{margin:0;padding:0 22px 20px;color:var(--muted);font-size:15px;line-height:1.7;max-width:760px}
+    .faq-item p a{color:var(--blue);font-weight:800;text-decoration:underline}
+    .faq-intro{max-width:760px;color:var(--muted);font-size:16px;line-height:1.7;margin-top:14px}
+  </style>
+</head>
+<body class="site-body"><a href="#contenido" class="skip-link">Saltar al contenido</a><div class="ambient-bg" aria-hidden="true"><span class="ambient-orb ambient-orb-a"></span><span class="ambient-orb ambient-orb-b"></span><span class="ambient-grid"></span></div><nav class="topbar" aria-label="Navegación principal">
+    <div class="topbar-inner">
+        <a href="../" class="brand" aria-label="DIFTEL SJ, volver al inicio"><span class="brand-mark brand-mark-img" aria-hidden="true"><img src="../diftel-logo.png" alt="DIFTEL"></span></a>
+        <div class="desktop-nav"><a href=".././" class="nav-link">Inicio</a><a href="../malla/" class="nav-link">Malla</a><a href="../proyectos/" class="nav-link">Proyectos</a><a href="../talleres/" class="nav-link">Talleres</a><a href="../comunidad/" class="nav-link">Comunidad</a><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n" class="nav-link">Wiki ↗</a></div>
+        <div class="topbar-actions"><form action="../buscar/" method="get" class="mini-search desktop-search" role="search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" name="q" placeholder="Buscar en DIFTEL…" aria-label="Buscar en DIFTEL"></form><div class="theme-picker" data-theme-picker><button class="theme-trigger" type="button" aria-label="Cambiar tema" aria-expanded="false" data-theme-trigger><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.5A6.7 6.7 0 0 1 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><div class="theme-menu" data-theme-menu><button type="button" data-set-theme="warm"><span class="theme-dot dot-warm"></span><span>Cálido</span></button><button type="button" data-set-theme="light"><span class="theme-dot dot-light"></span><span>Blanco</span></button><button type="button" data-set-theme="dark"><span class="theme-dot dot-dark"></span><span>Oscuro</span></button></div></div><button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button></div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden><form action="../buscar/" method="get" class="mini-search mobile-search" role="search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" name="q" placeholder="Buscar ramos, proyectos, talleres…" aria-label="Buscar en DIFTEL"></form><a href=".././">Inicio</a><a href="../malla/">Malla y Ramos</a><a href="../proyectos/">Proyectos</a><a href="../talleres/">Talleres</a><a href="../comunidad/">Comunidad</a><a target="_blank" rel="noopener" href="https://wiki-diftel.josnic.cl/share/x82bmjt0f4/p/biblioteca-diftel-iINlC7wT9n">Wiki / Apuntes ↗</a><a href="../buzon/" class="mobile-upload">Opinar en ramos</a></div>
+</nav><main id="contenido" class="site-main">
+  <section class="page-hero section-shell compact reveal">
+    <div>
+      <span class="eyebrow">La carrera, explicada sin tecnicismos</span>
+      <h1>¿Qué es la Telemática?</h1>
+      <p class="faq-intro">Telemática es la ingeniería que combina telecomunicaciones e informática: diseña, administra y protege las redes que hacen posible que la información viaje —desde una antena, un satélite o un cable de fibra óptica— hasta cualquier pantalla, rápido, estable y de forma segura. Es la disciplina detrás de internet, las redes móviles, la nube y buena parte de la infraestructura digital que usamos todos los días.</p>
+    </div>
+    <div class="page-hero-note"><span>✦</span><p>Esta página la escriben estudiantes de Ingeniería Civil Telemática USM, Campus San Joaquín. No reemplaza la información oficial de la universidad.</p></div>
+  </section>
+
+  <section class="section-shell faq-section" aria-label="Preguntas frecuentes sobre Telemática">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2>Lo que más preguntan sobre la carrera</h2>
+    </div>
+    <div class="faq-list reveal delay-1">
+      <details class="faq-item">
+        <summary>¿Cuál es la diferencia entre Telemática e Informática?</summary>
+        <p>Ambas carreras comparten una base de programación y estructuras de datos, pero el foco es distinto. Informática / Ingeniería Civil en Computación se especializa en el desarrollo de software y sistemas. Telemática se especializa en la infraestructura que conecta esos sistemas: redes, transmisión de señales, comunicaciones y ciberseguridad. En la práctica, quien estudia Telemática entiende tanto de redes y protocolos como de programación e inteligencia artificial aplicada a esas redes.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Telemática tiene relación con el hacking o la ciberseguridad?</summary>
+        <p>Sí. La malla de Ingeniería Civil Telemática USM incluye ramos específicos de ciberseguridad —como Ingeniería en Ciberseguridad—, además de redes, sistemas operativos y administración de redes: las mismas bases técnicas que usa el hacking ético o pentesting. DIFTEL organiza además un <a href="../talleres/Taller_ctf.html">CTF de Ciberseguridad</a> abierto a la comunidad, con desafíos de criptografía, redes y análisis de tráfico.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué se estudia en Ingeniería Civil Telemática USM, Campus San Joaquín?</summary>
+        <p>La carrera dura 10 semestres e incluye ciencias básicas (cálculo, física, álgebra), programación, redes de computadores, electrónica digital, sistemas de comunicaciones, ciberseguridad, ciencia de datos, administración de redes y un bloque de electivos disciplinares hacia el final de la malla. Puedes revisar la <a href="../malla/">malla completa, semestre a semestre, acá</a>.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Dónde se estudia Telemática en la USM?</summary>
+        <p>En la Universidad Técnica Federico Santa María, Ingeniería Civil Telemática se dicta en el Campus San Joaquín, en Santiago. DIFTEL es la organización estudiantil que reúne la malla, proyectos, talleres y experiencias de quienes cursan la carrera en ese campus.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué hace un Ingeniero o Ingeniera Civil Telemático/a?</summary>
+        <p>Diseña, administra y protege redes e infraestructura de comunicaciones: desde redes corporativas y móviles hasta sistemas en la nube, IoT y ciberseguridad. También aplica inteligencia artificial y ciencia de datos para optimizar redes y sistemas, en proyectos donde la información necesita viajar rápido, de forma estable y segura.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section-shell contribution-banner reveal"><div><span class="eyebrow light">Sigue explorando</span><h2>Recorre la malla completa o prueba el CTF de ciberseguridad.</h2><p>La mejor forma de entender la carrera es ver los ramos semestre a semestre o meterte de lleno en un desafío práctico.</p></div><a href="../malla/" class="button button-light">Ver la malla <span>→</span></a></section>
+</main>
+<footer class="site-footer"><div class="section-shell footer-grid"><div><strong>DIFTEL SJ</strong><p>Portal estudiantil de Telemática USM San Joaquín. Un archivo vivo para compartir lo que aprendemos, hacemos y recordamos.</p></div><div class="footer-links"><a href="../malla/">Malla</a><a href="../proyectos/">Proyectos</a><a href="../talleres/">Talleres</a><a href="../comunidad/">Comunidad</a><a href="../buzon/">Aportar</a></div></div></footer>
+<script src="../assets/site.js" defer></script><script src="../assets/site-cleanup.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Cuál es la diferencia entre Telemática e Informática?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ambas carreras comparten una base de programación y estructuras de datos, pero el foco es distinto. Informática o Ingeniería Civil en Computación se especializa en el desarrollo de software y sistemas. Telemática se especializa en la infraestructura que conecta esos sistemas: redes, transmisión de señales, comunicaciones y ciberseguridad."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Telemática tiene relación con el hacking o la ciberseguridad?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. La malla de Ingeniería Civil Telemática USM incluye ramos específicos de ciberseguridad, además de redes, sistemas operativos y administración de redes: las mismas bases técnicas que usa el hacking ético o pentesting. DIFTEL organiza además un CTF de ciberseguridad abierto a la comunidad."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué se estudia en Ingeniería Civil Telemática USM, Campus San Joaquín?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "La carrera dura 10 semestres e incluye ciencias básicas, programación, redes de computadores, electrónica digital, sistemas de comunicaciones, ciberseguridad, ciencia de datos, administración de redes y electivos disciplinares."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Dónde se estudia Telemática en la USM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "En la Universidad Técnica Federico Santa María, Ingeniería Civil Telemática se dicta en el Campus San Joaquín, en Santiago."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué hace un Ingeniero o Ingeniera Civil Telemático/a?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diseña, administra y protege redes e infraestructura de comunicaciones, desde redes corporativas y móviles hasta sistemas en la nube, IoT y ciberseguridad, aplicando también inteligencia artificial y ciencia de datos."
+      }
+    }
+  ]
+}
+</script>
+</body>
+</html>
