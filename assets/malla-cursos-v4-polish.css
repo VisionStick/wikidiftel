@@ -7,31 +7,50 @@
   min-height:48px;
   padding:0 42px 0 14px;
   border-radius:14px;
-  border:1px solid color-mix(in srgb, var(--cyan) 55%, var(--line));
-  background-color:#102739;
-  color:#eef8ff;
+  border:1px solid color-mix(in srgb, var(--cyan) 40%, var(--line-strong));
+  background-color:var(--surface-solid);
+  color:var(--text-strong);
   font-size:13px;
   font-weight:900;
   line-height:1.2;
-  box-shadow:0 10px 24px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.03);
+  box-shadow:var(--shadow), inset 0 1px 0 color-mix(in srgb, #fff 38%, transparent);
   background-image:
-    linear-gradient(45deg, transparent 50%, #7ad9ff 50%),
-    linear-gradient(135deg, #7ad9ff 50%, transparent 50%),
-    linear-gradient(to right, transparent, transparent);
+    linear-gradient(45deg, transparent 50%, var(--cyan) 50%),
+    linear-gradient(135deg, var(--cyan) 50%, transparent 50%),
+    linear-gradient(to right, color-mix(in srgb, var(--line) 45%, transparent), color-mix(in srgb, var(--line) 45%, transparent));
   background-position:
     calc(100% - 18px) calc(50% - 3px),
     calc(100% - 12px) calc(50% - 3px),
-    100% 0;
-  background-size:6px 6px, 6px 6px, 2.6em 2.6em;
+    calc(100% - 2.65em) 50%;
+  background-size:6px 6px, 6px 6px, 1px 58%;
   background-repeat:no-repeat;
-  transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
+  transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease, transform .18s ease;
 }
 .malla-filter-form.v4 select:hover,
-.sort-box-v4 select:hover{background-color:#123147;border-color:#56d6ff}
+.sort-box-v4 select:hover{
+  background-color:var(--surface-2);
+  border-color:color-mix(in srgb, var(--cyan) 72%, var(--line-strong));
+}
 .malla-filter-form.v4 select:focus,
-.sort-box-v4 select:focus{outline:none;border-color:#71deff;box-shadow:0 0 0 4px rgba(59,197,255,.18),0 12px 26px rgba(0,0,0,.18)}
+.sort-box-v4 select:focus{
+  outline:none;
+  border-color:var(--cyan);
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--cyan) 18%, transparent), var(--shadow-hover);
+}
 .malla-filter-form.v4 select option,
-.sort-box-v4 select option{background:#102739;color:#eef8ff}
+.sort-box-v4 select option{
+  background:var(--surface-solid);
+  color:var(--text-strong);
+}
+html[data-theme="dark"] .malla-filter-form.v4 select,
+html[data-theme="dark"] .sort-box-v4 select{
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.04);
+}
+html[data-theme="dark"] .malla-filter-form.v4 select option,
+html[data-theme="dark"] .sort-box-v4 select option{
+  background:var(--surface-solid);
+  color:var(--text-strong);
+}
 .malla-filter-form.v4{align-items:end}.malla-filter-form.v4 .button,.malla-filter-form.v4 .clear-filter{min-height:48px}
 
 .malla-board-v4{gap:16px;padding-bottom:20px}.semester-v4{display:flex;flex-direction:column}.semester-cards-v4{gap:12px}

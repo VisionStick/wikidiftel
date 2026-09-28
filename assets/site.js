@@ -6,6 +6,8 @@
   const repoIndex = pathParts.indexOf('wikidiftel');
   const depth = repoIndex >= 0 ? Math.max(0, pathParts.length - repoIndex - 1) : pathParts.length;
   const base = depth ? '../'.repeat(depth) : './';
+  const faviconSrc = `${base}icon.png`;
+  const brandLogoSrc = `${base}diftel-logo.png`;
 
   function setTheme(theme) {
     const safeTheme = themes.includes(theme) ? theme : 'warm';
@@ -84,30 +86,12 @@
   }
 
   function ensureFavicon() {
-    const href = `${base}icon.png`;
     $$('link[rel="icon"], link[rel="shortcut icon"]').forEach((link) => link.remove());
     const icon = document.createElement('link');
     icon.rel = 'icon';
     icon.type = 'image/png';
-    icon.href = href;
+    icon.href = faviconSrc;
     document.head.append(icon);
-  }
-
-  function cleanObsoleteLinks(root = document) {
-    $$('a', root).forEach((link) => {
-      const text = (link.textContent || '').trim().toLowerCase();
-      const href = (link.getAttribute('href') || '').toLowerCase();
-      if (href.includes('wiki-diftel.josnic.cl') || text === 'wiki ↗' || text.includes('wiki / apuntes') || text.includes('wiki diftel')) {
-        link.remove();
-        return;
-      }
-      if (text.includes('subir material') || text.includes('aportar material') || text === 'aportar') {
-        link.textContent = 'Opinar en ramos';
-        link.href = `${base}malla/`;
-        link.removeAttribute('target');
-        link.removeAttribute('rel');
-      }
-    });
   }
 
   function renderFooter() {
@@ -117,7 +101,7 @@
       <div class="section-shell footer-main">
         <div class="footer-brand-block">
           <a href="${base}" class="footer-brand">
-            <span class="brand-mark brand-mark-img" aria-hidden="true"><img src="${base}icon.png" alt="DIFTEL"></span>
+            <span class="brand-mark brand-mark-img" aria-hidden="true"><img src="${brandLogoSrc}" alt="DIFTEL"></span>
             <span><strong>DIFTEL SJ</strong><small>San Joaquín</small></span>
           </a>
           <p>Hecho por estudiantes, para estudiantes. Una biblioteca viva de ramos, proyectos, talleres y recuerdos de Telemática.</p>
@@ -166,6 +150,5 @@
   ensureFavicon();
   revealContent();
   renderFooter();
-  cleanObsoleteLinks();
   setupGlobalSearchShortcut();
 })();
