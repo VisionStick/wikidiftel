@@ -12,6 +12,24 @@
     return meta;
   }
 
+
+  function ensurePropertyMeta(property) {
+    let meta = document.querySelector(`meta[property="${property}"]`);
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('property', property);
+      document.head.append(meta);
+    }
+    return meta;
+  }
+
+  function updateSocialSeo(title, description, canonicalHref) {
+    ensurePropertyMeta('og:title').setAttribute('content', title);
+    ensurePropertyMeta('og:description').setAttribute('content', description);
+    ensurePropertyMeta('og:url').setAttribute('content', canonicalHref);
+    ensurePropertyMeta('og:image').setAttribute('content', `${location.origin}/assets/diftel.jpeg`);
+  }
+
   function ensureCanonical() {
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -63,9 +81,12 @@
       const course = await window.WikiDiftelDB.getCourseBySlug(slug);
       if (!course?.code || !course?.name) return false;
 
-      document.title = `${course.code} · ${course.name} · DIFTEL SJ`;
-      ensureMetaDescription().setAttribute('content', descriptionFromCourse(course).slice(0, 220));
+      const pageTitle = `${course.code} · ${course.name} · DIFTEL SJ`;
+      const pageDescription = descriptionFromCourse(course).slice(0, 220);
+      document.title = pageTitle;
+      ensureMetaDescription().setAttribute('content', pageDescription);
       setCanonical(course.slug || slug);
+      updateSocialSeo(pageTitle, pageDescription, ensureCanonical().href);
       return true;
     } catch (error) {
       console.warn('[WikiDIFTEL] No se pudo actualizar SEO desde Supabase:', error);
@@ -92,8 +113,10 @@
     const areaText = area ? `, área ${area}` : '';
     const description = `Ficha de ${code} · ${name}${semesterText}${areaText} de Ingeniería Civil Telemática USM San Joaquín. Información del ramo, SCT, área, bibliotecas y experiencia estudiantil.`;
 
-    ensureMetaDescription().setAttribute('content', description.slice(0, 220));
+    const pageDescription = description.slice(0, 220);
+    ensureMetaDescription().setAttribute('content', pageDescription);
     setCanonical(slug);
+    updateSocialSeo(document.title, pageDescription, ensureCanonical().href);
   }
 
   async function updateSeo() {
