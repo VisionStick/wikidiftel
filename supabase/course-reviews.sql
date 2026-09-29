@@ -252,6 +252,9 @@ $$;
 revoke all on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) from public;
 grant execute on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) to anon;
 
+-- Pide a PostgREST refrescar inmediatamente las RPC disponibles.
+notify pgrst, 'reload schema';
+
 -- 7) RPC única para 👍 y 👎.
 
 -- Comportamiento:
