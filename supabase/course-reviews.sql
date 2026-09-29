@@ -57,7 +57,7 @@ create index if not exists idx_course_review_reactions_review_reaction
 
 -- Si ya existían likes del sistema anterior, los conservamos.
 -- El bloque dinámico evita fallar si course_review_likes nunca fue creada.
-do $
+do $$
 begin
   if to_regclass('public.course_review_likes') is not null then
     execute $migrate$
@@ -68,7 +68,7 @@ begin
     $migrate$;
   end if;
 end
-$;
+$$;
 
 -- 3) RLS.
 alter table public.course_reviews enable row level security;
