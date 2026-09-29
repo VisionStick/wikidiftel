@@ -249,7 +249,11 @@
       console.warn(error);
       state.saving = false;
       state.message = '';
-      state.error = 'No pudimos publicar el comentario. Revisa los campos e intenta nuevamente.';
+      const rawMessage = String(error?.message || '');
+      const detail = rawMessage.match(/Supabase respondió \d+:\s*(.*)$/s)?.[1] || rawMessage;
+      state.error = detail
+        ? `No pudimos publicar el comentario. Detalle: ${detail.slice(0, 280)}`
+        : 'No pudimos publicar el comentario. Intenta nuevamente.';
       render();
     }
   }

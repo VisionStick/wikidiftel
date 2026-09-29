@@ -148,27 +148,24 @@
       throw new Error('Semestre cursado inválido.');
     }
 
-    const review = {
-      course_id: course.id,
-      student_name: String(payload.student_name || '').trim() || null,
-      professor_name: String(payload.professor_name || '').trim() || null,
-      term_year: termYear,
-      term_semester: termSemester || null,
-      difficulty: requireRange(payload.difficulty, 1, 5, 'Dificultad'),
-      workload: requireRange(payload.workload, 1, 5, 'Carga de trabajo'),
-      usefulness: requireRange(payload.usefulness, 1, 5, 'Utilidad'),
-      study_hours: studyHours,
-      comment,
-      status: 'approved'
-    };
-
-    const inserted = await request('course_reviews', { select: '*' }, {
-      method: 'POST',
-      headers: { Prefer: 'return=representation' },
-      body: review
+    const result = await rpc('submit_course_review', {
+      course_id_input: Number(course.id),
+      student_name_input: String(payload.student_name || '').trim() || null,
+      professor_name_input: String(payload.professor_name || '').trim() || null,
+      term_year_input: termYear,
+      term_semester_input: termSemester || null,
+      difficulty_input: requireRange(payload.difficulty, 1, 5, 'Dificultad'),
+      workload_input: requireRange(payload.workload, 1, 5, 'Carga de trabajo'),
+      usefulness_input: requireRange(payload.usefulness, 1, 5, 'Utilidad'),
+      study_hours_input: studyHours,
+      comment_input: comment
     });
 
-    return inserted?.[0] || null;
+    const inserted = Array.isArray(result) ? result[0] : result;
+    if (!inserted?.id || String(inserted.course_id) !== String(course.id)) {
+      throw new Error('Supabase no confirmó la publicación del comentario en el ramo correcto.');
+    }
+    return inserted;
   }
 
   function getClientToken() {
