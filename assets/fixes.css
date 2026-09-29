@@ -16,3 +16,8 @@ html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img img{height:42px
 /* El footer siempre usa fondo oscuro: el logo completo necesita una base clara en los tres temas. */
 .footer-brand .brand-mark.brand-mark-img{width:auto;height:auto;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.72);border-radius:14px;padding:5px 14px 5px 6px;box-shadow:0 10px 24px rgba(0,0,0,.18);}
 .footer-brand .brand-mark.brand-mark-img img{height:42px;transform:scale(1.08);filter:none;}
+
+/* FAQ de Telemática: contenido indexable y legible sin cambiar la identidad visual. */
+.telematica-faq{display:grid;gap:10px;margin-top:20px}.telematica-faq details{border:1px solid color-mix(in srgb,var(--line) 82%,transparent);border-radius:16px;background:color-mix(in srgb,var(--surface-solid) 82%,transparent);padding:0 16px}.telematica-faq summary{cursor:pointer;color:var(--text-strong);font-weight:900;padding:14px 0}.telematica-faq details p{margin:0;padding:0 0 15px;color:var(--text);line-height:1.6}
+/* Fallback progresivo para malla/ramo cuando JavaScript no está disponible. */
+.static-fallback{width:min(1180px,calc(100% - 40px));margin:40px auto;padding:24px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}.static-fallback h1{margin:0 0 10px;color:var(--text-strong)}.static-fallback p{color:var(--text);line-height:1.6}.static-fallback a{color:var(--blue);font-weight:900}.static-course-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;margin:18px 0 0;padding:0;list-style:none}.static-course-list li{padding:8px 0;border-bottom:1px solid var(--line);color:var(--text)}@media(max-width:700px){.static-course-list{grid-template-columns:1fr}}
