@@ -6,7 +6,6 @@
   const repoIndex = pathParts.indexOf('wikidiftel');
   const depth = repoIndex >= 0 ? Math.max(0, pathParts.length - repoIndex - 1) : pathParts.length;
   const base = depth ? '../'.repeat(depth) : './';
-  const faviconSrc = `${base}icon.png`;
   const brandLogoSrc = `${base}diftel-logo.png`;
 
   function setTheme(theme) {
@@ -85,14 +84,6 @@
     document.head.append(link);
   }
 
-  function ensureFavicon() {
-    $$('link[rel="icon"], link[rel="shortcut icon"]').forEach((link) => link.remove());
-    const icon = document.createElement('link');
-    icon.rel = 'icon';
-    icon.type = 'image/png';
-    icon.href = faviconSrc;
-    document.head.append(icon);
-  }
 
   function renderFooter() {
     const footer = $('.site-footer');
@@ -175,7 +166,6 @@
   }
 
   ensureFixesCss();
-  ensureFavicon();
   revealContent();
   renderFooter();
   setupPreviewCards();
