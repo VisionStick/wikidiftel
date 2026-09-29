@@ -12,3 +12,7 @@ html[data-theme="dark"] .brand-mark.brand-mark-img{background:rgba(255,255,255,.
 html[data-theme="dark"] .brand-mark.brand-mark-img img{filter:none;}
 html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img{width:auto;height:auto;border-radius:14px;padding:5px 14px 5px 6px;}
 html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img img{height:42px;transform:scale(1.08);}
+
+/* El footer siempre usa fondo oscuro: el logo completo necesita una base clara en los tres temas. */
+.footer-brand .brand-mark.brand-mark-img{width:auto;height:auto;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.72);border-radius:14px;padding:5px 14px 5px 6px;box-shadow:0 10px 24px rgba(0,0,0,.18);}
+.footer-brand .brand-mark.brand-mark-img img{height:42px;transform:scale(1.08);filter:none;}
