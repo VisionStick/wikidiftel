@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="same-origin">
+  <title>Wiki DIFTEL · Consola</title>
+  <link rel="stylesheet" href="../assets/admin-console.css">
+</head>
+<body>
+  <main id="loginView" class="login-screen">
+    <section class="dialog">
+      <header class="dialog-title">Wiki DIFTEL — Consola administrativa</header>
+      <div class="dialog-content">
+        <div class="login-symbol" aria-hidden="true">🖥️</div>
+        <form id="loginForm">
+          <h1>Inicio de sesión</h1>
+          <p>Acceso exclusivo para cuentas administradoras autorizadas.</p>
+          <label>Correo electrónico<input id="email" type="email" autocomplete="username" required></label>
+          <label>Contraseña<input id="password" type="password" autocomplete="current-password" required></label>
+          <p id="loginError" class="error" hidden></p>
+          <div class="dialog-actions"><button type="submit">Iniciar sesión</button></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <main id="adminView" class="admin-shell" hidden>
+    <header class="window-title"><span>🗂️</span><strong>Wiki DIFTEL — Comentarios</strong><span class="window-controls">—　□　×</span></header>
+    <nav class="menu"><span>File</span><span>Action</span><span>View</span><span>Help</span></nav>
+    <div class="toolbar">
+      <button id="refresh" title="Actualizar">🔄</button><button id="expand" title="Expandir">📂</button><button id="collapse" title="Contraer">📁</button>
+      <span class="toolbar-spacer"></span><span id="identity"></span><button id="logout">Cerrar sesión</button>
+    </div>
+    <div class="pathbar"><b>Ubicación:</b><span id="pathLabel">Wiki DIFTEL / Comentarios</span></div>
+
+    <section class="workspace">
+      <aside class="tree-panel"><div class="panel-head">Árbol de cursos</div><div id="tree" class="tree"></div></aside>
+      <section class="data-panel">
+        <div class="filters">
+          <input id="search" type="search" placeholder="Buscar nombre, profesor, ramo o texto…">
+          <select id="professor"><option value="">Todos los profesores</option></select>
+          <select id="year"><option value="">Todos los años</option></select>
+          <select id="status"><option value="">Todos los estados</option><option value="approved">Aprobado</option><option value="pending">Pendiente</option><option value="rejected">Rechazado</option></select>
+          <button id="clear">Limpiar</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nombre / alias</th><th>Profesor/a</th><th>Ramo</th><th>Año</th><th>Valoraciones</th><th>👍 / 👎</th><th>Fecha y hora</th><th>Estado</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <article id="detail" class="detail"><p>Selecciona un comentario para ver su ficha completa.</p></article>
+      </section>
+    </section>
+    <footer class="status"><span id="count">0 comentarios</span><span id="sync">—</span></footer>
+  </main>
+
+  <script src="../assets/supabase-config.js"></script>
+  <script src="../assets/admin-console.js"></script>
+</body>
+</html>
