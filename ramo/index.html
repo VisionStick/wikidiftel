@@ -4,17 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <link rel="icon" type="image/png" href="../icon.png">
-  <link rel="shortcut icon" type="image/png" href="../icon.png">
-  <link rel="apple-touch-icon" href="../icon.png">
+  <link rel="icon" href="../favicon.svg" sizes="any">
   <title>Ficha de ramo · DIFTEL SJ</title>
   <meta name="description" content="Ficha colaborativa de ramos de Ingeniería Civil Telemática USM San Joaquín.">
+  <link rel="canonical" href="https://diftel.cl/ramo/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_CL">
+  <meta property="og:site_name" content="DIFTEL SJ">
+  <meta property="og:title" content="Ficha de ramo · Ingeniería Civil Telemática USM · DIFTEL SJ">
+  <meta property="og:description" content="Ficha colaborativa de ramos de Ingeniería Civil Telemática USM San Joaquín con información académica, biblioteca y experiencia estudiantil.">
+  <meta property="og:url" content="https://diftel.cl/ramo/">
+  <meta property="og:image" content="https://diftel.cl/assets/diftel.jpeg">
+  <meta name="twitter:card" content="summary_large_image">
   
   
   
   <script>(function(){const saved=localStorage.getItem('diftel-theme');const theme=['warm','light','dark'].includes(saved)?saved:'warm';document.documentElement.setAttribute('data-theme',theme);})();</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Nunito Sans','Inter','sans-serif']}}}}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -27,9 +32,11 @@
 <body class="site-body">
   <a href="#contenido" class="skip-link">Saltar al contenido</a>
   <div class="ambient-bg" aria-hidden="true"><span class="ambient-orb ambient-orb-a"></span><span class="ambient-orb ambient-orb-b"></span><span class="ambient-grid"></span></div>
+  <noscript><nav class="static-fallback static-noscript-nav" aria-label="Navegación sin JavaScript"><a href="../">Inicio</a> · <a href="../malla/">Malla</a> · <a href="../proyectos/">Proyectos</a> · <a href="../talleres/">Talleres</a> · <a href="../comunidad/">Comunidad</a></nav></noscript>
   <main id="contenido" class="site-main">
-    <div id="course-v4-root"></div>
+    <div id="course-v4-root"><section class="static-fallback" data-static-fallback><h1>Ficha de ramo · Ingeniería Civil Telemática USM</h1><p>Las fichas de DIFTEL reúnen código, nombre, semestre, SCT, biblioteca externa y experiencia estudiantil. Para abrir una ficha específica puedes partir desde la <a href="../malla/">malla curricular</a>. Si JavaScript está disponible, esta vista se completa automáticamente con el ramo seleccionado.</p><p><a href="../malla/">← Ver todos los ramos de la malla</a></p></section></div>
   </main>
+  <noscript><footer class="static-fallback"><strong>DIFTEL SJ</strong><p>Portal estudiantil de Ingeniería Civil Telemática USM, Campus San Joaquín.</p></footer></noscript>
   <script src="../assets/supabase-config.js" defer></script>
   <script src="../assets/supabase-courses.js" defer></script>
   <script src="../assets/malla-cursos-v4.js" defer></script>
@@ -37,6 +44,5 @@
   <script src="../assets/course-reviews-stable.js" defer></script>
   <script src="../assets/ramo-progression-links.js" defer></script>
   <script src="../assets/ramo-biblioteca-externa.js" defer></script>
-  <script src="../assets/site-cleanup.js" defer></script>
 </body>
 </html>

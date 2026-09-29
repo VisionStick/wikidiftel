@@ -9,7 +9,7 @@
   function courseUrlByCode(code){return getRootPath()+'ramo/?c='+encodeURIComponent(String(code||'').trim());}
   function isSideCard(card){
     const label=norm(card?.querySelector('small')?.textContent||'');
-    return label.includes('previo')||label.includes('siguiente')||label.includes('anterior');
+    return label.includes('siguiente')||label.includes('anterior');
   }
   function cardCode(card){
     return (card?.querySelector('span')?.textContent||'').trim();
@@ -52,4 +52,5 @@
     if(attempts<80) setTimeout(tick,100);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
+  window.addEventListener('wikidiftel:course-hydrated',()=>setTimeout(enhanceProgression,0));
 })();

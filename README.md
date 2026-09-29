@@ -4,9 +4,7 @@ Portal estudiantil para **Ingeniería Civil Telemática USM, Campus San Joaquín
 
 ## Estado actual
 
-Esta versión pública está pensada para funcionar en **GitHub Pages** como sitio estático.
-
-También despliega directo en **Vercel** (ver `vercel.json`): importar el repo, sin build command, dominio `diftel.cl`.
+El portal público es un **sitio estático desplegado en Vercel** (ver `vercel.json`) bajo `diftel.cl`, sin build command. El frontend vive en la raíz, las secciones públicas y `assets/`; los datos comunitarios de ramos se conectan a Supabase.
 
 La página actualmente separa claramente dos funciones:
 
@@ -46,12 +44,12 @@ Para agregar una biblioteca nueva, se debe sumar el código de ramo y su URL ext
 
 ## Participación estudiantil
 
-La participación dentro de la página se realiza mediante comentarios/opiniones de cada ramo. En la versión estática actual, las opiniones pueden almacenarse en el navegador del usuario; para hacerlas compartidas entre toda la comunidad se recomienda conectar una base de datos externa como Firebase Firestore o Supabase.
+La participación dentro de la página se realiza mediante comentarios/opiniones de cada ramo. Las fichas usan Supabase para leer y publicar opiniones compartidas y registrar reacciones; el frontend mantiene validaciones y estados de interfaz antes de enviar los datos.
 
 ## Flujo de ramas
 
-- `main` es producción (`diftel.cl`, Vercel). `dev` es integración.
-- No se hace push directo a ninguna de las dos: rama de trabajo → PR a `dev` → PR de `dev` a `main`.
+- `main` es producción (`diftel.cl`, Vercel). `dev` puede usarse como integración cuando el equipo lo requiera.
+- Los cambios se trabajan en ramas y llegan a producción mediante PR a `main`.
 - Cada PR necesita la aprobación de un codeowner (`.github/CODEOWNERS`: @craulii o @ChrisPsx).
 - Para cerrar un issue al mergear, poner `Closes #N` en el PR que llega a `main`.
 
@@ -62,13 +60,16 @@ La interfaz busca sentirse estudiantil, cálida y clara: tonos azul oscuro/cyan,
 ## Archivos principales
 
 - `index.html` — Inicio.
-- `assets/site.js` — Interacciones generales, malla y fichas de ramo.
+- `assets/site.js` — Interacciones generales del portal.
 - `assets/site-cleanup.js` — Correcciones globales de visibilidad, favicon y limpieza de enlaces antiguos.
-- `assets/malla-cursos-v4.js` — Render y comportamiento de malla.
+- `assets/malla-cursos-v4.js` — Render y comportamiento de malla y ficha base de ramo.
+- `assets/supabase-courses.js` — Cliente de datos para cursos, opiniones y reacciones en Supabase.
+- `assets/course-reviews-stable.js` — Interfaz comunitaria de opiniones y reacciones.
 - `assets/ramo-biblioteca-externa.js` — Mapa código de ramo → biblioteca externa.
 - `assets/ramo-progression-links.js` — Navegación clickeable entre ramo previo y siguiente.
 - `assets/*.css` — Estilos visuales del portal.
 
-## Nota de auditoría
 
-El repositorio conserva algunos archivos de infraestructura heredada para despliegue alternativo/local, pero la versión publicada en GitHub Pages funciona principalmente con los archivos estáticos de la raíz, carpetas públicas y `assets/`.
+## Arquitectura actual
+
+La producción no depende de Django, PostgreSQL local ni Nginx. La infraestructura heredada fue retirada del repositorio para evitar mantener dos implementaciones y múltiples copias de los mismos assets. La configuración activa de despliegue está en `vercel.json`; la configuración de Supabase está separada en los archivos del frontend y en `supabase/`.
