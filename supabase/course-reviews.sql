@@ -171,7 +171,89 @@ where r.status = 'approved'
 
 grant select on public.course_review_public_view to anon;
 
--- 6) RPC única para 👍 y 👎.
+-- 6) RPC de publicación. El navegador no escribe directamente en course_reviews.
+create or replace function public.submit_course_review(
+  course_id_input bigint,
+  student_name_input text,
+  professor_name_input text,
+  term_year_input int,
+  term_semester_input text,
+  difficulty_input int,
+  workload_input int,
+  usefulness_input int,
+  study_hours_input int,
+  comment_input text
+)
+returns table (
+  id bigint,
+  course_id bigint,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  new_review_id bigint;
+  new_created_at timestamptz;
+  clean_student_name text := nullif(btrim(student_name_input), '');
+  clean_professor_name text := nullif(btrim(professor_name_input), '');
+  clean_comment text := btrim(comment_input);
+begin
+  if not exists (
+    select 1 from public.courses c
+    where c.id = course_id_input and c.is_active = true
+  ) then
+    raise exception 'Ramo no disponible';
+  end if;
+
+  if clean_comment is null or char_length(clean_comment) < 20 or char_length(clean_comment) > 1500 then
+    raise exception 'El comentario debe tener entre 20 y 1500 caracteres';
+  end if;
+  if clean_student_name is not null and char_length(clean_student_name) > 80 then
+    raise exception 'El nombre o alias es demasiado largo';
+  end if;
+  if clean_professor_name is not null and char_length(clean_professor_name) > 120 then
+    raise exception 'El nombre del profesor es demasiado largo';
+  end if;
+  if term_year_input is not null and (term_year_input < 2020 or term_year_input > 2035) then
+    raise exception 'Año cursado inválido';
+  end if;
+  if term_semester_input is not null and term_semester_input not in ('1', '2', 'Verano') then
+    raise exception 'Semestre cursado inválido';
+  end if;
+  if difficulty_input not between 1 and 5
+     or workload_input not between 1 and 5
+     or usefulness_input not between 1 and 5 then
+    raise exception 'Las valoraciones deben estar entre 1 y 5';
+  end if;
+  if study_hours_input is not null and (study_hours_input < 0 or study_hours_input > 80) then
+    raise exception 'Horas de estudio inválidas';
+  end if;
+
+  insert into public.course_reviews (
+    course_id, student_name, professor_name, term_year, term_semester,
+    difficulty, workload, usefulness, study_hours, comment, status,
+    likes_count, dislikes_count
+  )
+  values (
+    course_id_input, clean_student_name, clean_professor_name, term_year_input,
+    term_semester_input, difficulty_input, workload_input, usefulness_input,
+    study_hours_input, clean_comment, 'approved', 0, 0
+  )
+  returning course_reviews.id, course_reviews.created_at
+  into new_review_id, new_created_at;
+
+  return query
+  select new_review_id, course_id_input, new_created_at;
+end;
+$$;
+
+revoke all on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) from public;
+grant execute on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) to anon;
+
+-- 7) RPC única para 👍 y 👎.
+
 -- Comportamiento:
 --   sin reacción + 👍 => agrega 👍
 --   👍 + 👍 => quita 👍
@@ -238,7 +320,7 @@ begin
     values (
       review_id_input, client_token_input, reaction_input, now()
     )
-    on conflict (review_id, client_token)
+    on conflict on constraint course_review_reactions_review_id_client_token_key
     do update set
       reaction = excluded.reaction,
       updated_at = now();
@@ -276,7 +358,7 @@ $$;
 revoke all on function public.set_course_review_reaction(bigint, text, text) from public;
 grant execute on function public.set_course_review_reaction(bigint, text, text) to anon;
 
--- 7) Compatibilidad con la web antigua que todavía llame like_course_review().
+-- 8) Compatibilidad con la web antigua que todavía llame like_course_review().
 create or replace function public.like_course_review(
   review_id_input bigint,
   client_token_input text
@@ -304,7 +386,7 @@ $$;
 revoke all on function public.like_course_review(bigint, text) from public;
 grant execute on function public.like_course_review(bigint, text) to anon;
 
--- 8) Comprobación final. Si este SELECT devuelve filas/0 filas sin error,
+-- 9) Comprobación final. Si este SELECT devuelve filas/0 filas sin error,
 -- la estructura quedó instalada correctamente.
 select
   id,
