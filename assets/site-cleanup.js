@@ -19,18 +19,6 @@
     document.head.append(style);
   }
 
-  function forceIcon(){
-    document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]').forEach(el=>el.remove());
-    const svg=document.createElement('link');
-    svg.rel='icon';
-    svg.type='image/png';
-    svg.href=base+'icon.png';
-    document.head.append(svg);
-    const apple=document.createElement('link');
-    apple.rel='apple-touch-icon';
-    apple.href=base+'icon.png';
-    document.head.append(apple);
-  }
 
   function cleanText(node){
     if(!node) return;
@@ -53,14 +41,12 @@
 
   function applyCleanup(){
     injectPageFixes();
-    forceIcon();
     cleanText(document.querySelector('.site-footer'));
     cleanText(document.querySelector('#mobile-menu'));
     cleanText(document.querySelector('main'));
   }
 
   injectPageFixes();
-  forceIcon();
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyCleanup); else applyCleanup();
   setTimeout(applyCleanup,50);
   setTimeout(applyCleanup,300);
