@@ -14,7 +14,6 @@
     const style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = `
-      [data-hidden-legacy-review-form="true"]{display:none!important}
       .stable-reviews{max-width:1180px;margin:0 auto 76px;padding:0 20px}
       .stable-reviews-card{background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);border-radius:26px;padding:clamp(20px,3vw,30px);box-shadow:var(--shadow)}
       .stable-reviews-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid var(--line)}
@@ -63,23 +62,8 @@
     document.head.append(style);
   }
 
-  function hideLegacyReviewFormOnly() {
-    const root = $('#course-v4-root');
-    if (!root) return;
-    $$('form', root).forEach((form) => {
-      if (form.closest(`#${ROOT_ID}`)) return;
-      const text = (form.innerText || form.textContent || '').toLowerCase();
-      const isOldReviewForm = text.includes('publicar como estudiante anónimo') || text.includes('contenido más difícil') || text.includes('consejo para aprobar') || (text.includes('cuenta tu experiencia') && text.includes('comentario'));
-      if (isOldReviewForm) {
-        form.setAttribute('data-hidden-legacy-review-form', 'true');
-        form.setAttribute('aria-hidden', 'true');
-      }
-    });
-  }
-
   function mountRoot() {
     ensureStyles();
-    hideLegacyReviewFormOnly();
     let mount = $(`#${ROOT_ID}`);
     if (!mount) {
       mount = document.createElement('section');
@@ -308,7 +292,5 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     load();
-    setTimeout(hideLegacyReviewFormOnly, 350);
-    setTimeout(hideLegacyReviewFormOnly, 1200);
   });
 })();
