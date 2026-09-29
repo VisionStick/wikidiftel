@@ -3,6 +3,7 @@
   const COURSE_SELECT = 'id,code,slug,name,sct,summary,description,sort_order,is_active,semester_number,semester_name,area_name,area_slug,area_color';
   const REVIEW_SELECT = 'id,course_id,course_code,course_slug,course_name,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,created_at,status,dislikes_count';
   const REVIEW_BASE_SELECT = 'id,course_id,student_name,professor_name,term_year,term_semester,difficulty,workload,usefulness,study_hours,comment,likes_count,dislikes_count,created_at,status';
+  const LIBRARY_SELECT = 'id,course_id,title,url,type,is_active,created_at';
 
   async function request(path, params = {}, options = {}) {
     if (!cfg?.url || !cfg?.key) {
@@ -75,6 +76,18 @@
     });
 
     return byCode[0] || null;
+  }
+
+  async function getCourseLibraries(slugOrCode) {
+    const course = await getCourseBySlug(slugOrCode);
+    if (!course) return { course: null, libraries: [] };
+    const libraries = await request('course_libraries', {
+      select: LIBRARY_SELECT,
+      course_id: `eq.${course.id}`,
+      is_active: 'eq.true',
+      order: 'created_at.asc,id.asc'
+    });
+    return { course, libraries };
   }
 
   async function getReviewsForCourse(slugOrCode) {
@@ -204,6 +217,7 @@
     rpc,
     getCourses,
     getCourseBySlug,
+    getCourseLibraries,
     getReviewsForCourse,
     submitCourseReview,
     reactToCourseReview,
