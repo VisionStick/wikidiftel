@@ -1,4 +1,4 @@
-/* Pulido visual puntual: uniformidad de malla + selectores + experiencia estudiantil */
+/* Pulido visual puntual: uniformidad de malla y selectores */
 .malla-filter-form.v4 select{
   appearance:none;
   -webkit-appearance:none;
@@ -25,23 +25,23 @@
   background-repeat:no-repeat;
   transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease, transform .18s ease;
 }
-.malla-filter-form.v4 select:hover:hover{
+.malla-filter-form.v4 select:hover{
   background-color:var(--surface-2);
   border-color:color-mix(in srgb, var(--cyan) 72%, var(--line-strong));
 }
-.malla-filter-form.v4 select:focus:focus{
+.malla-filter-form.v4 select:focus{
   outline:none;
   border-color:var(--cyan);
   box-shadow:0 0 0 4px color-mix(in srgb, var(--cyan) 18%, transparent), var(--shadow-hover);
 }
-.malla-filter-form.v4 select option option{
+.malla-filter-form.v4 select option{
   background:var(--surface-solid);
   color:var(--text-strong);
 }
 html[data-theme="dark"] .malla-filter-form.v4 select{
   box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.04);
 }
-html[data-theme="dark"] .malla-filter-form.v4 select option option{
+html[data-theme="dark"] .malla-filter-form.v4 select option{
   background:var(--surface-solid);
   color:var(--text-strong);
 }
