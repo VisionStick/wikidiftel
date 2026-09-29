@@ -85,39 +85,20 @@
   }
 
 
+  // Footer mini de una línea: marca + copyright + RRSS (la navegación ya está arriba).
   function renderFooter() {
     const footer = $('.site-footer');
     if (!footer) return;
     footer.innerHTML = `
-      <div class="section-shell footer-main">
-        <div class="footer-brand-block">
-          <a href="${base}" class="footer-brand">
-            <span class="brand-mark brand-mark-img" aria-hidden="true"><img src="${brandLogoSrc}" alt="DIFTEL"></span>
-            <span><strong>DIFTEL SJ</strong><small>San Joaquín</small></span>
-          </a>
-          <p>Hecho por estudiantes, para estudiantes. Una biblioteca viva de ramos, proyectos, talleres y recuerdos de Telemática.</p>
-        </div>
-        <div class="footer-column">
-          <strong>Explorar</strong>
-          <a href="${base}malla/">Malla</a>
-          <a href="${base}proyectos/">Proyectos</a>
-          <a href="${base}talleres/">Talleres</a>
-          <a href="${base}comunidad/">Comunidad</a>
-        </div>
-        <div class="footer-column">
-          <strong>Participar</strong>
-          <a href="${base}malla/">Opinar en ramos</a>
-        </div>
-        <div class="footer-column">
-          <strong>Redes</strong>
-          <a target="_blank" rel="noopener" href="https://www.instagram.com/diftelusm/">@diftelusm</a>
-          <a target="_blank" rel="noopener" href="https://instagram.com/telematicausm">@telematicausm</a>
-          <a target="_blank" rel="noopener" href="https://www.instagram.com/ceetel.sj/">@ceetel.sj</a>
-        </div>
-      </div>
-      <div class="section-shell footer-bottom">
-        <span>© 2026 DIFTEL · Ingeniería Civil Telemática USM, Campus San Joaquín</span>
-        <span>Contenido comunitario · verifica siempre información académica oficial.</span>
+      <div class="section-shell footer-mini">
+        <a class="footer-brand" href="${base}" aria-label="DIFTEL SJ, volver al inicio"><span class="footer-brand-mark"><img src="${brandLogoSrc}" alt="DIFTEL"></span><strong>DIFTEL SJ</strong></a>
+        <span class="footer-copy">© 2026 DIFTEL SJ · Todos los derechos reservados</span>
+        <nav class="footer-socials" aria-label="Redes sociales">
+          <a target="_blank" rel="noopener" href="https://www.instagram.com/diftelusm/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg><span>@diftelusm</span></a>
+          <a target="_blank" rel="noopener" href="https://instagram.com/telematicausm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg><span>@telematicausm</span></a>
+          <a target="_blank" rel="noopener" href="https://www.instagram.com/ceetel.sj/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg><span>@ceetel.sj</span></a>
+          <a target="_blank" rel="noopener" href="https://www.tiktok.com/@diftel.sj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 8.5v8.3a2.8 2.8 0 1 0 2.8-2.8"/><path d="M9.5 8.5c.6 2.6 2.4 4 5.2 4.2V9.6c-.9 0-1.9-.3-2.7-.9"/><path d="M9.5 5v3.5"/></svg><span>@diftel.sj</span></a>
+        </nav>
       </div>`;
   }
 
