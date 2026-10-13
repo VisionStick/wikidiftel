@@ -25,8 +25,7 @@ html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img img{height:42px
 /* Ficha de ramo 2.0 */
 .course-source-v4{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.course-source-v4 span,.course-facts-v4 div{border:1px solid var(--line);background:var(--surface-2);border-radius:14px}.course-source-v4 span{padding:6px 9px;color:var(--muted);font-size:10px;font-weight:900}.course-about-v4>[data-course-description]{font-size:15px;line-height:1.75;color:var(--text)}.course-facts-v4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}.course-facts-v4 div{padding:14px}.course-facts-v4 small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.course-facts-v4 strong{display:block;margin-top:4px;color:var(--text-strong);font-size:13px}.library-links-v4{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.library-links-v4 .library-button{width:auto}.library-anchor-v4 .empty-note-v4{margin-top:18px}@media(max-width:720px){.course-facts-v4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Archivo vivo de comunidad y proyectos */
-.archive-intro-v4{margin-bottom:24px;padding:22px 24px;border:1px dashed var(--line-strong);border-radius:22px;background:color-mix(in srgb,var(--surface-2) 70%,transparent)}.archive-intro-v4 h2{margin:5px 0 7px;color:var(--text-strong)}.archive-intro-v4 p{margin:0;color:var(--muted);line-height:1.6}.archive-controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}.archive-controls button{border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);padding:8px 13px;font:inherit;font-size:11px;font-weight:900;cursor:pointer}.archive-controls button:hover,.archive-controls button.is-active{border-color:var(--cyan);background:color-mix(in srgb,var(--cyan) 11%,var(--surface));color:var(--text-strong)}.archive-detail-list{display:grid;gap:4px;color:var(--muted);font-size:11px;line-height:1.45}.archive-detail-list strong{color:var(--text-strong)}[data-year][hidden]{display:none!important}
-
+.archive-controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}.archive-controls button{border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);padding:8px 13px;font:inherit;font-size:11px;font-weight:900;cursor:pointer}.archive-controls button:hover,.archive-controls button.is-active{border-color:var(--cyan);background:color-mix(in srgb,var(--cyan) 11%,var(--surface));color:var(--text-strong)}.archive-detail-list{display:grid;gap:4px;color:var(--muted);font-size:11px;line-height:1.45}.archive-detail-list strong{color:var(--text-strong)}[data-year][hidden]{display:none!important}
 
 /* PR55 · pulido visual del archivo vivo */
 
@@ -37,12 +36,6 @@ html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img img{height:42px
 .archive-controls button:hover{transform:translateY(-1px)}
 .archive-controls button.is-active{box-shadow:0 5px 14px color-mix(in srgb,var(--cyan) 12%,transparent)}
 .archive-filter-status{flex:0 0 auto;color:var(--muted);font-size:10px;font-weight:850;padding-bottom:8px}
-
-
-
-
-
-
 
 .archive-card-v2{position:relative;isolation:isolate;overflow:hidden;min-height:0!important;padding:22px!important;gap:0!important;border-radius:22px!important;background:linear-gradient(145deg,color-mix(in srgb,var(--surface-solid) 94%,transparent),color-mix(in srgb,var(--surface-2) 78%,transparent))!important}
 .archive-card-v2::after{content:"";position:absolute;z-index:-1;width:150px;height:150px;right:-72px;top:-78px;border-radius:50%;background:color-mix(in srgb,var(--cyan) 8%,transparent);pointer-events:none}
@@ -79,11 +72,6 @@ html[data-theme="dark"] .footer-brand .brand-mark.brand-mark-img img{height:42px
 .project-section-head h2{letter-spacing:-.035em}
 .project-section-head p{font-size:12px;line-height:1.55}
 .project-count{font-size:9px;padding:6px 10px}
-.archive-intro-v4{position:relative;overflow:hidden;border-style:solid;background:linear-gradient(120deg,color-mix(in srgb,var(--cyan) 6%,var(--surface)),color-mix(in srgb,var(--surface-2) 72%,transparent))}
-.archive-intro-v4::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--cyan),var(--yellow-deep))}
-.archive-intro-v4 h2{font-size:clamp(21px,2.4vw,29px);letter-spacing:-.03em}
-
-
 
 .people-grid{gap:12px}
 .profile-card{position:relative;min-height:220px;padding:18px;border-radius:19px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
