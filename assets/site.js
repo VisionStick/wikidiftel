@@ -103,7 +103,7 @@
   }
 
   function setupPreviewCards() {
-    $('[data-preview-card]').forEach((card) => {
+    $$('[data-preview-card]').forEach((card) => {
       let holdTimer = null;
       let openedByHold = false;
       const closeTimer = () => {
