@@ -1,5 +1,5 @@
 (()=>{
-const DATA=window.DIFTEL_ARCHIVE_DATA||{projects:[],memories:[]};
+const DATA=window.DIFTEL_ARCHIVE_DATA||{projects:[]};
 const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const years=items=>[...new Set(items.map(x=>Number(x.year)).filter(Boolean))].sort((a,b)=>b-a);
 const pill=v=>`<span>${esc(v)}</span>`;
@@ -34,19 +34,11 @@ function projectCard(p){
   const category=p.type||p.category;
   return `<article class="project-card archive-card-v2" data-year="${esc(p.year)}" data-category="${esc(p.category)}"><div class="archive-card-accent" aria-hidden="true"></div><div class="project-card-top"><span class="archive-icon-v2">${iconFor(category)}</span><div class="archive-card-badges"><span class="project-label">${esc(category)}</span><span class="project-year">${esc(p.date||p.year)}</span></div></div><div class="archive-card-copy"><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p></div><div class="archive-detail-grid"><div><small>Participantes</small><strong>${esc((p.participants||[]).join(', ')||'Por documentar')}</strong></div>${p.course?`<div><small>Ramo</small><strong>${esc(p.course)}</strong></div>`:''}${p.area?`<div><small>Área</small><strong>${esc(p.area)}</strong></div>`:''}</div><div class="archive-card-footer"><div class="project-tags">${(p.tags||[]).map(pill).join('')}</div>${p.href?`<a class="archive-action project-link" href="${esc(p.href)}"><span>${esc((p.linkLabel||'Ver proyecto').replace(/\s*→\s*$/,''))}</span><b aria-hidden="true">→</b></a>`:''}</div></article>`;
 }
-function memoryCard(m){
-  return `<article class="memory-card archive-card-v2" data-year="${esc(m.year)}" data-category="${esc(m.category)}"><div class="archive-card-accent" aria-hidden="true"></div><div class="memory-top"><span class="archive-icon-v2">${iconFor(m.category)}</span><div class="archive-card-badges"><span class="memory-tag">${esc(m.category)}</span><span class="project-year">${esc(m.date||m.year)}</span></div></div><div class="archive-card-copy"><h3>${esc(m.title)}</h3><p>${esc(m.description)}</p></div><div class="archive-detail-grid"><div><small>Participantes</small><strong>${esc((m.participants||[]).join(', ')||'Por documentar')}</strong></div>${m.course?`<div><small>Ramo</small><strong>${esc(m.course)}</strong></div>`:''}</div><div class="archive-card-footer"><div class="memory-meta">${(m.tags||[]).map(pill).join('')}</div>${m.href?`<a class="archive-action memory-link" href="${esc(m.href)}"><span>${esc((m.linkLabel||'Abrir').replace(/\s*→\s*$/,''))}</span><b aria-hidden="true">→</b></a>`:''}</div></article>`;
-}
 function renderProjects(){
   const root=document.querySelector('[data-project-archive]');if(!root)return;
   const cats=[...new Set(DATA.projects.map(x=>x.category))];
   root.innerHTML=controls(DATA.projects,'proyectos')+cats.map(cat=>{const items=DATA.projects.filter(x=>x.category===cat);return `<section class="project-section"><div class="project-section-head"><div><span class="eyebrow">${cat==='DIFTEL'?'Archivo interno':'Producción estudiantil'}</span><h2>${cat==='DIFTEL'?'Proyectos DIFTEL':'Proyectos de Telemática'}</h2><p>${cat==='DIFTEL'?'Iniciativas y herramientas construidas para la comunidad.':'Trabajos y proyectos desarrollados por estudiantes dentro o fuera de ramos.'}</p></div><span class="project-count">${items.length} proyecto${items.length===1?'':'s'}</span></div><div class="project-grid">${items.map(projectCard).join('')}</div></section>`;}).join('');
   bind(root);const n=document.querySelector('[data-project-count]');if(n)n.textContent=`${DATA.projects.length} proyectos documentados`;
 }
-function renderMemories(){
-  const root=document.querySelector('[data-community-archive]');if(!root)return;
-  root.innerHTML=controls(DATA.memories,'memoria comunitaria')+years(DATA.memories).map(y=>{const items=DATA.memories.filter(x=>Number(x.year)===y);return `<section class="archive-year-block"><div class="archive-year-head"><div><small>Archivo</small><span>${y}</span></div><em>${items.length} registro${items.length===1?'':'s'}</em></div><div class="memory-grid">${items.map(memoryCard).join('')}</div></section>`;}).join('');
-  bind(root);const n=document.querySelector('[data-memory-count]');if(n)n.textContent=`${DATA.memories.length} recuerdos documentados`;
-}
-document.addEventListener('DOMContentLoaded',()=>{renderProjects();renderMemories();});
+document.addEventListener('DOMContentLoaded',()=>{renderProjects();});
 })();

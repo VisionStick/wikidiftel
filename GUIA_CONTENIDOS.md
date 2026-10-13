@@ -37,6 +37,28 @@ Guardar talleres, charlas, hackathones y actividades formativas. Cada ficha pued
 
 Usar como archivo visual y narrativo de la carrera. Sirve para recuerdos, bienvenidas, ferias, actividades académicas y momentos de vida universitaria.
 
+### Galería de fotos
+
+La galería es un carrusel con espacios reservados. Cada foto vive en su propia slide con título y fecha, así la galería puede crecer sin desordenarse.
+
+Para publicar una foto:
+
+1. Guardar la imagen en `assets/fotos/` (proporción 4:3, alrededor de 1200 px de ancho).
+2. En `comunidad/index.html`, buscar el `<li class="photo-slide is-placeholder">` que corresponda.
+3. Reemplazar el bloque `<div class="photo-frame">…</div>` por la imagen:
+
+```html
+<img src="../assets/fotos/nombre-de-la-foto.jpg" alt="Descripción de la foto" loading="lazy">
+```
+
+4. Actualizar el título y la fecha en `.photo-caption`.
+
+Mientras no haya imagen, la slide muestra el marcador "Foto por subir". El contador de la sección indica cuántas fotos están publicadas y cuántos espacios siguen libres.
+
+Cuando una foto ya está publicada, al tocarla se abre el visor a pantalla completa: se pasa con las flechas, con el teclado (← →) o deslizando, y se cierra con Esc o tocando el fondo.
+
+Recordar que las fotos personales solo se suben con autorización de quienes aparecen.
+
 ## Ramos
 
 Cada ficha de ramo puede centralizar:
