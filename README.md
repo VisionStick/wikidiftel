@@ -46,6 +46,13 @@ Para agregar una biblioteca nueva, se debe sumar el código de ramo y su URL ext
 
 La participación dentro de la página se realiza mediante comentarios/opiniones de cada ramo. Las fichas usan Supabase para leer y publicar opiniones compartidas y registrar reacciones; el frontend mantiene validaciones y estados de interfaz antes de enviar los datos.
 
+Los comentarios nuevos quedan pendientes de aprobación, sin exigir inicio de sesión
+a estudiantes. La consola administrativa permite aprobar, rechazar y revisar reportes,
+con auditoría de cada decisión. Para actualizar una instalación existente, ejecutar
+`supabase/comment-moderation.sql` **antes de desplegar el frontend**. El uso, los
+permisos y la comprobación posterior están documentados en
+[supabase/MODERACION.md](supabase/MODERACION.md).
+
 ## Flujo de ramas
 
 - `main` es producción (`diftel.cl`, Vercel). `dev` puede usarse como integración cuando el equipo lo requiera.
@@ -73,3 +80,4 @@ La interfaz busca sentirse estudiantil, cálida y clara: tonos azul oscuro/cyan,
 ## Arquitectura actual
 
 La producción no depende de Django, PostgreSQL local ni Nginx. La infraestructura heredada fue retirada del repositorio para evitar mantener dos implementaciones y múltiples copias de los mismos assets. La configuración activa de despliegue está en `vercel.json`; la configuración de Supabase está separada en los archivos del frontend y en `supabase/`.
+

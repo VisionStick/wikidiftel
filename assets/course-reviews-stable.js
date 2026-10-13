@@ -2,7 +2,7 @@
   const ROOT_ID = 'stable-course-reviews';
   const STYLE_ID = 'stable-course-reviews-style';
   const slug = new URLSearchParams(location.search).get('c') || '';
-  const state = { course: null, reviews: [], sort: 'recent', loading: true, saving: false, message: '', error: '' };
+  const state = { course: null, reviews: [], sort: 'recent', loading: true, saving: false, draft: {}, message: '', error: '' };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -51,6 +51,14 @@
       .stable-help{margin:0;color:var(--muted);font-size:.78rem;line-height:1.45}
       .stable-submit{border:0;border-radius:999px;padding:11px 16px;font-weight:1000;cursor:pointer;background:var(--cyan);color:#06121f}
       .stable-submit{width:100%}.stable-submit:disabled,.stable-reaction:disabled{opacity:.55;cursor:not-allowed}
+      .stable-report-panel{margin-top:12px;font-size:.85rem;color:var(--muted)}
+      .stable-report-panel summary{cursor:pointer;width:fit-content;text-decoration:underline;text-underline-offset:3px}
+      .stable-report-form{display:grid;gap:10px;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+      .stable-report-form label{display:grid;gap:5px}
+      .stable-report-form select,.stable-report-form textarea{width:100%;font:inherit;color:var(--text-strong);background:var(--surface-solid);border:1px solid var(--line);border-radius:8px;padding:8px}
+      .stable-report-form textarea{min-height:70px;resize:vertical}
+      .stable-report-form button{justify-self:start;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer;color:var(--text-strong);background:var(--surface-solid)}
+      .stable-report-form p{margin:0;line-height:1.5}
       .stable-reactions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
       .stable-reaction{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font:inherit;font-size:.82rem;font-weight:950;cursor:pointer;background:var(--surface-2);color:var(--text-strong);transition:transform .15s,border-color .15s,background .15s}
       .stable-reaction:hover{transform:translateY(-1px);border-color:var(--line-strong)}
@@ -104,6 +112,14 @@
         <div class="stable-meta">${pill('Dificultad', review.difficulty)}${pill('Carga', review.workload)}${pill('Utilidad', review.usefulness)}${review.study_hours ? `<span class="stable-pill">${esc(review.study_hours)} h/sem aprox.</span>` : ''}</div>
         <p class="stable-comment">${esc(review.comment)}</p>
         <div class="stable-footer"><span class="stable-pill">${esc(review.course_code || state.course?.code || '')}</span><div class="stable-reactions" aria-label="Reacciones al comentario"><button class="stable-reaction like" type="button" data-review-reaction="like" data-review-id="${esc(review.id)}" aria-label="Me gusta">👍 <span>${esc(review.likes_count || 0)}</span></button><button class="stable-reaction dislike" type="button" data-review-reaction="dislike" data-review-id="${esc(review.id)}" aria-label="No me gusta">👎 <span>${esc(review.dislikes_count || 0)}</span></button></div></div>
+        <details class="stable-report-panel"><summary>Reportar comentario</summary>
+          <form class="stable-report-form" data-report-form data-review-id="${esc(review.id)}">
+            <label>Motivo<select name="reason" required><option value="">Elige un motivo</option><option value="offensive">Insultos o acoso</option><option value="spam">Spam o publicidad</option><option value="personal_data">Datos personales</option><option value="other">Otro motivo</option></select></label>
+            <label>Detalle opcional<textarea name="detail" maxlength="500" placeholder="Explica brevemente qué debemos revisar"></textarea></label>
+            <p>El equipo revisará el reporte. El comentario seguirá visible hasta que se tome una decisión.</p>
+            <button type="submit">Enviar reporte</button><p data-report-status role="status" aria-live="polite"></p>
+          </form>
+        </details>
       </article>
     `).join('');
   }
@@ -125,6 +141,10 @@
   }
 
   function render() {
+    const previousForm = $('#stable-review-form');
+    if (previousForm && !previousForm.elements.namedItem('comment').disabled) {
+      state.draft = Object.fromEntries(new FormData(previousForm).entries());
+    }
     const mount = mountRoot();
     const courseLabel = state.course ? `${state.course.code} · ${state.course.name}` : 'este ramo';
     if (state.course) {
@@ -132,7 +152,7 @@
       mount.dataset.courseCode = String(state.course.code || '');
       mount.dataset.courseSlug = String(state.course.slug || '');
     }
-    const status = state.error ? `<div class="stable-status error">${esc(state.error)}</div>` : state.message ? `<div class="stable-status">${esc(state.message)}</div>` : '';
+    const status = `${state.error ? `<div class="stable-status error" role="alert">${esc(state.error)}</div>` : ''}${state.message ? `<div class="stable-status" role="status" aria-live="polite">${esc(state.message)}</div>` : ''}`;
     mount.innerHTML = `
       <div class="stable-reviews-card">
         <div class="stable-reviews-head"><div><div class="stable-reviews-kicker">Experiencia estudiantil</div><h2 class="stable-reviews-title">Lo que cuentan sobre ${esc(courseLabel)}</h2><p class="stable-reviews-sub">Lee experiencias reales y deja contexto útil para quienes tomarán el ramo después. Los comentarios de esta sección se cargan desde la base de datos del ramo.</p></div>${status}</div>
@@ -142,7 +162,7 @@
           <div class="stable-list" id="stable-review-list">${renderReviews()}</div>
           <aside class="stable-form-wrap">
             <h3 class="stable-form-title">Cuenta tu experiencia</h3>
-            <p class="stable-form-intro">Sé concreto y respetuoso. Tu opinión quedará asociada únicamente a <strong>${esc(courseLabel)}</strong>.</p>
+            <p class="stable-form-intro">Sé concreto y respetuoso. Tu opinión quedará asociada únicamente a <strong>${esc(courseLabel)}</strong> y será visible después de que el equipo la apruebe.</p>
             <form class="stable-form" id="stable-review-form" action="" method="post" novalidate>
               <label class="span-2">Nombre o alias opcional<input name="student_name" maxlength="80" placeholder="Puedes dejarlo vacío"></label>
               <label class="span-2">Profesor/a opcional<input name="professor_name" maxlength="120" placeholder="Nombre del profesor/a"></label>
@@ -153,12 +173,17 @@
               <label>Utilidad<select name="usefulness" required><option value="">Elegir</option><option value="1">1 - Baja</option><option value="2">2</option><option value="3">3 - Media</option><option value="4">4</option><option value="5">5 - Alta</option></select></label>
               <label>Horas/semana<input name="study_hours" type="number" min="0" max="80" placeholder="Ej: 6"></label>
               <label class="span-4">Comentario<textarea name="comment" minlength="20" maxlength="1500" required placeholder="¿Cómo fue cursarlo? ¿Qué costó más? ¿Qué consejo dejarías?"></textarea></label>
-              <div class="stable-actions"><p class="stable-help">Evita datos sensibles. La opinión se guarda en la base comunitaria y se muestra solo en la ficha de este ramo.</p><button class="stable-submit" type="submit" ${state.saving ? 'disabled' : ''}>${state.saving ? 'Publicando...' : 'Publicar comentario'}</button></div>
+              <div class="stable-actions"><p class="stable-help">Puedes usar un alias o dejar el nombre vacío. El comentario quedará pendiente de revisión.</p><button class="stable-submit" type="submit" ${state.saving || state.loading || !state.course ? 'disabled' : ''}>${state.saving ? 'Enviando...' : 'Enviar para revisión'}</button></div>
             </form>
           </aside>
         </div>
       </div>
     `;
+    const currentForm = $('#stable-review-form');
+    for (const field of currentForm.elements) {
+      if (field.name && Object.hasOwn(state.draft, field.name)) field.value = state.draft[field.name];
+      field.disabled = state.saving || (field.type === 'submit' && (state.loading || !state.course));
+    }
   }
 
   async function load() {
@@ -207,7 +232,9 @@
   }
 
   async function submitReview(form) {
+    if (state.saving || state.loading || !state.course) return;
     const data = Object.fromEntries(new FormData(form).entries());
+    state.draft = data;
     const validation = validate(data);
     if (validation) {
       state.error = validation;
@@ -218,27 +245,44 @@
     try {
       state.saving = true;
       state.error = '';
-      state.message = 'Publicando comentario...';
+      state.message = 'Enviando comentario para revisión...';
       render();
       const inserted = await window.WikiDiftelDB.submitCourseReview(slug, data);
       if (!inserted?.id || String(inserted.course_id) !== String(state.course?.id)) {
         throw new Error('Supabase no confirmó correctamente la asociación del comentario con este ramo.');
       }
       state.saving = false;
-      state.message = 'Comentario publicado y asociado correctamente a este ramo.';
+      state.message = 'Comentario enviado para revisión. Aparecerá en este ramo cuando el equipo lo apruebe.';
+      state.draft = {};
+      const submittedForm = $('#stable-review-form');
+      if (submittedForm) submittedForm.reset();
       await refreshReviews(false);
-      const currentForm = $('#stable-review-form');
-      if (currentForm) currentForm.reset();
     } catch (error) {
       console.warn(error);
       state.saving = false;
       state.message = '';
-      const rawMessage = String(error?.message || '');
-      const detail = rawMessage.match(/Supabase respondió \d+:\s*(.*)$/s)?.[1] || rawMessage;
-      state.error = detail
-        ? `No pudimos publicar el comentario. Detalle: ${detail.slice(0, 280)}`
-        : 'No pudimos publicar el comentario. Intenta nuevamente.';
+      state.error = 'No pudimos enviar el comentario. Conservamos lo que escribiste para que puedas intentarlo nuevamente.';
       render();
+    }
+  }
+
+  async function reportReview(form) {
+    const button = form.querySelector('button[type="submit"]');
+    const status = form.querySelector('[data-report-status]');
+    if (button.disabled) return;
+    const data = Object.fromEntries(new FormData(form).entries());
+    try {
+      button.disabled = true;
+      status.textContent = 'Enviando reporte...';
+      const result = await window.WikiDiftelDB.reportCourseReview(form.dataset.reviewId, data.reason, data.detail);
+      if (!result?.ok) throw new Error('Reporte no confirmado');
+      status.textContent = 'Reporte enviado. El equipo lo revisará.';
+      form.reset();
+    } catch (error) {
+      console.warn(error);
+      status.textContent = 'No pudimos enviar el reporte. Intenta nuevamente.';
+    } finally {
+      button.disabled = false;
     }
   }
 
@@ -274,6 +318,10 @@
       event.stopPropagation();
       if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
       submitReview(event.target);
+    } else if (event.target?.matches?.('[data-report-form]')) {
+      event.preventDefault();
+      event.stopPropagation();
+      reportReview(event.target);
     }
   }, true);
 

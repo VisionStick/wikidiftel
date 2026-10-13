@@ -212,6 +212,22 @@
     return reactToCourseReview(reviewId, 'dislike');
   }
 
+  async function reportCourseReview(reviewId, reason, detail = '') {
+    const id = Number(reviewId);
+    if (!Number.isSafeInteger(id) || id <= 0) throw new Error('Comentario inválido.');
+    if (!['offensive', 'spam', 'personal_data', 'other'].includes(reason)) {
+      throw new Error('Selecciona el motivo del reporte.');
+    }
+    const text = String(detail || '').trim();
+    if (text.length > 500) throw new Error('El detalle debe tener como máximo 500 caracteres.');
+    return rpc('report_course_review', {
+      review_id_input: id,
+      client_token_input: getClientToken(),
+      reason_input: reason,
+      detail_input: text || null
+    });
+  }
+
   window.WikiDiftelDB = {
     request,
     rpc,
@@ -222,6 +238,8 @@
     submitCourseReview,
     reactToCourseReview,
     likeCourseReview,
-    dislikeCourseReview
+    dislikeCourseReview,
+    reportCourseReview
   };
 })();
+
