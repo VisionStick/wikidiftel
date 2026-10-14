@@ -1,0 +1,1185 @@
+{
+  "titulo": "¿Qué tan telemático eres?",
+  "carrera": "Ingeniería Civil Telemática",
+  "universidad": "UTFSM",
+  "total_preguntas": 75,
+  "obligatorias": {
+    "categoria": "Historia de la carrera",
+    "minimo_por_quiz": 2,
+    "descripcion": "En cada partida se deben incluir al menos 2 preguntas de la categoría Historia de la carrera (Telemática USM)."
+  },
+  "niveles": {
+    "basico": {
+      "cantidad": 24,
+      "puntos_por_pregunta": 1
+    },
+    "intermedio": {
+      "cantidad": 26,
+      "puntos_por_pregunta": 2
+    },
+    "dificil": {
+      "cantidad": 25,
+      "puntos_por_pregunta": 3
+    }
+  },
+  "puntaje_maximo": 151,
+  "resultados": [
+    {
+      "min": 0,
+      "max": 38,
+      "titulo": "Mechón despistado",
+      "descripcion": "Recién estás conectando los cables. ¡Aún tienes toda la carrera para aprender!"
+    },
+    {
+      "min": 39,
+      "max": 75,
+      "titulo": "Telemático en formación",
+      "descripcion": "Ya entiendes lo básico de redes y programación. Sigue así."
+    },
+    {
+      "min": 76,
+      "max": 113,
+      "titulo": "Telemático sólido",
+      "descripcion": "Dominas bastante bien los conceptos clave de la carrera."
+    },
+    {
+      "min": 114,
+      "max": 136,
+      "titulo": "Telemático de élite",
+      "descripcion": "Tu conocimiento en redes, sistemas y software es impresionante."
+    },
+    {
+      "min": 137,
+      "max": 151,
+      "titulo": "Telemático legendario",
+      "descripcion": "Eres un verdadero paquete sin pérdidas: llegaste al destino con todo."
+    }
+  ],
+  "preguntas": [
+    {
+      "id": 1,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué significan las siglas IP?",
+      "opciones": [
+        "Internet Protocol",
+        "Internal Process",
+        "Integrated Port",
+        "Information Package"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "IP es Internet Protocol, el protocolo que direcciona y enruta paquetes en la red.",
+      "obligatoria": false
+    },
+    {
+      "id": 2,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué dispositivo se encarga principalmente de enrutar paquetes entre distintas redes?",
+      "opciones": [
+        "Hub",
+        "Repetidor",
+        "Router",
+        "Patch panel"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "El router toma decisiones de reenvío según direcciones IP y conecta redes distintas.",
+      "obligatoria": false
+    },
+    {
+      "id": 3,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es el puerto por defecto del protocolo HTTP?",
+      "opciones": [
+        "21",
+        "80",
+        "443",
+        "8081"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "HTTP usa el puerto 80; HTTPS usa el 443.",
+      "obligatoria": false
+    },
+    {
+      "id": 4,
+      "nivel": "basico",
+      "categoria": "Web",
+      "pregunta": "¿Qué significan las siglas HTML?",
+      "opciones": [
+        "HyperText Markdown Language",
+        "High Transfer Markup Language",
+        "Hyper Tool Multi Language",
+        "HyperText Markup Language"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "HTML es HyperText Markup Language, el lenguaje de marcado para estructurar páginas web.",
+      "obligatoria": false
+    },
+    {
+      "id": 5,
+      "nivel": "basico",
+      "categoria": "Fundamentos",
+      "pregunta": "¿Cómo se representa el número decimal 5 en binario?",
+      "opciones": [
+        "110",
+        "100",
+        "101",
+        "111"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "5 = 4 + 1, es decir 101 en binario.",
+      "obligatoria": false
+    },
+    {
+      "id": 6,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué servicio traduce nombres de dominio (como utfsm.cl) a direcciones IP?",
+      "opciones": [
+        "DNS",
+        "DHCP",
+        "FTP",
+        "SNMP"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "DNS (Domain Name System) resuelve nombres de dominio a direcciones IP.",
+      "obligatoria": false
+    },
+    {
+      "id": 7,
+      "nivel": "basico",
+      "categoria": "Programación",
+      "pregunta": "¿Qué lenguaje de programación utiliza la indentación para delimitar bloques de código?",
+      "opciones": [
+        "C",
+        "Java",
+        "Python",
+        "JavaScript"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "En Python la indentación es parte de la sintaxis y define los bloques.",
+      "obligatoria": false
+    },
+    {
+      "id": 8,
+      "nivel": "basico",
+      "categoria": "Fundamentos",
+      "pregunta": "¿Cuántos bits tiene un byte?",
+      "opciones": [
+        "2",
+        "4",
+        "16",
+        "8"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "Un byte está compuesto por 8 bits.",
+      "obligatoria": false
+    },
+    {
+      "id": 9,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué es una dirección MAC?",
+      "opciones": [
+        "Una dirección de correo",
+        "Un identificador físico de una interfaz de red",
+        "Una contraseña de WiFi",
+        "Un tipo de puerto TCP"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La dirección MAC identifica a nivel de enlace la tarjeta o interfaz de red.",
+      "obligatoria": false
+    },
+    {
+      "id": 10,
+      "nivel": "basico",
+      "categoria": "Sistemas Operativos",
+      "pregunta": "¿Cuál de los siguientes es un sistema operativo de código abierto?",
+      "opciones": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "iOS"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "Linux es un kernel/sistema operativo libre y de código abierto.",
+      "obligatoria": false
+    },
+    {
+      "id": 11,
+      "nivel": "basico",
+      "categoria": "Sistemas Operativos",
+      "pregunta": "¿Qué comando de Linux muestra el directorio de trabajo actual?",
+      "opciones": [
+        "ls",
+        "cd",
+        "pwd",
+        "whoami"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "pwd (print working directory) imprime la ruta del directorio actual.",
+      "obligatoria": false
+    },
+    {
+      "id": 12,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué significan las siglas LAN?",
+      "opciones": [
+        "Large Area Network",
+        "Local Area Network",
+        "Long Access Node",
+        "Linked Address Network"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "LAN es Local Area Network, una red de alcance local como una oficina o un campus.",
+      "obligatoria": false
+    },
+    {
+      "id": 13,
+      "nivel": "basico",
+      "categoria": "Redes",
+      "pregunta": "¿Qué protocolo se utiliza tradicionalmente para el envío de correos electrónicos?",
+      "opciones": [
+        "SMTP",
+        "SSH",
+        "ICMP",
+        "NTP"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "SMTP (Simple Mail Transfer Protocol) se usa para enviar correos entre servidores.",
+      "obligatoria": false
+    },
+    {
+      "id": 14,
+      "nivel": "basico",
+      "categoria": "Hardware",
+      "pregunta": "¿Qué tipo de memoria pierde su contenido cuando se apaga el equipo?",
+      "opciones": [
+        "SSD",
+        "ROM",
+        "Disco duro",
+        "RAM"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "La RAM es memoria volátil: requiere energía para mantener los datos.",
+      "obligatoria": false
+    },
+    {
+      "id": 15,
+      "nivel": "basico",
+      "categoria": "Seguridad",
+      "pregunta": "En HTTPS, ¿qué significa la letra \"S\"?",
+      "opciones": [
+        "Server",
+        "Secure",
+        "Standard",
+        "Simple"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La S significa Secure: la comunicación va cifrada mediante TLS.",
+      "obligatoria": false
+    },
+    {
+      "id": 16,
+      "nivel": "basico",
+      "categoria": "Programación",
+      "pregunta": "¿Qué es un algoritmo?",
+      "opciones": [
+        "Un lenguaje de programación",
+        "Un tipo de hardware",
+        "Un programa ya compilado",
+        "Una secuencia finita de pasos para resolver un problema"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "Un algoritmo es un conjunto finito y ordenado de instrucciones para resolver un problema.",
+      "obligatoria": false
+    },
+    {
+      "id": 17,
+      "nivel": "basico",
+      "categoria": "Herramientas",
+      "pregunta": "¿Qué comando de Git registra en el repositorio local los cambios que ya están en el área de staging?",
+      "opciones": [
+        "git push",
+        "git commit",
+        "git clone",
+        "git pull"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "git commit guarda una instantánea de los cambios preparados en el historial local.",
+      "obligatoria": false
+    },
+    {
+      "id": 18,
+      "nivel": "basico",
+      "categoria": "Telecomunicaciones",
+      "pregunta": "¿En qué unidad se mide la frecuencia de una señal?",
+      "opciones": [
+        "Hertz",
+        "Watt",
+        "Volt",
+        "Ohm"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "La frecuencia se mide en Hertz (Hz), es decir, ciclos por segundo.",
+      "obligatoria": false
+    },
+    {
+      "id": 19,
+      "nivel": "basico",
+      "categoria": "Cultura UTFSM",
+      "pregunta": "¿Cómo se les llama coloquialmente a los estudiantes de la UTFSM?",
+      "opciones": [
+        "Pucones",
+        "Sansanos",
+        "Beauchefianos",
+        "Usachinos"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Sansano es el gentilicio coloquial de quienes estudian en la Universidad Técnica Federico Santa María.",
+      "obligatoria": false
+    },
+    {
+      "id": 20,
+      "nivel": "basico",
+      "categoria": "Cultura UTFSM",
+      "pregunta": "¿En qué ciudad se encuentra la Casa Central de la UTFSM?",
+      "opciones": [
+        "Concepción",
+        "Santiago",
+        "Valparaíso",
+        "Viña del Mar"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "La Casa Central de la UTFSM está en Valparaíso, en el Cerro Los Placeres.",
+      "obligatoria": false
+    },
+    {
+      "id": 21,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Cuántas capas tiene el modelo de referencia OSI?",
+      "opciones": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "OSI define 7 capas: física, enlace, red, transporte, sesión, presentación y aplicación.",
+      "obligatoria": false
+    },
+    {
+      "id": 22,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿En qué capa del modelo OSI opera principalmente un router?",
+      "opciones": [
+        "Capa 1 (Física)",
+        "Capa 2 (Enlace)",
+        "Capa 3 (Red)",
+        "Capa 4 (Transporte)"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "Los routers toman decisiones según direcciones IP, que pertenecen a la capa de red.",
+      "obligatoria": false
+    },
+    {
+      "id": 23,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la principal diferencia entre TCP y UDP?",
+      "opciones": [
+        "TCP es más rápido pero inseguro",
+        "UDP garantiza la entrega ordenada",
+        "TCP es orientado a conexión y confiable; UDP no",
+        "UDP solo funciona en redes locales"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "TCP establece conexión, confirma entrega y ordena los datos; UDP envía datagramas sin garantías.",
+      "obligatoria": false
+    },
+    {
+      "id": 24,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Cuántos hosts utilizables tiene una red con máscara /24?",
+      "opciones": [
+        "254",
+        "256",
+        "255",
+        "252"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "Hay 2^8 = 256 direcciones, menos la de red y la de broadcast: 254 utilizables.",
+      "obligatoria": false
+    },
+    {
+      "id": 25,
+      "nivel": "intermedio",
+      "categoria": "Algoritmos",
+      "pregunta": "¿Cuál es la complejidad temporal de la búsqueda binaria sobre un arreglo ordenado?",
+      "opciones": [
+        "O(n)",
+        "O(log n)",
+        "O(n log n)",
+        "O(1)"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "En cada paso se descarta la mitad del espacio de búsqueda, por eso es O(log n).",
+      "obligatoria": false
+    },
+    {
+      "id": 26,
+      "nivel": "intermedio",
+      "categoria": "Bases de Datos",
+      "pregunta": "En SQL, ¿qué cláusula se usa para combinar filas de dos o más tablas según una condición relacionada?",
+      "opciones": [
+        "GROUP BY",
+        "WHERE",
+        "ORDER BY",
+        "JOIN"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "JOIN combina filas de distintas tablas a partir de columnas relacionadas.",
+      "obligatoria": false
+    },
+    {
+      "id": 27,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Qué puerto usa por defecto el protocolo SSH?",
+      "opciones": [
+        "23",
+        "22",
+        "25",
+        "53"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "SSH usa el puerto 22; Telnet usa el 23, SMTP el 25 y DNS el 53.",
+      "obligatoria": false
+    },
+    {
+      "id": 28,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la función del protocolo DHCP?",
+      "opciones": [
+        "Cifrar el tráfico de red",
+        "Traducir nombres a IP",
+        "Asignar automáticamente configuración IP a los hosts",
+        "Sincronizar la hora"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "DHCP entrega dinámicamente dirección IP, máscara, gateway y DNS a los clientes.",
+      "obligatoria": false
+    },
+    {
+      "id": 29,
+      "nivel": "intermedio",
+      "categoria": "Estructuras de Datos",
+      "pregunta": "¿Qué estructura de datos sigue el principio LIFO (último en entrar, primero en salir)?",
+      "opciones": [
+        "Cola",
+        "Pila",
+        "Lista enlazada",
+        "Árbol binario"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La pila (stack) saca primero el último elemento insertado.",
+      "obligatoria": false
+    },
+    {
+      "id": 30,
+      "nivel": "intermedio",
+      "categoria": "Web",
+      "pregunta": "En una API REST, ¿qué método HTTP se usa típicamente para reemplazar completamente un recurso existente y es idempotente?",
+      "opciones": [
+        "POST",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "PUT reemplaza el recurso completo y repetir la misma petición produce el mismo resultado.",
+      "obligatoria": false
+    },
+    {
+      "id": 31,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Para qué sirve una VLAN?",
+      "opciones": [
+        "Segmentar lógicamente una red en la capa 2",
+        "Aumentar la velocidad del cable",
+        "Cifrar el tráfico entre sucursales",
+        "Asignar nombres de dominio"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "Las VLAN separan dominios de broadcast lógicos sobre la misma infraestructura física.",
+      "obligatoria": false
+    },
+    {
+      "id": 32,
+      "nivel": "intermedio",
+      "categoria": "Sistemas",
+      "pregunta": "¿Qué diferencia a un contenedor Docker de una máquina virtual tradicional?",
+      "opciones": [
+        "El contenedor incluye su propio kernel completo",
+        "El contenedor comparte el kernel del sistema anfitrión",
+        "El contenedor solo corre en Windows",
+        "No existe ninguna diferencia"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Los contenedores aíslan procesos compartiendo el kernel del host, por lo que son más livianos que una VM.",
+      "obligatoria": false
+    },
+    {
+      "id": 33,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Qué protocolo resuelve una dirección IP a su dirección MAC dentro de una red local?",
+      "opciones": [
+        "ICMP",
+        "RARP",
+        "ARP",
+        "BGP"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "ARP (Address Resolution Protocol) obtiene la MAC asociada a una IP en la LAN.",
+      "obligatoria": false
+    },
+    {
+      "id": 34,
+      "nivel": "intermedio",
+      "categoria": "Seguridad",
+      "pregunta": "¿Cuántos bits tiene el resultado (digest) de la función hash SHA-256?",
+      "opciones": [
+        "128",
+        "512",
+        "64",
+        "256"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "SHA-256 produce un resumen de 256 bits (32 bytes).",
+      "obligatoria": false
+    },
+    {
+      "id": 35,
+      "nivel": "intermedio",
+      "categoria": "Bases de Datos",
+      "pregunta": "¿Cuál es el objetivo principal de la normalización en bases de datos relacionales?",
+      "opciones": [
+        "Reducir la redundancia y mejorar la integridad",
+        "Aumentar el tamaño de las tablas",
+        "Cifrar los datos",
+        "Eliminar las claves primarias"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "Normalizar organiza los datos para evitar duplicación y anomalías de actualización.",
+      "obligatoria": false
+    },
+    {
+      "id": 36,
+      "nivel": "intermedio",
+      "categoria": "Redes",
+      "pregunta": "¿Qué hace NAT (Network Address Translation)?",
+      "opciones": [
+        "Cifra paquetes IP",
+        "Traduce direcciones IP privadas a públicas y viceversa",
+        "Asigna direcciones MAC",
+        "Balancea la carga entre servidores"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "NAT permite que muchos hosts con IP privada salgan a Internet compartiendo una o pocas IP públicas.",
+      "obligatoria": false
+    },
+    {
+      "id": 37,
+      "nivel": "intermedio",
+      "categoria": "Sistemas Operativos",
+      "pregunta": "En Linux, ¿qué permisos otorga el comando chmod 755 a un archivo?",
+      "opciones": [
+        "rw-r--r--",
+        "rwxrwxrwx",
+        "rwxr-xr-x",
+        "r-xr-xr-x"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "7 = rwx para el dueño; 5 = r-x para el grupo y para otros.",
+      "obligatoria": false
+    },
+    {
+      "id": 38,
+      "nivel": "intermedio",
+      "categoria": "Telecomunicaciones",
+      "pregunta": "Según el teorema de Nyquist-Shannon, ¿a qué frecuencia mínima se debe muestrear una señal para reconstruirla sin pérdida?",
+      "opciones": [
+        "La mitad de su frecuencia máxima",
+        "Igual a su frecuencia máxima",
+        "El triple de su frecuencia máxima",
+        "Al menos el doble de su frecuencia máxima"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "La frecuencia de muestreo debe ser al menos 2·fmax para evitar aliasing.",
+      "obligatoria": false
+    },
+    {
+      "id": 39,
+      "nivel": "intermedio",
+      "categoria": "Seguridad",
+      "pregunta": "¿Qué es un ataque DDoS?",
+      "opciones": [
+        "Saturar un servicio con tráfico desde múltiples orígenes para dejarlo inaccesible",
+        "Robar contraseñas mediante correos falsos",
+        "Inyectar código SQL malicioso",
+        "Interceptar comunicaciones cifradas"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "DDoS (Distributed Denial of Service) busca agotar los recursos de un servicio desde muchas fuentes.",
+      "obligatoria": false
+    },
+    {
+      "id": 40,
+      "nivel": "intermedio",
+      "categoria": "Algoritmos",
+      "pregunta": "¿Cuál es la complejidad promedio del algoritmo Quicksort?",
+      "opciones": [
+        "O(n²)",
+        "O(n log n)",
+        "O(n)",
+        "O(log n)"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "En promedio Quicksort divide el problema balanceadamente, dando O(n log n); el peor caso es O(n²).",
+      "obligatoria": false
+    },
+    {
+      "id": 41,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la secuencia correcta del three-way handshake de TCP?",
+      "opciones": [
+        "SYN, ACK, SYN-ACK",
+        "ACK, SYN, SYN-ACK",
+        "SYN, SYN-ACK, ACK",
+        "SYN-ACK, SYN, ACK"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "El cliente envía SYN, el servidor responde SYN-ACK y el cliente cierra con ACK.",
+      "obligatoria": false
+    },
+    {
+      "id": 42,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿A qué familia de algoritmos de enrutamiento pertenece OSPF?",
+      "opciones": [
+        "Vector de distancia",
+        "Estado de enlace (link-state)",
+        "Vector de rutas de camino",
+        "Enrutamiento estático"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "OSPF es un protocolo link-state que usa el algoritmo de Dijkstra sobre una base de datos de topología.",
+      "obligatoria": false
+    },
+    {
+      "id": 43,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Qué protocolo se utiliza para intercambiar información de enrutamiento entre sistemas autónomos en Internet?",
+      "opciones": [
+        "RIP",
+        "BGP",
+        "OSPF",
+        "EIGRP"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "BGP es el protocolo de enrutamiento inter-dominio que sostiene el Internet global.",
+      "obligatoria": false
+    },
+    {
+      "id": 44,
+      "nivel": "dificil",
+      "categoria": "Sistemas Distribuidos",
+      "pregunta": "¿Qué establece el teorema CAP?",
+      "opciones": [
+        "Un sistema distribuido puede garantizar simultáneamente consistencia, disponibilidad y tolerancia a particiones",
+        "Ante una partición de red, un sistema debe sacrificar consistencia o disponibilidad",
+        "Las bases de datos NoSQL no pueden ser consistentes",
+        "La latencia siempre es inversamente proporcional al ancho de banda"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Como las particiones de red son inevitables, hay que elegir entre consistencia y disponibilidad cuando ocurren.",
+      "obligatoria": false
+    },
+    {
+      "id": 45,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuántos bits tiene una dirección IPv6?",
+      "opciones": [
+        "32",
+        "64",
+        "256",
+        "128"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "IPv6 usa direcciones de 128 bits, frente a los 32 bits de IPv4.",
+      "obligatoria": false
+    },
+    {
+      "id": 46,
+      "nivel": "dificil",
+      "categoria": "Telecomunicaciones",
+      "pregunta": "¿Qué expresa la fórmula de capacidad de canal de Shannon, C = B · log₂(1 + SNR)?",
+      "opciones": [
+        "La máxima tasa de datos sin error en un canal con ruido y ancho de banda B",
+        "El retardo máximo de propagación",
+        "El número de usuarios simultáneos en una celda",
+        "La potencia mínima de transmisión"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "Shannon fija el límite teórico de bits por segundo en función del ancho de banda y la relación señal/ruido.",
+      "obligatoria": false
+    },
+    {
+      "id": 47,
+      "nivel": "dificil",
+      "categoria": "Sistemas Operativos",
+      "pregunta": "¿Cuál de las siguientes NO es una condición necesaria (de Coffman) para que ocurra un deadlock?",
+      "opciones": [
+        "Exclusión mutua",
+        "Retención y espera",
+        "Espera circular",
+        "Apropiación de recursos (preemption)"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "Lo necesario es la NO apropiación; si los recursos pueden quitarse, el deadlock puede evitarse.",
+      "obligatoria": false
+    },
+    {
+      "id": 48,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es el propósito del protocolo Spanning Tree (STP)?",
+      "opciones": [
+        "Cifrar tramas Ethernet",
+        "Balancear carga entre routers",
+        "Evitar bucles en redes de capa 2 con enlaces redundantes",
+        "Asignar VLANs automáticamente"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "STP bloquea enlaces redundantes lógicamente para evitar bucles y tormentas de broadcast.",
+      "obligatoria": false
+    },
+    {
+      "id": 49,
+      "nivel": "dificil",
+      "categoria": "Seguridad",
+      "pregunta": "En el handshake de TLS, ¿para qué se usa la criptografía asimétrica?",
+      "opciones": [
+        "Cifrar todo el tráfico de la sesión",
+        "Comprimir los datos",
+        "Acordar de forma segura una clave de sesión simétrica",
+        "Enrutar los paquetes"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "La asimétrica autentica y acuerda claves; luego se usa cifrado simétrico, más eficiente, para los datos.",
+      "obligatoria": false
+    },
+    {
+      "id": 50,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuántos hosts utilizables tiene la red 192.168.10.0/26?",
+      "opciones": [
+        "30",
+        "64",
+        "62",
+        "126"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "/26 deja 6 bits de host: 2^6 = 64 direcciones, menos 2 = 62 utilizables.",
+      "obligatoria": false
+    },
+    {
+      "id": 51,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la dirección de broadcast de la red 192.168.1.64/26?",
+      "opciones": [
+        "192.168.1.95",
+        "192.168.1.128",
+        "192.168.1.255",
+        "192.168.1.127"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "El bloque /26 va de .64 a .127; la última dirección (.127) es el broadcast.",
+      "obligatoria": false
+    },
+    {
+      "id": 52,
+      "nivel": "dificil",
+      "categoria": "Algoritmos",
+      "pregunta": "¿Cuál es la complejidad del algoritmo de Dijkstra implementado con un heap binario?",
+      "opciones": [
+        "O(V²)",
+        "O(V · E)",
+        "O((V + E) log V)",
+        "O(E)"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "Con cola de prioridad basada en heap binario, la complejidad es O((V + E) log V).",
+      "obligatoria": false
+    },
+    {
+      "id": 53,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "En el control de congestión de TCP, ¿cómo crece la ventana de congestión durante la fase de slow start?",
+      "opciones": [
+        "Linealmente cada RTT",
+        "Se mantiene constante",
+        "Exponencialmente (se duplica cada RTT aproximadamente)",
+        "Decrece hasta el umbral"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "En slow start cwnd aumenta en 1 MSS por cada ACK, lo que equivale a duplicarse aproximadamente cada RTT.",
+      "obligatoria": false
+    },
+    {
+      "id": 54,
+      "nivel": "dificil",
+      "categoria": "Telecomunicaciones",
+      "pregunta": "¿Qué característica define a la modulación QAM?",
+      "opciones": [
+        "Solo varía la frecuencia de la portadora",
+        "Solo varía la amplitud de la portadora",
+        "Solo usa dos niveles de fase",
+        "Combina variaciones de amplitud y de fase"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "QAM modula simultáneamente amplitud y fase de la portadora para transmitir más bits por símbolo.",
+      "obligatoria": false
+    },
+    {
+      "id": 55,
+      "nivel": "dificil",
+      "categoria": "Sistemas Distribuidos",
+      "pregunta": "En el algoritmo de consenso Raft, ¿qué rol es responsable de recibir las peticiones de los clientes y replicar el log?",
+      "opciones": [
+        "Seguidor (follower)",
+        "Candidato (candidate)",
+        "Observador",
+        "Líder (leader)"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "En Raft el líder electo gestiona las escrituras y replica las entradas del log a los seguidores.",
+      "obligatoria": false
+    },
+    {
+      "id": 56,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la ruta resumida (summarization) de 10.0.0.0/24 y 10.0.1.0/24?",
+      "opciones": [
+        "10.0.0.0/25",
+        "10.0.0.0/23",
+        "10.0.0.0/22",
+        "10.0.0.0/16"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Ambas redes son contiguas y comparten los primeros 23 bits, por lo que se agregan como 10.0.0.0/23.",
+      "obligatoria": false
+    },
+    {
+      "id": 57,
+      "nivel": "dificil",
+      "categoria": "Sistemas Operativos",
+      "pregunta": "En sistemas Unix/Linux, ¿qué hace la llamada al sistema fork()?",
+      "opciones": [
+        "Termina el proceso actual",
+        "Crea un nuevo proceso hijo duplicando al proceso llamador",
+        "Carga un nuevo programa en memoria",
+        "Bloquea un archivo"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "fork() crea un proceso hijo casi idéntico al padre; exec() es la que reemplaza la imagen del programa.",
+      "obligatoria": false
+    },
+    {
+      "id": 58,
+      "nivel": "dificil",
+      "categoria": "Bases de Datos",
+      "pregunta": "En las propiedades ACID, ¿cuál garantiza que las transacciones concurrentes no interfieran entre sí?",
+      "opciones": [
+        "Atomicidad",
+        "Consistencia",
+        "Durabilidad",
+        "Aislamiento"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "El aislamiento (Isolation) hace que el resultado de transacciones concurrentes equivalga a ejecutarlas de forma serial.",
+      "obligatoria": false
+    },
+    {
+      "id": 59,
+      "nivel": "dificil",
+      "categoria": "Redes",
+      "pregunta": "¿Cuál es la MTU típica de una trama Ethernet estándar (carga útil)?",
+      "opciones": [
+        "576 bytes",
+        "1500 bytes",
+        "9000 bytes",
+        "65535 bytes"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La MTU estándar de Ethernet es 1500 bytes; las jumbo frames llegan a unos 9000.",
+      "obligatoria": false
+    },
+    {
+      "id": 60,
+      "nivel": "dificil",
+      "categoria": "Teoría de la Computación",
+      "pregunta": "¿Cuál de los siguientes es un problema NP-completo?",
+      "opciones": [
+        "Ordenar una lista de números",
+        "Búsqueda binaria en un arreglo",
+        "Multiplicar dos enteros",
+        "Problema del viajante (versión de decisión)"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "La versión de decisión del problema del viajante (TSP) es un clásico problema NP-completo.",
+      "obligatoria": false
+    },
+    {
+      "id": 61,
+      "nivel": "basico",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿En qué año comenzó a impartirse la carrera de Ingeniería Civil Telemática en la UTFSM?",
+      "opciones": [
+        "1998",
+        "2003",
+        "2010",
+        "2019"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La carrera comenzó a impartirse en la Casa Central de Valparaíso en 2003."
+    },
+    {
+      "id": 62,
+      "nivel": "basico",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿A qué departamento de la UTFSM pertenece la carrera de Ingeniería Civil Telemática?",
+      "opciones": [
+        "Departamento de Informática",
+        "Departamento de Electrónica",
+        "Departamento de Industrias",
+        "Departamento de Física"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Telemática pertenece al Departamento de Electrónica, junto a Ingeniería Civil Electrónica."
+    },
+    {
+      "id": 63,
+      "nivel": "basico",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Qué distingue a Telemática de una carrera puramente de Informática?",
+      "opciones": [
+        "Telemática no incluye programación",
+        "Informática no utiliza computadores",
+        "Telemática integra el software con las redes y las telecomunicaciones (TIC)",
+        "Son exactamente la misma carrera con distinto nombre"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "La telemática usa software para agregar inteligencia a los sistemas de telecomunicaciones u ofrecer servicios a distancia mediante redes como Internet."
+    },
+    {
+      "id": 64,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Qué hito tiene la UTFSM respecto a Ingeniería Civil Telemática en Chile?",
+      "opciones": [
+        "Fue la última universidad en adoptar la carrera",
+        "Es la única universidad del mundo que la ofrece",
+        "La copió del plan de la Universidad de Chile",
+        "Fue la primera en crear la carrera en el país"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "La UTFSM fue pionera: creó la primera carrera de Ingeniería Civil Telemática de Chile, para formar profesionales especializados en TIC."
+    },
+    {
+      "id": 65,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿En qué año la carrera se extendió también al Campus San Joaquín, en Santiago?",
+      "opciones": [
+        "2010",
+        "2015",
+        "2019",
+        "2023"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "A partir de 2019 la carrera se imparte además en Santiago, con profesores que viajan entre ambas sedes."
+    },
+    {
+      "id": 66,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Cuál describe mejor la diferencia entre Telemática y Electrónica?",
+      "opciones": [
+        "Telemática solo estudia cables y Electrónica solo software",
+        "Telemática se centra en software y servicios TIC sobre redes; Electrónica, en circuitos, dispositivos y control",
+        "No hay diferencias: comparten el mismo plan de estudios",
+        "Electrónica no estudia telecomunicaciones"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Telemática nació desde el Departamento de Electrónica, pero se orienta a aplicaciones y servicios sobre redes; la Electrónica se enfoca más en el hardware, los circuitos y el control (aunque también incluye comunicaciones)."
+    },
+    {
+      "id": 67,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Con qué institución francesa mantiene la carrera un convenio de doble titulación?",
+      "opciones": [
+        "Sorbonne Université",
+        "INSA Lyon",
+        "École Polytechnique",
+        "IMT Atlantique"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "Existe un convenio especial de doble titulación con IMT Atlantique Bretagne Pays de la Loire, en Francia."
+    },
+    {
+      "id": 68,
+      "nivel": "dificil",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Cuántos estudiantes ingresaron directamente a la carrera en su primer año de funcionamiento (2003)?",
+      "opciones": [
+        "120",
+        "90",
+        "58",
+        "32"
+      ],
+      "respuesta_correcta": 2,
+      "explicacion": "En su primer año ingresaron 58 estudiantes directamente a Ingeniería Civil Telemática."
+    },
+    {
+      "id": 69,
+      "nivel": "dificil",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿En qué año aprobó el Consejo Superior de la UTFSM el proyecto de creación de la carrera?",
+      "opciones": [
+        "2002",
+        "2001",
+        "2003",
+        "1999"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "El Consejo Académico lo aprobó en 2001 y el Consejo Superior en 2002; la carrera partió en 2003."
+    },
+    {
+      "id": 70,
+      "nivel": "dificil",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Qué programa de postgrado de la UTFSM incluye una mención en Telemática?",
+      "opciones": [
+        "Magíster en Ciencias de la Ingeniería Informática, mención Telemática",
+        "Magíster en Ciencias de la Ingeniería Electrónica, mención Telemática",
+        "MBA, mención Telemática",
+        "Magíster en Ciencias de la Ingeniería Civil, mención Telemática"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "La UTFSM ofrece el Magíster en Ciencias de la Ingeniería Electrónica con mención en Telemática, dentro del Departamento de Electrónica."
+    },
+    {
+      "id": 71,
+      "nivel": "basico",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿En qué sedes se imparte Ingeniería Civil Telemática en la UTFSM?",
+      "opciones": [
+        "Solo Campus San Joaquín (Santiago)",
+        "Solo Casa Central (Valparaíso)",
+        "Sede Viña del Mar y Campus Vitacura",
+        "Casa Central (Valparaíso) y Campus San Joaquín (Santiago)"
+      ],
+      "respuesta_correcta": 3,
+      "explicacion": "Se imparte en Casa Central (Valparaíso) desde 2003 y se extendió al Campus San Joaquín (Santiago) desde 2019."
+    },
+    {
+      "id": 72,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Qué sigla identifica a los ramos propios de Telemática en la UTFSM, como Iniciación a la Programación (TEL101)?",
+      "opciones": [
+        "ELO",
+        "TEL",
+        "MAT",
+        "FIS"
+      ],
+      "respuesta_correcta": 1,
+      "explicacion": "Los ramos propios usan la sigla TEL (ej. TEL101, TEL315 Redes Inalámbricas), mientras ELO es de Electrónica."
+    },
+    {
+      "id": 73,
+      "nivel": "intermedio",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Cuál de estos ramos es parte típica de la malla de Telemática USM?",
+      "opciones": [
+        "Redes de Computadores I (ELO322)",
+        "Hormigón Armado",
+        "Geología Estructural",
+        "Termodinámica Aplicada"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "ELO322 Redes de Computadores I es un ramo central de la malla; los otros son de Civil/Construcción."
+    },
+    {
+      "id": 74,
+      "nivel": "dificil",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Cuál describe mejor el quehacer distintivo de un ingeniero civil telemático USM frente a un electrónico o informático puro?",
+      "opciones": [
+        "Diseñar y gestionar servicios y aplicaciones sobre redes y telecomunicaciones (ej. VoIP, video, redes empresariales, IoT)",
+        "Diseñar circuitos integrados, máquinas eléctricas y sistemas de potencia",
+        "Desarrollar solo software de escritorio sin considerar la red ni las telecomunicaciones",
+        "Operar y mantener solo redes eléctricas de distribución"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "El telemático USM combina software + redes + telecom (TIC) para crear servicios a distancia; el electrónico se centra en hardware/circuitos/control y el informático puro en software sin foco en telecom."
+    },
+    {
+      "id": 75,
+      "nivel": "dificil",
+      "categoria": "Historia de la carrera",
+      "obligatoria": true,
+      "pregunta": "¿Cuál de estos ramos TEL avanzados existe realmente en la malla de Telemática USM?",
+      "opciones": [
+        "TEL312 Seguridad en Redes de Computadores",
+        "TEL312 Administración de Puentes y Carreteras",
+        "TEL312 Electrónica de Potencia y Máquinas Eléctricas",
+        "TEL312 Control Automático de Plantas Industriales"
+      ],
+      "respuesta_correcta": 0,
+      "explicacion": "TEL312 Seguridad en Redes de Computadores es un ramo real (junto a TEL315 Redes Inalámbricas, TEL317 Redes Ópticas WDM, TEL354 Minería de Datos). Los demás son de Civil o de Electrónica de potencia/control, no TEL."
+    }
+  ]
+}
