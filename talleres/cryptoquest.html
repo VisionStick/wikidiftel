@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoQuest — Desbloquea la sala</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{
+ --bg:#0c0618; --panel:#150e2e; --panel2:#0f0a22; --line:#3b2a63;
+ --lila:#c084fc; --lila-dim:#7c3aed; --cyan:#22d3ee; --cyan-dim:#0e7490;
+ --pink:#f472b6; --trace:#22d3ee; --trace-dim:#0e7490; --amber:#f472b6;
+ --text:#ede9fe; --text-dim:#a794d6; --bad:#fb7185;
+ }
+ *{box-sizing:border-box;}
+ body{
+ margin:0; background:var(--bg); color:var(--text);
+ font-family:'IBM Plex Mono', monospace; line-height:1.55;
+ background-image:
+ radial-gradient(circle at 8% 0%, rgba(192,132,252,.16), transparent 42%),
+ radial-gradient(circle at 92% 20%, rgba(34,211,238,.13), transparent 45%),
+ radial-gradient(circle at 50% 100%, rgba(244,114,182,.10), transparent 50%),
+ repeating-linear-gradient(0deg, rgba(192,132,252,.035) 0 1px, transparent 1px 3px);
+ }
+ h1,h2,h3,.display{font-family:'Orbitron','Space Grotesk',sans-serif;}
+ .wrap{max-width:860px;margin:0 auto;padding:28px 18px 90px;}
+
+ #hud{
+ position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:10px;
+ background:rgba(12,6,24,.9);backdrop-filter:blur(8px);
+ border-bottom:1px solid var(--lila-dim);
+ box-shadow:0 0 18px rgba(192,132,252,.25), 0 0 32px rgba(34,211,238,.12);
+ padding:12px 18px;font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--text-dim);
+ letter-spacing:.12em;
+ }
+ #hud b{color:var(--cyan);font-family:'IBM Plex Mono',monospace;text-shadow:0 0 8px var(--cyan);}
+
+ header.hero{margin:28px 0 30px;border:1px solid var(--line);border-radius:12px;padding:22px;
+ background:linear-gradient(135deg, rgba(124,58,237,.18), rgba(34,211,238,.08));
+ box-shadow:0 0 24px rgba(124,58,237,.25), inset 0 0 40px rgba(34,211,238,.05);}
+ header.hero .display{font-size:2rem;margin:0 0 8px;letter-spacing:.02em;
+ background:linear-gradient(90deg,var(--lila),var(--cyan));
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 0 12px rgba(192,132,252,.5));}
+ header.hero p{color:var(--text-dim);font-size:.95rem;max-width:68ch;}
+ header.hero ol{color:var(--text-dim);font-size:.88rem;padding-left:20px;}
+ header.hero ol b{color:var(--cyan);}
+
+ .step{
+ background:linear-gradient(180deg, var(--panel), var(--panel2));
+ border:1px solid var(--line);border-radius:12px;
+ padding:22px;margin-bottom:22px;position:relative;
+ transition:opacity .3s ease, box-shadow .3s ease;
+ box-shadow:0 0 0 rgba(0,0,0,0);
+ }
+ .step:not(.locked){box-shadow:0 0 22px rgba(124,58,237,.18);}
+ .step.locked{opacity:.35;pointer-events:none;}
+ .step .tag{font-size:.72rem;color:var(--cyan);display:flex;align-items:center;gap:8px;margin-bottom:8px;
+ font-family:'Orbitron',sans-serif;letter-spacing:.14em;}
+ .step .tag .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+ .step h2{margin:0 0 10px;font-size:1.3rem;color:#fff;text-shadow:0 0 14px rgba(192,132,252,.6);}
+ .step p{color:var(--text-dim);font-size:.92rem;margin:0 0 12px;}
+ .step.done{border-color:var(--cyan);box-shadow:0 0 26px rgba(34,211,238,.3);}
+ .step.done .tag .dot{box-shadow:0 0 12px var(--cyan);background:var(--lila);}
+
+ .mono-box{background:#0a0618;border:1px solid var(--lila-dim);border-radius:8px;padding:10px 14px;
+ font-size:1.02rem;letter-spacing:.06em;color:var(--cyan);word-break:break-all;
+ text-shadow:0 0 8px rgba(34,211,238,.6);}
+ .btn{
+ display:inline-block;padding:12px 20px;border-radius:8px;border:1px solid var(--cyan);
+ background:linear-gradient(90deg,var(--lila-dim),var(--cyan-dim));
+ color:#fff;font-weight:700;font-family:'Orbitron',sans-serif;font-size:.8rem;letter-spacing:.08em;cursor:pointer;
+ box-shadow:0 0 16px rgba(34,211,238,.35);transition:transform .1s;
+ }
+ .btn:hover{box-shadow:0 0 26px rgba(192,132,252,.6);transform:translateY(-1px);}
+ .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text-dim);font-size:.78rem;padding:8px 12px;box-shadow:none;}
+ .btn.on{background:linear-gradient(90deg,#059669,#22d3ee);border-color:var(--cyan);}
+ .answer-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+ .answer-row input[type=text]{flex:1;min-width:180px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:.92rem;background:#0a0618;color:var(--text);border:1px solid var(--lila-dim);border-radius:8px;}
+ .answer-row input[type=text]:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.4);}
+ .feedback{margin-top:12px;font-size:.88rem;padding:12px 14px;border-radius:8px;display:none;}
+ .feedback.ok{display:block;background:rgba(34,211,238,.08);border:1px solid var(--cyan);color:var(--cyan);}
+ .feedback.err{display:block;background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.5);color:var(--bad);}
+ .reveal{display:none;margin-top:18px;padding:16px;border-radius:8px;background:rgba(124,58,237,.1);border:1px solid var(--lila);
+ box-shadow:0 0 18px rgba(192,132,252,.25);}
+ .reveal.show{display:block;}
+
+ .res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:14px 0;}
+ .res-card{background:#0a0618;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;}
+ .res-card .rlabel{font-size:.75rem;color:var(--text-dim);margin-bottom:10px;}
+ .resistor{display:flex;align-items:center;justify-content:center;margin:8px 0 10px;}
+ .resistor .lead{width:22px;height:4px;background:#5b6b85;}
+ .resistor .body{display:flex;gap:0;width:110px;height:30px;border-radius:14px;background:#e8d5a8;border:1px solid #8a7a55;overflow:hidden;position:relative;}
+ .resistor .body .band{flex:1;border-right:1px solid rgba(0,0,0,.25);}
+ .res-card input{width:100%;text-align:center;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-size:1rem;background:#0c0618;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px;}
+ .res-card input.ok{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(34,211,238,.4);}
+ .res-card input.bad{border-color:var(--bad);color:var(--bad);}
+ .res-card .dec{font-size:.75rem;color:var(--text-dim);min-height:1.2em;}
+ table.colors{width:100%;border-collapse:collapse;font-size:.78rem;margin:10px 0;}
+ table.colors td, table.colors th{border:1px solid var(--line);padding:5px 6px;text-align:center;}
+ table.colors th{color:var(--text-dim);font-weight:500;}
+ .chip{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:6px;border:1px solid rgba(255,255,255,.25);}
+ .hint{background:#0a0618;border-left:2px solid var(--pink);padding:10px 12px;font-size:.82rem;color:var(--text-dim);margin:10px 0;}
+ .leds{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;}
+ .led{min-width:26px;height:26px;border-radius:4px;background:#0a0618;border:1px solid var(--line);
+ display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--text-dim);padding:0 4px;}
+ .led.on{background:var(--cyan);color:#062018;border-color:var(--cyan);box-shadow:0 0 12px var(--cyan);}
+ .bin{font-size:.85rem;line-height:2;}
+ .sub-title{margin:18px 0 6px;font-size:1rem;color:var(--cyan);letter-spacing:.04em;}
+ .led-card{background:#0a0618;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;}
+ .led-card .rlabel{font-size:.75rem;color:var(--text-dim);margin-bottom:8px;}
+ .led-panel{display:flex;justify-content:center;gap:6px;margin:6px 0 10px;flex-wrap:wrap;}
+ .led-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+ .led-col .val{font-size:.72rem;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;}
+ .bulb{width:24px;height:24px;border-radius:50%;background:#1a1230;border:1px solid var(--line);}
+ .bulb.on{background:#fde047;border-color:#fde047;box-shadow:0 0 14px #fde047;}
+ .led-col .bit{font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:var(--text-dim);}
+ .led-col .bit.on{color:#fde047;}
+ .bin-str{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--text-dim);margin:-4px 0 10px;}
+ .bin-str b{color:#fde047;letter-spacing:.15em;}
+ .led-card input{width:100%;max-width:160px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:1rem;background:#0c0618;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px;}
+ .led-card input.ok{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(34,211,238,.4);}
+ .led-card input.bad{border-color:var(--bad);color:var(--bad);}
+ .led-card .dec{font-size:.75rem;color:var(--text-dim);min-height:1.2em;}
+
+ /* ---- Paso 2: osciloscopio cyberpunk ---- */
+ .scope-layout{display:grid;grid-template-columns:1fr;gap:14px;}
+ .scope-box{background:#070313;border:1px solid var(--lila-dim);border-radius:12px;padding:10px;position:relative;
+ box-shadow:0 0 30px rgba(124,58,237,.35), inset 0 0 60px rgba(34,211,238,.05);}
+ .scope-box canvas{width:100%;height:280px;display:block;border-radius:8px;cursor:grab;touch-action:none;
+ background:radial-gradient(ellipse at center, #120a2a 0%, #070313 75%);}
+ .scope-box canvas:active{cursor:grabbing;}
+ .scope-readout{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+ .ro{flex:1;min-width:140px;background:#0a0618;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:.8rem;color:var(--text-dim);}
+ .ro b{display:block;font-size:1.15rem;color:var(--cyan);text-shadow:0 0 10px var(--cyan);}
+ .ro.pink b{color:var(--pink);text-shadow:0 0 10px var(--pink);}
+ .scope-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--text-dim);margin-top:8px;}
+ .swatch{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px;}
+ .ctrl-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+ @media(max-width:560px){.ctrl-grid{grid-template-columns:1fr;}}
+ .ctrl{background:#0a0618;border:1px solid var(--lila-dim);border-radius:10px;padding:12px 14px;box-shadow:0 0 14px rgba(192,132,252,.15);}
+ .ctrl label{font-size:.78rem;color:var(--text-dim);display:flex;justify-content:space-between;margin-bottom:8px;}
+ .ctrl label b{color:var(--cyan);}
+ .ctrl input[type=range]{width:100%;accent-color:var(--cyan);}
+ .fine{display:flex;gap:6px;margin-top:8px;}
+ .fine button{flex:1;background:#150e2e;border:1px solid var(--line);color:var(--cyan);border-radius:6px;padding:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;}
+ .fine button:hover{border-color:var(--cyan);}
+ .matchbar{height:12px;background:#0a0618;border:1px solid var(--lila-dim);border-radius:8px;overflow:hidden;margin-top:10px;}
+ .matchbar div{height:100%;width:0%;background:linear-gradient(90deg,var(--lila),var(--cyan));box-shadow:0 0 12px var(--cyan);transition:width .15s;}
+ .target-card{background:#0a0618;border:1px dashed var(--pink);border-radius:8px;padding:12px;font-size:.82rem;color:var(--text-dim);}
+ .target-card b{color:var(--pink);}
+ .audio-panel{background:#0a0618;border:1px solid var(--cyan-dim);border-radius:10px;padding:12px 14px;margin-top:12px;box-shadow:0 0 16px rgba(34,211,238,.15);}
+ .audio-panel h4{margin:0 0 8px;font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:.14em;color:var(--cyan);}
+ .morse-box{font-size:1rem;color:var(--pink);letter-spacing:.1em;word-break:break-all;text-shadow:0 0 8px rgba(244,114,182,.6);}
+ #morse-lamp{display:inline-block;width:16px;height:16px;border-radius:50%;background:#222;border:1px solid var(--line);margin-left:8px;vertical-align:middle;}
+ #morse-lamp.lit{background:var(--cyan);box-shadow:0 0 14px var(--cyan);}
+ #dist-label{font-size:.78rem;color:var(--text-dim);}
+ #dist-label b{color:var(--pink);}
+
+ .frag-row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;}
+ .frag{flex:1;min-width:200px;background:#0a0618;border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+ .frag h4{margin:0 0 6px;font-size:.75rem;color:var(--text-dim);font-weight:500;}
+ .frag .t{color:var(--cyan);font-size:1rem;letter-spacing:.05em;word-break:break-all;text-shadow:0 0 8px rgba(34,211,238,.5);}
+ .frag .b{color:var(--text-dim);font-size:.75rem;word-break:break-all;}
+ .disks{overflow-x:auto;background:#070313;border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0;}
+ .disk-row{display:flex;gap:4px;min-width:max-content;margin-bottom:6px;}
+ .disk-cell{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.85rem;border:1px solid var(--line);background:#0a0618;color:var(--text-dim);}
+ .disk-cell.top{color:var(--text);}
+ .disk-cell.bot{color:var(--pink);border-color:rgba(244,114,182,.4);}
+ .disk-cell.hl{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan);}
+ .caesar-controls{display:flex;align-items:center;gap:12px;margin:14px 0;flex-wrap:wrap;}
+ .caesar-controls input[type=range]{flex:1;min-width:180px;accent-color:var(--lila);}
+
+
+ .frag-stack{display:flex;flex-direction:column;gap:16px;margin:12px 0;}
+ .frag-stack .frag{flex:none;min-width:0;padding:14px 16px;}
+ .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+ .chip-btn{font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:6px 10px;border-radius:6px;background:#0a0618;color:var(--cyan);border:1px solid var(--lila-dim);cursor:pointer;}
+ .chip-btn:hover{border-color:var(--cyan);}
+ .chip-btn.sel{background:var(--cyan);color:#062018;box-shadow:0 0 12px var(--cyan);}
+ .chip-btn.sp{color:var(--pink);border-style:dashed;cursor:default;}
+ table.lookup{width:100%;border-collapse:collapse;font-size:.85rem;margin:8px 0 12px;table-layout:fixed;}
+ table.lookup th{color:var(--text-dim);font-weight:500;font-size:.7rem;padding:4px;border-bottom:1px solid var(--line);}
+ table.lookup td{border:1px solid var(--line);padding:5px 4px;text-align:center;}
+ table.lookup td.k{color:var(--text-dim);background:#0a0618;}
+ table.lookup td.v{color:var(--cyan);font-weight:600;border-right:2px solid var(--lila-dim);}
+ table.lookup td.v:last-child{border-right:1px solid var(--line);}
+ table.lookup td.hl{background:rgba(34,211,238,.22);color:#fff;box-shadow:inset 0 0 10px rgba(34,211,238,.5);}
+ @media(max-width:560px){table.lookup{font-size:.72rem;}}
+
+ .route-slots{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+ .route-slot{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 12px;border:1px dashed var(--lila-dim);border-radius:8px;background:#0a0618;color:var(--text-dim);font-size:.85rem;}
+ .route-slot .n{font-family:'Orbitron',sans-serif;color:var(--cyan);font-size:.8rem;min-width:18px;}
+ .route-slot.filled{border-style:solid;border-color:var(--cyan);color:var(--text);box-shadow:0 0 10px rgba(34,211,238,.25);}
+ .route-slot.good{border-color:var(--cyan);background:rgba(34,211,238,.1);}
+ .route-slot.badp{border-color:var(--bad);}
+ .route-pool{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0;}
+ .route-card{text-align:left;background:#0a0618;color:var(--text);border:1px solid var(--lila-dim);border-radius:10px;padding:10px 12px;cursor:pointer;font-family:'IBM Plex Mono',monospace;}
+ .route-card b{display:block;color:var(--cyan);font-size:.9rem;margin-bottom:4px;}
+ .route-card span{font-size:.75rem;color:var(--text-dim);}
+ .route-card:hover{border-color:var(--cyan);}
+ .route-card:disabled{opacity:.3;cursor:default;}
+ .wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:14px 0;}
+ #wheel{width:min(380px,92%);height:auto;touch-action:none;cursor:grab;filter:drop-shadow(0 0 18px rgba(124,58,237,.45));}
+ #wheel:active{cursor:grabbing;}
+ #wheel text{font-family:'IBM Plex Mono',monospace;font-weight:600;user-select:none;}
+ #wheel-inner{transition:transform .25s ease;}
+ .tiktok-link{color:var(--pink);text-decoration:none;border-bottom:1px dashed var(--pink);}
+ .placeholder-note{font-size:.78rem;color:var(--text-dim);border-left:2px solid var(--pink);padding-left:10px;margin-top:10px;}
+  #final-screen{display:none;text-align:center;padding:60px 20px;}
+  #final-screen .display{font-size:2.2rem;background:linear-gradient(90deg,var(--lila),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  #login-overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(7,3,19,.94);padding:18px;}
+  .login-box{width:100%;max-width:420px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--lila);border-radius:14px;padding:28px;box-shadow:0 0 40px rgba(124,58,237,.5);text-align:center;}
+  .login-box .display{font-size:1.8rem;background:linear-gradient(90deg,var(--lila),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px;}
+  .login-box .sub{font-size:.72rem;letter-spacing:.14em;color:var(--cyan);font-family:'Orbitron',sans-serif;}
+  .login-box label{display:block;font-size:.75rem;color:var(--text-dim);margin:14px 0 6px;text-align:left;}
+  .login-box input{width:100%;padding:12px;background:#0a0618;border:1px solid var(--lila-dim);border-radius:8px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:1rem;text-align:center;letter-spacing:.06em;}
+  .login-box input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.4);}
+  .login-box .btn{width:100%;margin-top:6px;}
+  #login-err{color:var(--bad);font-size:.8rem;min-height:1.4em;margin-top:8px;}
+  .report{max-width:600px;margin:18px auto 0;text-align:left;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .report div{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:.8rem;background:#0a0618;}
+  .report div:last-child{border-bottom:none;}
+  .report span{color:var(--text-dim);flex-shrink:0;}
+  .report b{color:var(--cyan);text-align:right;word-break:break-all;font-weight:500;}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <span>CRYPTOQUEST </span>
+  <span>OPERADOR <b id="op-name">—</b></span>
+  <span>PROGRESO <b id="progress">0/5</b></span>
+  <span>TIEMPO <b id="elapsed">00:00</b></span>
+</div>
+
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="display">CryptoQuest</div>
+    <p class="sub">ACCESO RESTRINGIDO — IDENTIFÍCATE</p>
+    <label for="login-name">Nombre o alias del operador</label>
+    <input type="text" id="login-name" maxlength="24" placeholder="Ej. ADA-07" autocomplete="off" onkeydown="if(event.key==='Enter')startMission()">
+    <div id="login-err"></div>
+    <button class="btn" onclick="startMission()">Iniciar misión →</button>
+  </div>
+</div>
+
+<div class="wrap" id="main">
+ <header class="hero">
+ <div class="display">CryptoQuest</div>
+ <p>El servidor de la carrera fue bloqueado. Resuelve los 5 retos en orden para desbloquearlo:</p>
+ <ol>
+  <li><b>Paso 1 · Electrónica:</b> resistencias y luces binarias → Fragmento 1.</li>
+ <li><b>Paso 2 · Sintonizador:</b> ajusta la onda hasta oír el morse limpio → Fragmento 2.</li>
+ <li><b>Paso 3 · Cifrado César:</b> traduce los fragmentos, júntalos y gira el disco.</li>
+ <li><b>Paso 4 · Redes:</b> ordena el viaje de un paquete por internet.</li>
+ <li><b>Paso 5 · Pista final:</b> busca la palabra clave en el TikTok de la carrera.</li>
+ </ol>
+ </header>
+
+ <div class="step" id="step1">
+ <div class="tag"><span class="dot"></span>PASO 1 · LABORATORIO DE ELECTRÓNICA </div>
+ <h2>Encuentra los 5 números</h2>
+  <p>3 números están en las <b style="color:var(--text)">resistencias</b> y 2 en las <b style="color:var(--text)">luces binarias</b>. Escribe cada uno en su casilla.</p>
+
+  <h3 class="sub-title">A · Resistencias</h3>
+  <p>Mira solo las <b style="color:var(--text)">dos primeras bandas</b>. Cada color es un dígito (usa la tabla).</p>
+  <div class="hint">Ejemplo: <b>marrón–rojo</b> = 1 y 2 → <b>12</b>.</div>
+ <div class="res-grid" id="res-grid"></div>
+ <table class="colors" id="color-table">
+ <thead><tr><th>Color</th><th>Dígito</th><th>Color</th><th>Dígito</th></tr></thead>
+ <tbody></tbody>
+ </table>
+
+  <h3 class="sub-title">B · Luces binarias</h3>
+  <p>Los computadores guardan los números como <b style="color:var(--text)">encendido (1)</b> y <b style="color:var(--text)">apagado (0)</b>: eso es el <b style="color:var(--text)">binario</b>. <b style="color:var(--text)">Suma los valores de las luces encendidas</b>.</p>
+  <div class="hint">Ejemplo: encendidas 8, 2 y 1 → 8 + 2 + 1 = <b>11</b>.</div>
+ <div class="res-grid" id="led-grid"></div>
+
+  <div class="answer-row">
+  <button class="btn" onclick="checkResistors()">Verificar los 5 números</button>
+ <button class="btn ghost" id="hint-btn-1" onclick="useHint(1)">Pedir pista (+30 s)</button>
+ </div>
+ <div id="hint-box-1"></div>
+ <div class="feedback" id="res-feedback"></div>
+ <div class="reveal" id="res-reveal">
+ <p style="margin-bottom:6px;">Fragmento 1:</p>
+ <div class="mono-box bin" id="frag1-bin">—</div>
+ <div class="hint">¿Y si cada número fuera una letra? Lo descubrirás en el <b>Paso 3</b>.</div>
+ <button class="btn" onclick="unlockStep(2)">Continuar al sintonizador →</button>
+ </div>
+ </div>
+
+ <!-- ================= PASO 2: SINTONIZADOR SINUSOIDAL LENTO, SOLO FRECUENCIA ================= -->
+ <div class="step locked" id="step2">
+ <div class="tag"><span class="dot"></span>PASO 2 · SINTONIZADOR</div>
+ <h2>Sintoniza la señal</h2>
+  <p>Mueve la frecuencia de tu <b style="color:var(--cyan)">onda cian</b> hasta que coincida con la <b style="color:var(--pink)">línea magenta</b>. Guíate por la <b style="color:var(--text)">dirección</b>, la <b style="color:var(--text)">similitud</b> y el sonido: el morse suena roto y se va limpiando a medida que te acercas.</p>
+
+     <div class="target-card">La línea magenta se mueve sola: mantén la similitud sobre <b>95% durante 5 segundos</b>. Distorsión: <span id="dist-label"><b>—</b></span></div>
+
+ <div class="scope-layout" style="margin-top:12px;">
+ <div class="scope-box">
+ <canvas id="scope" width="780" height="280"></canvas>
+ <div class="scope-readout">
+  <div class="ro">TU FRECUENCIA<b id="freq-read">··· Hz</b><span id="note-read">Dirección: —</span></div>
+ <div class="ro pink">SIMILITUD<b id="sim-val">0%</b></div>
+ </div>
+ <div class="scope-legend">
+ <span><span class="swatch" style="background:var(--pink)"></span>objetivo</span>
+ <span><span class="swatch" style="background:var(--cyan)"></span>tu señal</span>
+          <span>Tip: también puedes arrastrar la onda</span>
+ </div>
+ <div class="matchbar"><div id="sim-bar"></div></div>
+ <div style="margin-top:8px;"><label style="font-size:.78rem;color:var(--text-dim)">Sintonía sostenida (5 s): <b id="hold-val" style="color:var(--cyan)">0.0 s</b></label>
+ <div class="matchbar"><div id="hold-bar"></div></div></div>
+ </div>
+
+ <div class="ctrl-grid" style="grid-template-columns:1fr;">
+ <div class="ctrl">
+  <label>Frecuencia <b id="freq-val">··· Hz</b></label>
+ <input type="range" id="freq-slider" min="60" max="660" step="1" value="180" oninput="updateScopeFromUI()">
+ <div class="fine">
+ <button onclick="nudgeFreq(-10)">−10</button>
+ <button onclick="nudgeFreq(-1)">−1</button>
+ <button onclick="nudgeFreq(1)">+1</button>
+ <button onclick="nudgeFreq(10)">+10</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="audio-panel">
+ <h4>AUDIO</h4>
+ <div class="hint">Sube el volumen del computador. Si puedes, usa audífonos. Pulsa "Escuchar morse" para probar.</div>
+        <div class="answer-row">
+          <button class="btn ghost" id="play-btn" onclick="togglePlay()">Escuchar morse</button>
+        </div>
+        <div style="margin-top:8px;font-size:.8rem;color:var(--text-dim)"><span id="play-status"></span></div>
+        <div class="matchbar"><div id="play-bar"></div></div>
+        <div style="margin-top:8px;font-size:.8rem;color:var(--text-dim)">Volumen <input type="range" id="vol-slider" min="0" max="100" value="45" style="width:160px;accent-color:var(--pink)" oninput="updateVolume()"></div>
+ <div style="margin-top:8px;font-size:.8rem;color:var(--text-dim)">Escucha<span id="morse-lamp"></span></div>
+ </div>
+ </div>
+
+ <div class="answer-row"><button class="btn ghost" id="hint-btn-2" onclick="useHint(2)">Pedir pista (+30 s)</button></div>
+<div id="hint-box-2"></div>
+ <div class="feedback" id="scope-feedback"></div>
+
+ <div class="reveal" id="scope-reveal">
+ <p>Fragmento 2 (morse):</p>
+ <div class="mono-box morse-box" id="morse-text2">—</div>
+ <div class="hint">Lo traducirás en el <b>Paso 3</b>.</div>
+ <div class="answer-row">
+ <button class="btn ghost" onclick="playCipherAudio()">Re-escuchar mensaje</button>
+ <button class="btn" onclick="unlockStep(3)">Continuar al Paso 3 →</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="step locked" id="step3">
+ <div class="tag"><span class="dot"></span>PASO 3 · DECODIFICACIÓN + CÉSAR</div>
+ <h2>Descifra, junta y gira </h2>
+ <p><b style="color:var(--text)">Traduce</b> cada fragmento a letras. Juntos forman un mensaje cifrado: <b style="color:var(--text)">gira el disco</b> hasta que se pueda leer. El disco está más abajo y se activa cuando traduces A y B.</p>
+
+<div class="answer-row"><button class="btn ghost" id="hint-btn-3" onclick="useHint(3)">Pedir pista (+30 s)</button></div>
+<div id="hint-box-3"></div>
+<div class="frag-stack">
+ <div class="frag">
+ <h4>A · NÚMEROS DEL PASO 1 → ¿QUÉ LETRAS SON?</h4>
+ <div class="chips" id="dec-bin-src"><span class="b">— termina el paso 1 —</span></div>
+ <div class="hint">Cada número es una letra según la tabla <b>ASCII</b>. Toca un número de arriba y se marca en la tabla.</div>
+ <table class="lookup" id="ascii-table"></table>
+ <div class="answer-row">
+ <input type="text" id="dec-bin-input" placeholder="Letras de los números…" autocomplete="off" onkeydown="if(event.key==='Enter')checkBinDecode()">
+ <button class="btn ghost" onclick="checkBinDecode()">Comprobar A</button>
+ </div>
+ <div class="feedback" id="dec-bin-fb"></div>
+ </div>
+ <div class="frag">
+ <h4>B · MORSE DEL PASO 2 → ¿QUÉ LETRAS SON?</h4>
+ <div class="chips" id="dec-morse-src"><span class="b">— termina el paso 2 —</span></div>
+ <div class="hint">Cada grupo de puntos y rayas es una letra. La <b>/</b> separa palabras. Toca un grupo y se marca en la tabla.</div>
+ <table class="lookup" id="morse-table"></table>
+ <div class="answer-row">
+ <button class="btn ghost" onclick="playCipherAudio()">Re-escuchar</button>
+ </div>
+ <div class="answer-row">
+ <input type="text" id="dec-morse-input" placeholder="Letras del morse (usa espacio entre palabras)…" autocomplete="off" onkeydown="if(event.key==='Enter')checkMorseDecode()">
+ <button class="btn ghost" onclick="checkMorseDecode()">Comprobar B</button>
+ </div>
+ <div class="feedback" id="dec-morse-fb"></div>
+ </div>
+ </div>
+
+ <div class="hint" id="caesar-lock">🔒 El disco se activa cuando traduzcas A y B (arriba).</div>
+ <div id="caesar-stage" style="opacity:.5;pointer-events:none;">
+ <div class="mono-box" id="combined-cipher" style="color:var(--pink);">— decodifica A y B para ver el César —</div>
+ <p style="font-size:.8rem;margin-top:6px;">↑ Mensaje cifrado (A + B)</p>
+ <div class="frag" style="margin:12px 0;">
+ <h4>LETRA POR LETRA</h4>
+ <div class="t" id="caesar-map" style="font-size:1.3rem;">—</div>
+ </div>
+ <div class="wheel-wrap">
+ <div style="font-size:.75rem;color:var(--text-dim);">DISCO CÉSAR · afuera: texto cifrado · adentro: texto real</div>
+ <svg id="wheel" viewBox="0 0 360 360" aria-label="Disco César: arrástralo para girarlo"></svg>
+ <div class="hint">Gira el disco: arrástralo, usa los botones o las flechas del teclado. La franja amarilla marca la primera letra: afuera está la cifrada y adentro, la que le toca con ese giro.</div>
+ </div>
+ <div class="caesar-controls">
+ <button class="btn ghost" onclick="nudgeShift(-1)"><</button>
+ <label style="color:var(--text-dim);font-size:.85rem;">Corrimiento: <b id="shift-val" style="color:var(--cyan)">0</b></label>
+ <input type="range" min="0" max="25" value="0" id="shift-slider" oninput="updateCaesar(this.value)">
+ <button class="btn ghost" onclick="nudgeShift(1)">></button>
+ </div>
+ <div class="mono-box" id="cipher-decoded">—</div>
+ <div class="answer-row">
+ <input type="text" id="cripto-input" placeholder="Escribe la frase descifrada...">
+ <button class="btn" onclick="checkCaesar()">Verificar</button>
+ </div>
+ <div class="feedback" id="cripto-feedback"></div>
+ </div>
+ </div>
+
+ <div class="step locked" id="step4">
+ <div class="tag"><span class="dot"></span>PASO 4 · REDES</div>
+ <h2>La ruta del paquete</h2>
+ <p>Cuando abres una página, tu mensaje viaja por varios aparatos hasta llegar al servidor. <b style="color:var(--text)">Toca las tarjetas en el orden del viaje</b>, desde tu computador hasta el servidor.</p>
+ <div class="answer-row"><button class="btn ghost" id="hint-btn-4" onclick="useHint(4)">Pedir pista (+30 s)</button></div>
+ <div id="hint-box-4"></div>
+ <div class="route-slots" id="route-slots"></div>
+ <div class="route-pool" id="route-pool"></div>
+ <div class="answer-row">
+ <button class="btn" onclick="checkRoute()">Verificar ruta</button>
+ <button class="btn ghost" onclick="undoRoute()">Deshacer</button>
+ <button class="btn ghost" onclick="clearRoute()">Limpiar</button>
+ </div>
+ <div class="feedback" id="route-feedback"></div>
+ <div class="reveal" id="route-reveal">
+ <p>Cada salto de un aparato a otro se llama <b>hop</b>. El comando <b>traceroute</b> muestra todos los hops que da tu mensaje.</p>
+ </div>
+ </div>
+
+ <div class="step locked" id="step5">
+ <div class="tag"><span class="dot"></span>PASO 5 · LA PISTA FINAL</div>
+ <h2>Busca la palabra clave</h2>
+ <p>Entra a la cuenta de la carrera:
+ <a class="tiktok-link" href="https://www.tiktok.com/@diftel.sj" target="_blank" rel="noopener">tiktok.com/@diftel.sj</a>
+ </p>
+ <div class="hint">Pista: en los videos aparece un <b>juego</b> cuyo nombre comienza como un <b>comando de redes</b>.</div>
+ <div class="answer-row"><button class="btn ghost" id="hint-btn-5" onclick="useHint(5)">Pedir pista (+30 s)</button></div>
+<div id="hint-box-5"></div>
+
+ <div class="answer-row">
+ <input type="text" id="final-input" placeholder="Palabra clave...">
+ <button class="btn" onclick="checkFinal()">Desbloquear sala</button>
+ </div>
+ <div class="feedback" id="final-feedback"></div>
+ </div>
+</div>
+
+<div id="final-screen">
+  <div class="display">Sala desbloqueada</div>
+  <p style="color:var(--text-dim)">Informe de misión — entrega final</p>
+  <div class="report">
+    <div><span>Operador</span><b id="rep-op">—</b></div>
+    <div><span>Tiempo total</span><b id="rep-time">—</b></div>
+    <div><span>Fragmento A (números)</span><b id="rep-a">—</b></div>
+    <div><span>Fragmento A decodificado</span><b id="rep-a-dec">—</b></div>
+    <div><span>Fragmento B (morse)</span><b id="rep-b">—</b></div>
+    <div><span>Fragmento B decodificado</span><b id="rep-b-dec">—</b></div>
+    <div><span>Mensaje final (César)</span><b id="rep-final">—</b></div>
+    <div><span>Pistas e intentos fallidos</span><b id="rep-pen">—</b></div>
+  </div>
+  <div class="answer-row" style="justify-content:center;margin-top:16px;">
+    <button class="btn" onclick="resetMission()">Reiniciar misión</button>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+ frag1: "IBZJH",
+ frag2: "LU APRAVR",
+ caesarShift: 7,
+ finalPhrase: "BUSCA EN TIKTOK",
+ finalCode: "PING PONG",
+  // Objetivo aleatorio por sesión (cualquier entero 180-600, sin mostrar números)
+  targetFreq: 180 + Math.floor(Math.random()*421),
+  tolFreq: 6,
+};
+
+// ---- guardado de progreso, pistas y penalizaciones ----
+const SAVE_KEY = 'cryptoquest_v1';
+const HINT_COST = 30, WRONG_COST = 10;
+function loadSave(){
+  try{ return JSON.parse(localStorage.getItem(SAVE_KEY)||'null'); }catch(e){ return null; }
+}
+const SAVED = loadSave();
+if(SAVED && SAVED.target) CONFIG.targetFreq = SAVED.target; // misma frecuencia al recargar
+let penalty = 0, hintsUsed = 0, wrongs = 0, finished = false, finalSec = null;
+const HINTS = {
+ 1:["Lee solo las dos primeras bandas de cada resistencia con la tabla de colores. La tercera y la cuarta no cuentan.",
+    "R1 es violeta (7) y naranja (3), o sea 73.",
+    "En las luces, suma solo los valores de las que están encendidas."],
+ 2:["Si tu onda cian tiene más ondas que la magenta, baja la frecuencia. Si tiene menos, súbela.",
+    "Cuando la similitud pase de 80%, usa los botones +1 y -1.",
+    "La magenta se mueve un poquito sola: ve corrigiendo de a poco y mantén."],
+ 3:["Junta las letras de A y B con un espacio en medio. Eso es lo que se gira en el disco.",
+    "El corrimiento está entre 5 y 10.",
+    "La frase tiene 3 palabras y habla de buscar algo en una red social."],
+ 4:["Piensa en cómo sales de tu casa: primero estás tú, después la puerta de tu casa, después la calle...",
+    "El primero es tu computador y el último es el servidor de la página.",
+    "Después de tu computador viene el router del colegio, y luego el proveedor de internet."],
+ 5:["Mira los videos de la cuenta: aparece un juego con paletas y una pelota.",
+    "El nombre del juego empieza como el comando ping, que sirve para probar una red.",
+    "Son dos palabras y la segunda rima con la primera."]
+};
+const hintCount = {1:0,2:0,3:0,4:0,5:0};
+function useHint(n){
+  const list = HINTS[n];
+  if(hintCount[n] >= list.length) return;
+  const box = document.getElementById('hint-box-'+n);
+  const d = document.createElement('div');
+  d.className = 'hint';
+  d.textContent = 'Pista ' + (hintCount[n]+1) + ': ' + list[hintCount[n]];
+  box.appendChild(d);
+  hintCount[n]++; hintsUsed++; penalty += HINT_COST;
+  if(hintCount[n] >= list.length){
+    const b = document.getElementById('hint-btn-'+n);
+    b.disabled = true; b.textContent = 'Sin más pistas';
+  }
+  saveState();
+}
+function wrong(){ wrongs++; penalty += WRONG_COST; saveState(); }
+function saveState(){
+  try{
+    const unlocked = [...document.querySelectorAll('.step')].filter(e=>!e.classList.contains('locked')).length;
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      operator, elapsed: startTime ? Math.floor((Date.now()-startTime)/1000) : 0,
+      penalty, hintsUsed, wrongs, hintCount, target: CONFIG.targetFreq, unlocked,
+      frag1Solved, scopeSolved, decA, decB,
+      step3done: document.getElementById('step3').classList.contains('done'),
+      step4done: document.getElementById('step4').classList.contains('done'),
+      finished, finalSec
+    }));
+  }catch(e){}
+}
+function resetMission(){
+  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+  location.reload();
+}
+// Fragmento 1 = "IBZJH" en ASCII: 73 66 90 74 72.
+// Las 3 primeras letras salen de resistencias y las 2 últimas de luces binarias.
+const RESISTORS = [
+ {bands:["violeta","naranja"]}, // 73 = I
+ {bands:["azul","azul"]},       // 66 = B
+ {bands:["blanco","negro"]},    // 90 = Z
+];
+const LED_VALUES = [64,32,16,8,4,2,1];
+const LED_NUMBERS = [74, 72]; // J, H
+const COLOR_HEX = {negro:"#141414",marron:"#6b3a1f",rojo:"#d32f2f",naranja:"#ef6c00",amarillo:"#fdd835",verde:"#388e3c",azul:"#1976d2",violeta:"#7b1fa2",gris:"#78909c",blanco:"#f2f2f2",dorado:"#c9a227"};
+const COLOR_DIGIT = {negro:0,marron:1,rojo:2,naranja:3,amarillo:4,verde:5,azul:6,violeta:7,gris:8,blanco:9};
+const MORSE = {A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",I:"..",J:".---",K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",Z:"--.."};
+
+let startTime = null, operator = '';
+setInterval(() => {
+  if(!startTime) return;
+  const s = Math.floor((Date.now() - startTime) / 1000) + penalty;
+  document.getElementById('elapsed').textContent =
+  String(Math.floor(s/60)).padStart(2,'0')+":"+String(s%60).padStart(2,'0');
+  if(!finished && s % 5 === 0) saveState();
+}, 1000);
+function startMission(){
+  const v = (document.getElementById('login-name').value||'').trim().slice(0,24);
+  if(!v){ document.getElementById('login-err').textContent='Escribe tu nombre o alias para comenzar.'; return; }
+  operator = v;
+  document.getElementById('op-name').textContent = operator;
+  document.getElementById('login-overlay').style.display='none';
+  startTime = Date.now();
+  saveState();
+  document.getElementById('step1').scrollIntoView({behavior:'smooth'});
+}
+function setProgress(){
+ document.getElementById('progress').textContent = document.querySelectorAll('.step.done').length + "/5";
+ saveState();
+}
+function unlockStep(n){
+ document.getElementById('step'+n).classList.remove('locked');
+ document.getElementById('step'+n).scrollIntoView({behavior:'smooth', block:'start'});
+ if(n===3) refreshCaesarChips();
+ saveState();
+}
+function normalize(str){
+ return str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ");
+}
+function textToDec(t){
+ return t.split('').map(c=>c.charCodeAt(0)).join(' ');
+}
+function frag2Morse(){
+ return CONFIG.frag2.toUpperCase().split('').map(ch=>{
+ if(ch===' ') return '/';
+ return MORSE[ch]||'?';
+ }).join(' ');
+}
+
+/* ---- PASO 1: resistencias (colores → número) + luces binarias (suma → número) ---- */
+function numInput(id, label){
+  return `<input id="${id}" maxlength="3" placeholder="${label}" autocomplete="off" inputmode="numeric">`;
+}
+function onlyDigits(e){
+  e.target.value = e.target.value.replace(/[^0-9]/g,'').slice(0,3);
+  e.target.classList.remove('ok','bad');
+}
+(function buildStep1(){
+ const grid = document.getElementById('res-grid');
+ RESISTORS.forEach((r,i)=>{
+ const card = document.createElement('div');
+ card.className = 'res-card';
+ const bandsHtml = `<div class="band" style="background:${COLOR_HEX[r.bands[0]]}"></div>`
+ + `<div class="band" style="background:${COLOR_HEX[r.bands[1]]}"></div>`
+ + `<div class="band" style="background:${COLOR_HEX.rojo}"></div>`
+ + `<div class="band" style="background:${COLOR_HEX.dorado}"></div>`;
+  card.innerHTML = `<div class="rlabel">R${i+1}</div>
+  <div class="resistor"><div class="lead"></div><div class="body">${bandsHtml}</div><div class="lead"></div></div>
+  ${numInput('res-in-'+i, 'número')}
+  <div class="dec" id="res-dec-${i}"></div>`;
+  grid.appendChild(card);
+  card.querySelector('input').addEventListener('input', onlyDigits);
+ });
+ const lgrid = document.getElementById('led-grid');
+ LED_NUMBERS.forEach((n,i)=>{
+  const card = document.createElement('div');
+  card.className = 'led-card';
+  const cols = LED_VALUES.map(v=>{
+    const on = (n & v) ? ' on' : '';
+    return `<div class="led-col"><span class="val">${v}</span><div class="bulb${on}"></div><span class="bit${on}">${on ? 1 : 0}</span></div>`;
+  }).join('');
+  const bin = LED_VALUES.map(v=>(n & v) ? 1 : 0).join('');
+  card.innerHTML = `<div class="rlabel">Luces L${i+1}</div>
+  <div class="led-panel">${cols}</div>
+  <div class="bin-str">En binario se escribe: <b>${bin}</b></div>
+  ${numInput('led-in-'+i, 'suma')}
+  <div class="dec" id="led-dec-${i}"></div>`;
+  lgrid.appendChild(card);
+  card.querySelector('input').addEventListener('input', onlyDigits);
+ });
+ const ct = document.querySelector('#color-table tbody');
+ [["negro",0,"azul",6],["marron",1,"violeta",7],["rojo",2,"gris",8],["naranja",3,"blanco",9],["amarillo",4,"dorado","tol."],["verde",5,"—","—"]].forEach(r=>{
+ const tr = document.createElement('tr');
+ tr.innerHTML = `<td><span class="chip" style="background:${COLOR_HEX[r[0]]||'#333'}"></span>${r[0]} ${r[1]}</td><td style="color:var(--cyan)">${r[1]}</td><td><span class="chip" style="background:${COLOR_HEX[r[2]]||'#333'}"></span>${r[2]} ${r[3]}</td><td style="color:var(--cyan)">${r[3]}</td>`;
+ ct.appendChild(tr);
+ });
+})();
+function resValue(r){ return COLOR_DIGIT[r.bands[0]]*10+COLOR_DIGIT[r.bands[1]]; }
+function resText(r){ return `${r.bands[0]} (${COLOR_DIGIT[r.bands[0]]}) y ${r.bands[1]} (${COLOR_DIGIT[r.bands[1]]}) → ${resValue(r)}`; }
+function ledSumText(n){ return LED_VALUES.filter(v=>n & v).join(' + ') + ' = ' + n; }
+function fillResistorHint(){
+  document.getElementById('res-in-0').value = resValue(RESISTORS[0]);
+  document.getElementById('res-dec-0').textContent = resText(RESISTORS[0]);
+}
+let frag1Solved = false;
+function checkOne(inp, dec, expected, okText){
+  if(parseInt(inp.value, 10) === expected){
+    inp.classList.add('ok'); inp.classList.remove('bad');
+    dec.textContent = okText;
+    return true;
+  }
+  inp.classList.add('bad'); inp.classList.remove('ok');
+  dec.textContent = inp.value ? 'Revisa este' : 'Falta este';
+  return false;
+}
+function checkResistors(){
+  const fb = document.getElementById('res-feedback');
+  let ok = 0;
+  RESISTORS.forEach((r,i)=>{
+    if(checkOne(document.getElementById('res-in-'+i), document.getElementById('res-dec-'+i), resValue(r), resText(r))) ok++;
+  });
+  LED_NUMBERS.forEach((n,i)=>{
+    if(checkOne(document.getElementById('led-in-'+i), document.getElementById('led-dec-'+i), n, ledSumText(n))) ok++;
+  });
+  const total = RESISTORS.length + LED_NUMBERS.length;
+  if(ok === total){
+  fb.className = 'feedback ok';
+  fb.textContent = 'OK: ¡Los 5 números son correctos!';
+  if(!frag1Solved){
+  frag1Solved = true;
+  document.getElementById('frag1-bin').textContent = textToDec(CONFIG.frag1);
+  document.getElementById('res-reveal').classList.add('show');
+  document.getElementById('step1').classList.add('done');
+  document.querySelectorAll('#res-grid input, #led-grid input').forEach(inp=>inp.disabled=true);
+  setProgress();
+  }
+  } else {
+  fb.className = 'feedback err';
+  fb.textContent = `X: Llevas ${ok} de ${total}. Revisa las casillas en rojo. (+${WRONG_COST} s)`;
+  wrong();
+  }
+}
+
+/* ---- PASO 2: SINTONIZADOR LENTO, SOLO FRECUENCIA, SIN PISTA DE FONDO ---- */
+const FIXED_AMP = 3.2; // amplitud fija = la del objetivo (ya no se juega)
+let userFreq = 180, scopeSolved = false;
+let currentTarget = CONFIG.targetFreq; // objetivo congelado por tick: la guía siempre es coherente
+const scope = document.getElementById('scope');
+const ctx = scope.getContext('2d');
+let visPhase = 0, lastT = performance.now();
+function effTarget(){
+  return CONFIG.targetFreq + Math.round(5*Math.sin(performance.now()/1000*0.8));
+}
+let holdMs = 0;
+
+function noteName(f){
+ const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+ const m = Math.round(69 + 12*Math.log2(f/440));
+ return names[((m%12)+12)%12] + Math.floor(m/12-1);
+}
+function errNorm(){
+  return Math.min(1, Math.abs(userFreq-currentTarget)/300);
+}
+function similarity(){
+  const fe = Math.abs(userFreq-currentTarget);
+  const s = Math.max(0, 100 - fe*0.8);
+  return {s, match: fe<=CONFIG.tolFreq, fe};
+}
+// Onda LENTA anti-mareo: la forma (nº de ciclos) depende de la frecuencia,
+// pero el desplazamiento visual avanza a velocidad fija y suave.
+function drawScope(now){
+  const dt = Math.min(0.05,(now-lastT)/1000); lastT = now;
+  visPhase += dt * 0.55; // ~medio ciclo por segundo, siempre igual
+  currentTarget = effTarget(); // se congela aquí: dibujo y guía usan el mismo valor
+ const W = scope.width, H = scope.height;
+ ctx.clearRect(0,0,W,H);
+ ctx.strokeStyle = 'rgba(124,58,237,.35)'; ctx.lineWidth = 1;
+ const nx=14, ny=8;
+ for(let i=0;i<=nx;i++){ctx.beginPath();ctx.moveTo(i*W/nx,0);ctx.lineTo(i*W/nx,H);ctx.stroke();}
+ for(let j=0;j<=ny;j++){ctx.beginPath();ctx.moveTo(0,j*H/ny);ctx.lineTo(W,j*H/ny);ctx.stroke();}
+ const midY = H/2, ampPx = (H/ny)*0.95*FIXED_AMP/2.2;
+ ctx.strokeStyle='rgba(167,148,214,.5)';ctx.beginPath();ctx.moveTo(0,midY);ctx.lineTo(W,midY);ctx.stroke();
+ // nº de ciclos visibles: proporcional a la frecuencia (comparable a ojo)
+ function cycles(f){ return f/110; }
+ function sine(cyc, ph, color, isTarget){
+ ctx.save();
+ if(isTarget) ctx.setLineDash([10,7]);
+ ctx.strokeStyle = color; ctx.lineWidth = isTarget?2.2:2.8;
+ if(!isTarget){ctx.shadowColor=color;ctx.shadowBlur=14;}
+ ctx.beginPath();
+ for(let x=0;x<=W;x+=2){
+ const y = midY - ampPx*Math.sin((x/W)*cyc*Math.PI*2 + ph*Math.PI*2);
+ x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+ }
+ ctx.stroke(); ctx.restore();
+ }
+  sine(cycles(currentTarget), 0, '#f472b6', true);
+  sine(cycles(userFreq), visPhase, '#22d3ee', false);
+ requestAnimationFrame(drawScope);
+}
+function updateScopeFromUI(){
+ userFreq = parseInt(document.getElementById('freq-slider').value);
+ syncScopeUI(); refreshScope();
+}
+function syncScopeUI(){
+  document.getElementById('freq-slider').value = userFreq;
+  // a propósito no se muestra ningún número: la guía es la similitud + la dirección
+}
+function dirText(fe){
+  const dir = userFreq < currentTarget ? 'Sube' : 'Baja';
+  const mag = fe > 150 ? ' mucho' : fe > 50 ? '' : ' un poco';
+  return 'Dirección: ' + dir + mag;
+}
+function nudgeFreq(d){ userFreq=Math.min(660,Math.max(60,userFreq+d)); syncScopeUI(); refreshScope(); }
+function holdUI(){
+  const hv=document.getElementById('hold-val'), hb=document.getElementById('hold-bar');
+  if(hv) hv.textContent=(holdMs/1000).toFixed(1)+' s';
+  if(hb) hb.style.width=Math.min(100,holdMs/50)+'%';
+}
+// Guía: solo LEE el estado y lo muestra. Nunca modifica holdMs ni resuelve.
+function updateGuide(){
+  const {s, match, fe} = similarity();
+  document.getElementById('sim-val').textContent = Math.round(s)+'%';
+  document.getElementById('sim-bar').style.width = s+'%';
+  document.getElementById('note-read').textContent = scopeSolved ? 'Dirección: sintonizado' : (match ? 'Dirección: ahí, mantén' : dirText(fe));
+  const err = errNorm();
+  const dl = document.querySelector('#dist-label b');
+  if(dl) dl.textContent = scopeSolved ? '0% · limpia' : Math.round(err*100)+'% · '+(err>0.6?'muy distorsionado':err>0.3?'distorsionado':'casi limpio');
+  const fb = document.getElementById('scope-feedback');
+  if(scopeSolved){ fb.style.display='block'; fb.className='feedback ok'; fb.textContent='Señal bloqueada en sintonía.'; return; }
+  if(match){
+    fb.style.display='block'; fb.className='feedback err';
+    fb.textContent='¡Ahí! Mantente '+Math.max(0,5-holdMs/1000).toFixed(1)+' s más.';
+  } else if(s>65){
+    fb.style.display='block'; fb.className='feedback err';
+    fb.textContent='Casi. Escucha cómo se limpia el morse.';
+  } else {
+    fb.className=''; fb.style.display='none';
+  }
+}
+function refreshScope(){ updateGuide(); }
+function solveScope(){
+  if(scopeSolved) return;
+  scopeSolved = true;
+  holdMs = 5000; holdUI();
+  const fb = document.getElementById('scope-feedback');
+  fb.style.display='block'; fb.className='feedback ok';
+  fb.textContent='OK: ¡Señal sintonizada!';
+  document.getElementById('morse-text2').textContent = frag2Morse();
+  document.getElementById('scope-reveal').classList.add('show');
+  document.getElementById('step2').classList.add('done');
+  setProgress(); cleanChime();
+}
+// Único dueño del hold: este tick refresca la guía (para que la deriva se vea
+// en vivo) y acumula tiempo solo mientras hay match continuo.
+setInterval(()=>{
+  if(scopeSolved) return;
+  updateGuide();
+  if(Math.abs(userFreq-currentTarget)<=CONFIG.tolFreq){
+    holdMs += 100;
+    holdUI();
+    if(holdMs>=5000) solveScope();
+  } else if(holdMs!==0){
+    holdMs = 0;
+    holdUI();
+  }
+},100);
+(function enableDrag(){
+ let dragging=false, lx=0;
+ scope.addEventListener('pointerdown', e=>{dragging=true;lx=e.clientX;scope.setPointerCapture(e.pointerId);});
+ scope.addEventListener('pointermove', e=>{
+ if(!dragging||scopeSolved) return;
+ const dx=e.clientX-lx; lx=e.clientX;
+ userFreq=Math.min(660,Math.max(60,Math.round(userFreq+dx*1.2)));
+ syncScopeUI(); refreshScope();
+ });
+ scope.addEventListener('pointerup', ()=>dragging=false);
+ scope.addEventListener('pointercancel', ()=>dragging=false);
+})();
+
+/* ---- AUDIO: reproductor con estado (un solo mensaje a la vez, con stop) ---- */
+const player = { ctx:null, master:null, shaper:null, filt:null, noiseGain:null,
+  playing:false, nodes:[], timers:[], progTimer:null, vol:0.45 };
+function makeDistCurve(k){
+  const n=256, curve=new Float32Array(n);
+  for(let i=0;i<n;i++){const x=i/(n-1)*2-1;curve[i]=Math.tanh(k*x)/Math.tanh(k);}
+  return curve;
+}
+function audioCtx(){
+  if(player.ctx) return player.ctx;
+  const AC = window.AudioContext||window.webkitAudioContext;
+  player.ctx = new AC();
+  player.master = player.ctx.createGain();
+  player.master.gain.value = player.vol*0.9;
+  player.master.connect(player.ctx.destination);
+  player.filt = player.ctx.createBiquadFilter();
+  player.filt.type='lowpass'; player.filt.frequency.value=3800;
+  player.filt.connect(player.master);
+  player.shaper = player.ctx.createWaveShaper();
+  player.shaper.curve = makeDistCurve(8);
+  player.shaper.connect(player.filt);
+  const len = player.ctx.sampleRate*1.2, buf = player.ctx.createBuffer(1,len,player.ctx.sampleRate), d = buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+  const noise = player.ctx.createBufferSource(); noise.buffer=buf; noise.loop=true;
+  player.noiseGain = player.ctx.createGain(); player.noiseGain.gain.value=0.0001;
+  noise.connect(player.noiseGain); player.noiseGain.connect(player.master); noise.start();
+  return player.ctx;
+}
+function updateVolume(){
+  player.vol = parseInt(document.getElementById('vol-slider').value)/100;
+  if(player.ctx) player.master.gain.setTargetAtTime(player.vol*0.9, player.ctx.currentTime, 0.05);
+}
+function setPlayStatus(t){ const el=document.getElementById('play-status'); if(el) el.textContent=t; }
+function setPlayProgress(p){ const el=document.getElementById('play-bar'); if(el) el.style.width=Math.round(p*100)+'%'; }
+function setPlayBtn(){
+  const b=document.getElementById('play-btn');
+  if(!b) return;
+  b.textContent = player.playing ? 'Detener' : 'Escuchar morse';
+  b.classList.toggle('on', player.playing);
+}
+function blinkLamp(dur, atMs){
+  const id = setTimeout(()=>{
+    const l=document.getElementById('morse-lamp');
+    if(!l) return;
+    l.classList.add('lit');
+    const id2 = setTimeout(()=>l.classList.remove('lit'), dur*1000);
+    player.timers.push(id2);
+  }, atMs);
+  player.timers.push(id);
+}
+// Apaga todo lo que esté sonando o programado. Es la única vía de parada.
+function audioStop(msg){
+  player.timers.forEach(clearTimeout); player.timers=[];
+  if(player.progTimer){ clearInterval(player.progTimer); player.progTimer=null; }
+  if(player.ctx){
+    const t = player.ctx.currentTime;
+    player.nodes.forEach(n=>{ try{ if(n.stop) n.stop(t); }catch(e){} try{ if(n.disconnect) n.disconnect(); }catch(e){} });
+    player.noiseGain.gain.setTargetAtTime(0.0001, t, 0.05);
+  }
+  player.nodes=[];
+  player.playing=false;
+  const l=document.getElementById('morse-lamp');
+  if(l) l.classList.remove('lit');
+  setPlayBtn();
+  setPlayStatus(msg||'');
+  setPlayProgress(0);
+}
+function togglePlay(){
+  if(player.playing){ audioStop('Detenido.'); return; }
+  playCipherAudio();
+}
+function playCipherAudio(){
+  const ctx = audioCtx(); ctx.resume();
+  audioStop(''); // por si quedaba algo colgado: nunca se duplica
+  const unit=0.14;
+  const err = scopeSolved?0:errNorm();
+  player.shaper.curve = makeDistCurve(1+err*80);
+  player.filt.frequency.setTargetAtTime(4200-err*3500, ctx.currentTime, 0.05);
+  player.noiseGain.gain.setTargetAtTime(err*0.35*player.vol+0.0001, ctx.currentTime, 0.1);
+  const seq=frag2Morse().split('');
+  const t0=ctx.currentTime+0.2;
+  let t=t0;
+  const g=ctx.createGain(); g.gain.value=0; g.connect(player.shaper); player.nodes.push(g);
+  const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=userFreq; o.connect(g); o.start(t0); player.nodes.push(o);
+  // vibrato agresivo: con error alto el tono baila y no se puede seguir el ritmo
+  if(err>0.02){
+    const vib=ctx.createOscillator(), vg=ctx.createGain();
+    vib.type='sawtooth'; vib.frequency.value=11+err*7; vg.gain.value=err*110;
+    vib.connect(vg); vg.connect(o.frequency); vib.start(t0); player.nodes.push(vib);
+  }
+  const lampPlan=[];
+  seq.forEach(sym=>{
+    if(sym==='.'){g.gain.setValueAtTime(0.9,t);g.gain.setValueAtTime(0,t+unit);lampPlan.push([t-t0,unit]);t+=unit*2;}
+    else if(sym==='-'){g.gain.setValueAtTime(0.9,t);g.gain.setValueAtTime(0,t+unit*3);lampPlan.push([t-t0,unit*3]);t+=unit*4;}
+    else if(sym===' '){t+=unit*2;}
+    else if(sym==='/'){t+=unit*4;}
+  });
+  const tEnd=t, dur=tEnd-t0;
+  // pitidos fantasma: rellenan los silencios y rompen el ritmo si hay error
+  if(err>0.05){
+    const nGhost=Math.round(err*18);
+    for(let i=0;i<nGhost;i++){
+      const gt=t0+Math.random()*Math.max(0.1,dur);
+      const gd=0.05+Math.random()*0.18;
+      g.gain.setValueAtTime(0.85,gt); g.gain.setValueAtTime(0,gt+gd);
+    }
+  }
+  o.stop(tEnd+0.3);
+  player.playing=true;
+  setPlayBtn();
+  setPlayStatus('Reproduciendo morse...');
+  lampPlan.forEach(([off,d])=>blinkLamp(d, off*1000));
+  player.progTimer=setInterval(()=>{
+    const p=(ctx.currentTime-t0)/dur;
+    setPlayProgress(Math.min(1,Math.max(0,p)));
+  },100);
+  player.timers.push(setTimeout(()=>{
+    if(player.progTimer){ clearInterval(player.progTimer); player.progTimer=null; }
+    player.noiseGain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.3);
+    player.nodes.forEach(n=>{ try{ if(n.disconnect) n.disconnect(); }catch(e){} });
+    player.nodes=[];
+    player.playing=false;
+    setPlayBtn();
+    setPlayStatus('Fin del mensaje.');
+    setPlayProgress(1);
+  }, dur*1000+900));
+  const fb=document.getElementById('scope-feedback');
+  fb.style.display='block';
+  fb.className = scopeSolved?'feedback ok':'feedback err';
+  fb.textContent = scopeSolved
+    ? 'OK: Morse limpio.'
+    : 'Morse distorsionado: sigue sintonizando.';
+}
+function cleanChime(){
+  if(!player.ctx) return;
+  player.ctx.resume();
+  const ctx=player.ctx, t=ctx.currentTime+0.05;
+  [523.25,659.25,783.99].forEach((f,i)=>{
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*0.12);
+  g.gain.linearRampToValueAtTime(0.4,t+i*0.12+0.02);
+  g.gain.exponentialRampToValueAtTime(0.001,t+i*0.12+0.35);
+  o.connect(g);g.connect(player.master);o.start(t+i*0.12);o.stop(t+i*0.12+0.4);
+  });
+}
+syncScopeUI(); refreshScope(); requestAnimationFrame(drawScope);
+
+
+/* ---- tablas de referencia y chips (paso 3) ---- */
+function buildLookup(id, pairs, cols, hdrK, hdrV){
+  const t=document.getElementById(id);
+  const rows=Math.ceil(pairs.length/cols);
+  let h='<tr>'+Array(cols).fill('<th>'+hdrK+'</th><th>'+hdrV+'</th>').join('')+'</tr>';
+  for(let r=0;r<rows;r++){
+    h+='<tr>';
+    for(let c=0;c<cols;c++){
+      const p=pairs[c*rows+r];
+      h+= p ? `<td class="k" data-k="${p[0]}">${p[0]}</td><td class="v" data-k="${p[0]}">${p[1]}</td>` : '<td></td><td></td>';
+    }
+    h+='</tr>';
+  }
+  t.innerHTML=h;
+}
+function hlTable(id,key){
+  document.querySelectorAll('#'+id+' td.hl').forEach(e=>e.classList.remove('hl'));
+  document.querySelectorAll('#'+id+' td[data-k="'+key+'"]').forEach(e=>e.classList.add('hl'));
+}
+function buildChips(id,tableId,items){
+  const box=document.getElementById(id);
+  box.innerHTML='';
+  items.forEach(it=>{
+    const b=document.createElement('button');
+    b.type='button';
+    if(it==='/'){ b.className='chip-btn sp'; b.textContent='espacio'; }
+    else{
+      b.className='chip-btn'; b.textContent=it;
+      b.onclick=()=>{
+        box.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));
+        b.classList.add('sel'); hlTable(tableId,it);
+      };
+    }
+    box.appendChild(b);
+  });
+}
+(function(){
+  const al='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  buildLookup('ascii-table',[...al].map((c,i)=>[65+i,c]).concat([[32,'esp']]),4,'Nº','Letra');
+  buildLookup('morse-table',[...al].map(c=>[MORSE[c],c]).concat([['/','esp']]),4,'Morse','Letra');
+})();
+
+/* ---- PASO 3: decodifica A (números) + B (morse), luego César ---- */
+let decA = "", decB = "";
+function fullCipher(){ return (decA&&decB) ? (decA + " " + decB) : ""; }
+function caesarDecode(text, shift){
+ return text.split('').map(ch=>{
+ const c=ch.charCodeAt(0);
+ if(c>=65&&c<=90) return String.fromCharCode(((c-65-shift+260)%26)+65);
+ return ch;
+ }).join('');
+}
+function refreshCaesarChips(){
+ if(frag1Solved) buildChips('dec-bin-src','ascii-table',textToDec(CONFIG.frag1).split(' '));
+ if(scopeSolved) buildChips('dec-morse-src','morse-table',frag2Morse().split(' '));
+ updateCaesar(document.getElementById('shift-slider').value);
+}
+function maybeUnlockCaesar(){
+ const ok = decA===CONFIG.frag1 && decB===CONFIG.frag2;
+ const st = document.getElementById('caesar-stage');
+ st.style.opacity = ok?'1':'.5';
+ document.getElementById('caesar-lock').style.display = ok?'none':'block';
+ st.style.pointerEvents = ok?'auto':'none';
+ if(ok) updateCaesar(document.getElementById('shift-slider').value);
+ return ok;
+}
+function checkBinDecode(){
+ const val = (document.getElementById('dec-bin-input').value||'').toUpperCase().replace(/[^A-Z ]/g,'').trim();
+ const fb = document.getElementById('dec-bin-fb');
+ if(!frag1Solved){ fb.className='feedback err'; fb.textContent='X: Termina el paso 1 primero.'; return; }
+ if(val===CONFIG.frag1){
+ decA = val; saveState();
+ fb.className='feedback ok'; fb.textContent='OK: ¡A correcto!';
+ document.getElementById('dec-bin-input').disabled = true;
+ if(maybeUnlockCaesar()) document.getElementById('combined-cipher').scrollIntoView({behavior:'smooth',block:'center'});
+ else document.getElementById('combined-cipher').textContent = decA + ' + ? (falta B)';
+ } else {
+ fb.className='feedback err'; fb.textContent='X: No coincide. Busca cada número en la tabla ASCII. (+'+WRONG_COST+' s)'; wrong();
+ }
+}
+function checkMorseDecode(){
+ const val = (document.getElementById('dec-morse-input').value||'').toUpperCase().replace(/[^A-Z ]/g,'').trim().replace(/\s+/g,' ');
+ const fb = document.getElementById('dec-morse-fb');
+ if(!scopeSolved){ fb.className='feedback err'; fb.textContent='X: Termina el paso 2 primero.'; return; }
+ if(val===CONFIG.frag2){
+ decB = val; saveState();
+ fb.className='feedback ok'; fb.textContent='OK: ¡B correcto!';
+ document.getElementById('dec-morse-input').disabled = true;
+ if(maybeUnlockCaesar()) document.getElementById('combined-cipher').scrollIntoView({behavior:'smooth',block:'center'});
+ else document.getElementById('combined-cipher').textContent = '? (falta A) + ' + decB;
+ } else {
+ fb.className='feedback err'; fb.textContent='X: No coincide. Revisa la tabla morse (/ es un espacio). (+'+WRONG_COST+' s)'; wrong();
+ }
+}
+function renderDisks(shift){
+ updateWheel(shift);
+ const cipher=fullCipher()||'????? ?? ??????';
+ // lupa letra por letra: cifrado → descifrado con el corrimiento actual
+ const pairs = cipher.split('').map(ch=>{
+ const c=ch.charCodeAt(0);
+ if(c>=65&&c<=90){
+ const d=String.fromCharCode(((c-65-shift+260)%26)+65);
+ return ch+'→'+d;
+ }
+ return ch===' ' ? '·' : ch;
+ }).join(' ');
+ document.getElementById('caesar-map').textContent = fullCipher()?pairs:'—';
+}
+function updateCaesar(shift){
+ shift=parseInt(shift);
+ document.getElementById('shift-val').textContent=shift;
+ const cipher=fullCipher();
+ document.getElementById('combined-cipher').textContent=cipher||'— decodifica A y B para ver el César —';
+ document.getElementById('cipher-decoded').textContent=cipher?caesarDecode(cipher,shift):'—';
+ renderDisks(shift);
+}
+function nudgeShift(d){
+ const s=document.getElementById('shift-slider');
+ s.value=Math.min(25,Math.max(0,parseInt(s.value)+d));
+ updateCaesar(s.value);
+}
+function checkCaesar(){
+ const val=normalize(document.getElementById('cripto-input').value);
+ const fb=document.getElementById('cripto-feedback');
+ if(!(decA===CONFIG.frag1&&decB===CONFIG.frag2)){fb.className='feedback err';fb.textContent='X: Primero decodifica A (números) y B (morse).';return;}
+ if(val===normalize(CONFIG.finalPhrase)){
+ fb.className='feedback ok';fb.textContent='OK: ¡Correcto! Sigue al Paso 4.';
+ document.getElementById('step3').classList.add('done');
+ document.getElementById('cripto-input').disabled=true;
+ setProgress();
+ setTimeout(()=>unlockStep(4),800);
+ } else {
+ fb.className='feedback err';fb.textContent='X: Aún no. Sigue girando el disco. (+'+WRONG_COST+' s)'; wrong();
+ }
+}
+
+/* ---- disco César circular ---- */
+const WHEEL_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const WHEEL_DEG = 360/26;
+let wheelShift = 0, wheelSteps = 0;
+function buildWheel(){
+  const svg = document.getElementById('wheel');
+  let h = '<circle cx="180" cy="180" r="174" fill="#0a0618" stroke="#7c3aed" stroke-width="2"/>';
+  h += '<circle cx="180" cy="180" r="138" fill="none" stroke="#3b2a63" stroke-width="2"/>';
+  h += '<circle cx="180" cy="180" r="98" fill="#150e2e" stroke="#7c3aed" stroke-width="2"/>';
+  for(let i=0;i<26;i++){
+    h += '<text x="180" y="24" transform="rotate('+(i*WHEEL_DEG)+' 180 180)" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#22d3ee">'+WHEEL_ALPHA[i]+'</text>';
+  }
+  h += '<g id="wheel-inner" style="transform-origin:180px 180px">';
+  for(let i=0;i<26;i++){
+    h += '<text x="180" y="62" transform="rotate('+(i*WHEEL_DEG)+' 180 180)" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="#f472b6">'+WHEEL_ALPHA[i]+'</text>';
+  }
+  h += '</g><g id="wheel-mark"></g>';
+  h += '<text x="180" y="172" text-anchor="middle" font-size="11" fill="#a794d6">AFUERA: CIFRADO</text>';
+  h += '<text x="180" y="192" text-anchor="middle" font-size="11" fill="#a794d6">ADENTRO: REAL</text>';
+  svg.innerHTML = h;
+  updateWheel(0);
+}
+function updateWheel(shift){
+  const inner = document.getElementById('wheel-inner');
+  if(!inner) return;
+  // giro continuo por el camino corto (evita que el disco de la vuelta de 25 a 0)
+  const d = (((shift - wheelShift + 13) % 26) + 26) % 26 - 13;
+  wheelSteps += d; wheelShift = shift;
+  inner.style.transform = 'rotate(' + (wheelSteps*WHEEL_DEG) + 'deg)';
+  const c = fullCipher();
+  const mark = document.getElementById('wheel-mark');
+  if(c){
+    const idx = c.charCodeAt(0)-65;
+    mark.innerHTML = '<rect x="164" y="8" width="32" height="104" rx="10" fill="rgba(253,224,71,.16)" stroke="#fde047" stroke-width="1.5" transform="rotate('+(idx*WHEEL_DEG)+' 180 180)"/>';
+  } else { mark.innerHTML = ''; }
+}
+(function wheelDrag(){
+  const svg = document.getElementById('wheel');
+  let drag = false, a0 = 0, s0 = 0;
+  function ang(e){
+    const r = svg.getBoundingClientRect();
+    return Math.atan2(e.clientY-(r.top+r.height/2), e.clientX-(r.left+r.width/2))*180/Math.PI;
+  }
+  svg.addEventListener('pointerdown', e=>{
+    if(document.getElementById('caesar-stage').style.pointerEvents!=='auto') return;
+    drag = true; a0 = ang(e); s0 = wheelShift; svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove', e=>{
+    if(!drag) return;
+    const s = (((s0 + Math.round((ang(e)-a0)/WHEEL_DEG)) % 26) + 26) % 26;
+    if(s !== wheelShift){ document.getElementById('shift-slider').value = Math.min(25,s); updateCaesar(s); }
+  });
+  svg.addEventListener('pointerup', ()=>{ drag = false; });
+  svg.addEventListener('pointercancel', ()=>{ drag = false; });
+})();
+buildWheel();
+refreshCaesarChips(); updateCaesar(0);
+
+function checkFinal(){
+ const clean = t => normalize(t).replace(/[^a-z0-9]/g,'');
+ const val=clean(document.getElementById('final-input').value);
+ const fb=document.getElementById('final-feedback');
+ if(val===clean(CONFIG.finalCode)){
+ fb.className='feedback ok';fb.textContent='OK: ¡Palabra clave correcta!';
+ document.getElementById('step5').classList.add('done'); setProgress();
+ setTimeout(showFinalScreen,700);
+ } else {
+ fb.className='feedback err';fb.textContent='X: Aún no. Revisa los videos. (+'+WRONG_COST+' s)'; wrong();
+ }
+}
+function showFinalScreen(){
+   try{ audioStop(''); }catch(e){}
+  document.getElementById('main').style.display='none';
+  document.getElementById('hud').style.display='none';
+  document.getElementById('final-screen').style.display='block';
+  const s = finalSec!==null ? finalSec : (startTime ? Math.floor((Date.now()-startTime)/1000)+penalty : 0);
+  finalSec = s; finished = true; saveState();
+  const t=String(Math.floor(s/60)).padStart(2,'0')+":"+String(s%60).padStart(2,'0');
+  document.getElementById('rep-op').textContent=operator||'—';
+  document.getElementById('rep-time').textContent=t;
+  document.getElementById('rep-a').textContent=textToDec(CONFIG.frag1);
+  document.getElementById('rep-a-dec').textContent=CONFIG.frag1;
+  document.getElementById('rep-b').textContent=frag2Morse();
+  document.getElementById('rep-b-dec').textContent=CONFIG.frag2;
+  document.getElementById('rep-final').textContent=CONFIG.finalPhrase+' (palabra clave: '+CONFIG.finalCode+')';
+  document.getElementById('rep-pen').textContent=hintsUsed+' pistas, '+wrongs+' intentos fallidos (incluidos en el tiempo)';
+}
+
+
+/* ---- PASO 4: ruta del paquete ---- */
+const ROUTE = [
+ {id:'pc', name:'Tu computador', desc:'Donde escribes la dirección de la página'},
+ {id:'router', name:'Router del colegio', desc:'Conecta tu sala con el resto de internet'},
+ {id:'isp', name:'Proveedor de internet (ISP)', desc:'La empresa que le vende internet al colegio'},
+ {id:'backbone', name:'Red troncal de internet', desc:'Cables gigantes que cruzan ciudades y países'},
+ {id:'server', name:'Servidor de la página', desc:'El computador que guarda la página y responde'}
+];
+let routePick = [], routeSolved = false;
+function shuffled(a){
+  const b = a.slice();
+  for(let i=b.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = b[i]; b[i] = b[j]; b[j] = t;
+  }
+  return b;
+}
+let routeOrder = shuffled(ROUTE);
+while(routeOrder.every((c,i)=>c.id===ROUTE[i].id)) routeOrder = shuffled(ROUTE);
+function routeName(id){ return ROUTE.find(c=>c.id===id).name; }
+function renderRoute(marks){
+  const slots = document.getElementById('route-slots');
+  slots.innerHTML = '';
+  for(let i=0;i<ROUTE.length;i++){
+    const d = document.createElement('div');
+    const id = routePick[i];
+    d.className = 'route-slot' + (id ? ' filled' : '');
+    if(marks && id) d.className += (id===ROUTE[i].id ? ' good' : ' badp');
+    d.innerHTML = '<span class="n">' + (i+1) + '</span>' + (id ? routeName(id) : 'vacío');
+    slots.appendChild(d);
+  }
+  const pool = document.getElementById('route-pool');
+  pool.innerHTML = '';
+  routeOrder.forEach(c=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'route-card';
+    b.disabled = routeSolved || routePick.includes(c.id);
+    b.innerHTML = '<b>' + c.name + '</b><span>' + c.desc + '</span>';
+    b.onclick = ()=>pickRoute(c.id);
+    pool.appendChild(b);
+  });
+}
+function pickRoute(id){
+  if(routeSolved || routePick.includes(id)) return;
+  routePick.push(id);
+  document.getElementById('route-feedback').className = 'feedback';
+  renderRoute();
+}
+function undoRoute(){ if(routeSolved) return; routePick.pop(); renderRoute(); }
+function clearRoute(){ if(routeSolved) return; routePick = []; renderRoute(); }
+function solveRoute(quiet){
+  routeSolved = true;
+  routePick = ROUTE.map(c=>c.id);
+  renderRoute(true);
+  const fb = document.getElementById('route-feedback');
+  fb.className = 'feedback ok';
+  fb.textContent = 'OK: ¡Ruta correcta!';
+  document.getElementById('route-reveal').classList.add('show');
+  document.getElementById('step4').classList.add('done');
+  setProgress();
+  if(!quiet) setTimeout(()=>unlockStep(5),1200);
+}
+function checkRoute(){
+  if(routeSolved) return;
+  const fb = document.getElementById('route-feedback');
+  if(routePick.length < ROUTE.length){
+    fb.className = 'feedback err';
+    fb.textContent = 'X: Falta completar la ruta (llevas ' + routePick.length + ' de ' + ROUTE.length + ').';
+    return;
+  }
+  let ok = 0;
+  routePick.forEach((id,i)=>{ if(id===ROUTE[i].id) ok++; });
+  if(ok === ROUTE.length){ solveRoute(false); return; }
+  renderRoute(true);
+  fb.className = 'feedback err';
+  fb.textContent = 'X: Llevas ' + ok + ' de ' + ROUTE.length + ' en su lugar. (+' + WRONG_COST + ' s)';
+  wrong();
+}
+renderRoute();
+
+// flechas del teclado mueven el disco César
+document.addEventListener('keydown', e=>{
+  const st = document.getElementById('caesar-stage');
+  if(!st || st.style.pointerEvents!=='auto') return;
+  if(document.activeElement && document.activeElement.tagName==='INPUT') return;
+  if(e.key==='ArrowLeft'){ nudgeShift(-1); e.preventDefault(); }
+  if(e.key==='ArrowRight'){ nudgeShift(1); e.preventDefault(); }
+});
+
+// restaurar progreso guardado
+function restoreSave(){
+  const S = SAVED;
+  if(!S || !S.operator) return;
+  operator = S.operator;
+  startTime = Date.now() - (S.elapsed||0)*1000;
+  penalty = S.penalty||0; hintsUsed = S.hintsUsed||0; wrongs = S.wrongs||0;
+  document.getElementById('op-name').textContent = operator;
+  document.getElementById('login-overlay').style.display = 'none';
+  [1,2,3,4,5].forEach(n=>{
+    const c = (S.hintCount && S.hintCount[n]) || 0;
+    for(let i=0;i<c;i++){
+      const d = document.createElement('div');
+      d.className = 'hint'; d.textContent = 'Pista ' + (i+1) + ': ' + HINTS[n][i];
+      document.getElementById('hint-box-'+n).appendChild(d);
+    }
+    hintCount[n] = c;
+    if(c >= HINTS[n].length){
+      const b = document.getElementById('hint-btn-'+n);
+      b.disabled = true; b.textContent = 'Sin más pistas';
+    }
+  });
+  if(S.frag1Solved){
+    RESISTORS.forEach((r,i)=>{ document.getElementById('res-in-'+i).value = resValue(r); });
+    LED_NUMBERS.forEach((n,i)=>{ document.getElementById('led-in-'+i).value = n; });
+    checkResistors();
+  }
+  if(S.scopeSolved) solveScope();
+  for(let n=2;n<=(S.unlocked||1);n++) document.getElementById('step'+n).classList.remove('locked');
+  if((S.unlocked||1)>=3) refreshCaesarChips();
+  if(S.decA){ document.getElementById('dec-bin-input').value = S.decA; checkBinDecode(); }
+  if(S.decB){ document.getElementById('dec-morse-input').value = S.decB; checkMorseDecode(); }
+  if(S.step3done){ document.getElementById('cripto-input').value = CONFIG.finalPhrase; checkCaesar(); }
+  if(S.step4done) solveRoute(true);
+  if(S.finished){ finalSec = S.finalSec; showFinalScreen(); }
+  saveState();
+}
+restoreSave();
+</script>
+</body>
+</html>
