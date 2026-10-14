@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mujeres en Tecnología 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ─── Variables de diseño (idénticas al original) ─── */
+:root {
+  --rosa:    #f7a8c4;
+  --rosa-cl: #fde8f1;
+  --lila:    #c9a8f7;
+  --lila-cl: #ede8fd;
+  --ciel:    #a8d8f7;
+  --ciel-cl: #e8f4fd;
+  --menta:   #a8f7c8;
+  --verde:   #4caf7d;
+  --rojo:    #f77a8a;
+  --amarillo:#f7d08a;
+  --amar-cl: #fef9e7;
+  --bg:      #fdf6ff;
+  --white:   #ffffff;
+  --texto:   #3d2c5e;
+  --gris:    #b0a0c8;
+  --sombra:  0 4px 20px rgba(180,140,220,0.15);
+  --radio:   20px;
+  --radio-sm:12px;
+  --fuente:  'Nunito','Segoe UI',Arial,sans-serif;
+}
+
+/* ─── DARK MODE ─── */
+[data-theme="dark"] {
+  --bg:      #0f0a1e;
+  --white:   #1a1030;
+  --texto:   #f0e6ff;
+  --gris:    #9d8ec0;
+  --rosa-cl: #2e1020;
+  --lila-cl: #1a0e38;
+  --ciel-cl: #0a1828;
+  --amar-cl: #2a2000;
+  --sombra:  0 4px 24px rgba(0,0,0,0.45);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family: var(--fuente);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ─── Fondo decorativo radial (igual al original) ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(247,168,196,.22) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(201,168,247,.22) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(168,216,247,.12) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+  transition: opacity 0.3s;
+}
+[data-theme="dark"] body::before { opacity: 0.4; }
+
+/* ══════════════════════════════════════════════
+   DESTELLOS FLOTANTES — visibles en PC y móvil
+   3 tipos: cruz de luz, orbe brillante, rombo
+   Todos con box-shadow multicapa para efecto glow
+══════════════════════════════════════════════ */
+
+/* Base común */
+.destello {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  animation: subirDestello linear infinite;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ── Tipo 1: Cruz de luz (4 brazos) ── */
+.destello.cruz {
+  border-radius: 50%;
+  /* El núcleo central brilla fuerte */
+}
+.destello.cruz::before,
+.destello.cruz::after {
+  content: '';
+  position: absolute;
+  border-radius: 100px;
+  background: inherit;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(1px);
+}
+/* brazo horizontal: ancho y delgado */
+.destello.cruz::before { width: 320%; height: 18%; }
+/* brazo vertical: alto y delgado */
+.destello.cruz::after  { width: 18%;  height: 320%; }
+
+/* ── Tipo 2: Orbe (círculo puro con halo) ── */
+.destello.orbe {
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+.destello.orbe::before,
+.destello.orbe::after { display: none; }
+
+/* ── Tipo 3: Rombo ── */
+.destello.rombo {
+  border-radius: 3px;
+  transform-origin: center;
+}
+.destello.rombo::before,
+.destello.rombo::after { display: none; }
+
+/* ── Animación principal: sube con deriva lateral ── */
+@keyframes subirDestello {
+  0%   {
+    transform: translateY(102vh) translateX(0px) scale(0.2) rotate(0deg);
+    opacity: 0;
+  }
+  6%   { opacity: 1; }
+  30%  { transform: translateY(70vh)  translateX(18px)  scale(1)   rotate(60deg);  opacity: 0.9; }
+  55%  { transform: translateY(45vh)  translateX(-14px) scale(1.1) rotate(110deg); opacity: 0.85; }
+  80%  { transform: translateY(20vh)  translateX(10px)  scale(0.95) rotate(155deg); opacity: 0.7; }
+  95%  { opacity: 0.3; }
+  100% {
+    transform: translateY(-8vh) translateX(0px) scale(0.3) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* ── Pulso de brillo (glow parpadeante) ── */
+.destello.pulso {
+  animation: subirDestello linear infinite, pulsoGlow ease-in-out infinite alternate;
+}
+@keyframes pulsoGlow {
+  0%   { filter: brightness(1)   blur(0px); }
+  50%  { filter: brightness(1.8) blur(1px); }
+  100% { filter: brightness(2.4) blur(2px); }
+}
+
+/* ─── Toggle dark mode ─── */
+.dark-toggle {
+  position:fixed; top:14px; right:14px; z-index:9999;
+  background:var(--white); border:2px solid var(--lila);
+  border-radius:50px; padding:5px 13px; cursor:pointer;
+  font-size:1.1rem; box-shadow:var(--sombra);
+  transition:all 0.2s; font-family:var(--fuente); font-weight:700;
+  color:var(--texto);
+}
+.dark-toggle:hover { transform:scale(1.08); }
+
+/* ─── Contenedor principal ─── */
+#app { position:relative; z-index:1; width:100%; max-width:640px; }
+
+/* ─── Pantallas ─── */
+.screen { display:none; animation:fadeIn .45s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── Card base ─── */
+.card {
+  background:var(--white);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  padding:32px 28px;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* ══════════════════════════════
+   PANTALLA 1 – INICIO
+══════════════════════════════ */
+#inicio { text-align:center; }
+
+.logo-row { display:flex; justify-content:center; gap:20px; margin-bottom:20px; }
+.logo-placeholder {
+  width:90px; height:60px; border-radius:var(--radio-sm);
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; font-size:11px; font-weight:700;
+  gap:3px; letter-spacing:.4px;
+}
+.logo-usm { background:var(--lila-cl); color:#7a44c4; border:2px solid var(--lila); }
+.logo-dif { background:var(--ciel-cl);  color:#2470a8; border:2px solid var(--ciel); }
+.logo-usm span, .logo-dif span { font-size:20px; }
+
+.badge-creado { font-size:12px; color:var(--gris); margin-bottom:6px; letter-spacing:.3px; }
+
+.titulo-principal {
+  font-size:clamp(26px,6vw,38px); font-weight:900;
+  color:var(--texto); line-height:1.15; margin-bottom:6px;
+}
+.titulo-accent { color:var(--lila); }
+.subtitulo { font-size:15px; color:var(--gris); margin-bottom:24px; }
+
+/* Hero emoji flotante */
+.hero-emoji {
+  font-size:64px; margin:10px 0 20px; display:block;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(-10px); }
+}
+
+/* (star-deco eliminado) */
+
+/* Nombre input */
+.nombre-section { margin-bottom:20px; text-align:left; }
+.nombre-section label {
+  display:block; font-size:13px; font-weight:800;
+  color:var(--gris); margin-bottom:5px; text-transform:uppercase; letter-spacing:.5px;
+}
+.nombre-row { display:flex; gap:10px; }
+.nombre-row input {
+  flex:1; padding:11px 15px; border:2px solid var(--lila);
+  border-radius:var(--radio-sm); font-family:var(--fuente);
+  font-size:15px; font-weight:700; background:var(--bg);
+  color:var(--texto); outline:none; transition:border 0.2s;
+}
+.nombre-row input:focus { border-color:#7a44c4; }
+[data-theme="dark"] .nombre-row input { background:var(--lila-cl); }
+
+/* Instrucciones */
+.instrucciones {
+  background:linear-gradient(135deg,var(--rosa-cl) 0%,var(--lila-cl) 100%);
+  border-radius:var(--radio-sm); padding:18px 20px;
+  text-align:left; margin-bottom:28px;
+}
+.instrucciones h3 {
+  font-size:14px; font-weight:800; color:var(--texto);
+  margin-bottom:10px; text-transform:uppercase; letter-spacing:.8px;
+}
+.instrucciones ol { padding-left:18px; color:var(--texto); font-size:14px; line-height:1.8; }
+
+/* ─── Botones ─── */
+.btn {
+  display:inline-block; padding:14px 36px; border:none;
+  border-radius:50px; font-family:var(--fuente); font-size:17px;
+  font-weight:800; cursor:pointer;
+  transition:transform .15s, box-shadow .15s, filter .15s;
+  letter-spacing:.3px;
+}
+.btn:hover  { transform:translateY(-2px) scale(1.03); filter:brightness(1.05); }
+.btn:active { transform:scale(.97); }
+
+.btn-primary {
+  background:linear-gradient(135deg,var(--rosa) 0%,var(--lila) 100%);
+  color:#fff; box-shadow:0 6px 20px rgba(201,168,247,.45);
+  width:100%; font-size:19px; padding:16px;
+  animation:pulsarBtn 2.2s ease-in-out infinite;
+}
+@keyframes pulsarBtn {
+  0%,100% { box-shadow:0 6px 20px rgba(201,168,247,.45); }
+  50%      { box-shadow:0 6px 36px rgba(247,168,196,.7); }
+}
+.btn-secondary {
+  background:linear-gradient(135deg,var(--lila) 0%,var(--ciel) 100%);
+  color:#fff; box-shadow:0 6px 18px rgba(168,216,247,.4);
+}
+.btn-outline {
+  background:transparent; border:2px solid var(--lila);
+  color:var(--texto); box-shadow:none;
+}
+.btn-gold {
+  background:linear-gradient(135deg,#f7d08a,#f7a8c4);
+  color:#fff; box-shadow:0 6px 18px rgba(247,208,138,.5);
+}
+
+/* ══════════════════════════════
+   PANTALLA 2 – JUEGO
+══════════════════════════════ */
+#juego { padding:22px 20px; }
+
+/* Header */
+.game-header {
+  display:flex; align-items:center;
+  justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;
+}
+.ronda-badge {
+  background:linear-gradient(135deg,var(--rosa) 0%,var(--lila) 100%);
+  color:#fff; font-size:13px; font-weight:800;
+  padding:5px 14px; border-radius:50px;
+}
+.puntaje-badge {
+  display:flex; align-items:center; gap:6px;
+  font-size:15px; font-weight:800; color:var(--texto);
+}
+.puntaje-badge span { font-size:18px; }
+.timer-badge {
+  font-size:13px; font-weight:800; padding:5px 14px;
+  border-radius:50px; background:var(--lila-cl); color:#7a44c4;
+  transition:all 0.3s;
+}
+.timer-badge.urgente {
+  background:#ffe0e4; color:#b02035;
+  animation:timerPulse 0.8s ease-in-out infinite;
+}
+@keyframes timerPulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }
+
+/* Barra de progreso */
+.progress-wrap {
+  background:var(--lila-cl); border-radius:50px;
+  height:10px; overflow:hidden; margin-bottom:14px;
+}
+.progress-bar {
+  height:100%; border-radius:50px;
+  background:linear-gradient(90deg,var(--rosa) 0%,var(--lila) 60%,var(--ciel) 100%);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+
+/* Badges área + dificultad */
+.badges-row { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.badge-area {
+  padding:4px 13px; border-radius:50px;
+  font-size:12px; font-weight:800; letter-spacing:.3px;
+}
+.area-telematica    { background:var(--ciel-cl);  color:#1a5fa8; border:1.5px solid var(--ciel); }
+.area-informatica   { background:var(--rosa-cl);  color:#a8205a; border:1.5px solid var(--rosa); }
+.area-electronica   { background:var(--amar-cl);  color:#8a5a00; border:1.5px solid var(--amarillo); }
+.area-electrica     { background:#e8fdf0;          color:#1a6640; border:1.5px solid var(--menta); }
+.area-general       { background:var(--lila-cl);  color:#5b21b6; border:1.5px solid var(--lila); }
+[data-theme="dark"] .area-telematica  { background:#0a1828; color:#93c5fd; }
+[data-theme="dark"] .area-informatica { background:#2e1020; color:#f9a8d4; }
+[data-theme="dark"] .area-electronica { background:#2a2000; color:#fde68a; }
+[data-theme="dark"] .area-electrica   { background:#0a2010; color:#6ee7b7; }
+[data-theme="dark"] .area-general     { background:#1a0e38; color:#c4b5fd; }
+
+.badge-dif {
+  padding:4px 13px; border-radius:50px;
+  font-size:12px; font-weight:800;
+}
+.dif-facil      { background:#e8fdf0; color:#1a6640; border:1.5px solid var(--menta); }
+.dif-intermedio { background:var(--amar-cl); color:#8a5a00; border:1.5px solid var(--amarillo); }
+.dif-dificil    { background:#ffe0e4; color:#b02035; border:1.5px solid var(--rojo); }
+[data-theme="dark"] .dif-facil      { background:#0a2010; color:#6ee7b7; }
+[data-theme="dark"] .dif-intermedio { background:#2a2000; color:#fde68a; }
+[data-theme="dark"] .dif-dificil    { background:#2e0a0a; color:#fca5a5; }
+
+/* Frase box */
+.frase-box {
+  background:linear-gradient(135deg,var(--lila-cl) 0%,var(--ciel-cl) 100%);
+  border-radius:var(--radio-sm); padding:18px 20px;
+  margin-bottom:16px; text-align:center;
+}
+.frase-label {
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1px; color:var(--lila); margin-bottom:6px;
+}
+.frase-texto {
+  font-size:clamp(15px,4vw,19px); font-weight:800;
+  color:var(--texto); line-height:1.35;
+}
+
+.mini-instruccion {
+  font-size:13px; color:var(--gris);
+  text-align:center; margin-bottom:14px;
+}
+.mini-instruccion strong { color:var(--lila); }
+
+/* ─── TIPO EMOJI ─── */
+.emoji-grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:10px; margin-bottom:18px;
+}
+.emoji-btn {
+  background:var(--rosa-cl); border:2px solid transparent;
+  border-radius:var(--radio-sm); padding:14px 6px;
+  font-size:28px; cursor:pointer;
+  transition:transform .18s, border-color .18s, background .18s, box-shadow .18s;
+  display:flex; flex-direction:column; align-items:center;
+  gap:4px; user-select:none; position:relative;
+  font-family:var(--fuente);
+}
+.emoji-btn .elabel { font-size:10px; font-weight:700; color:var(--gris); }
+.emoji-btn:hover:not(.bloqueado) {
+  transform:scale(1.08);
+  box-shadow:0 4px 14px rgba(201,168,247,.35);
+}
+.emoji-btn.seleccionado {
+  border-color:var(--lila); background:var(--lila-cl);
+  transform:scale(1.1); box-shadow:0 4px 16px rgba(201,168,247,.4);
+}
+.emoji-btn.correcto  { border-color:var(--verde); background:#d6f5e3; transform:scale(1.05); }
+.emoji-btn.incorrecto{ border-color:var(--rojo);  background:#ffe0e4; }
+.emoji-btn.bloqueado { cursor:default; }
+.emoji-btn .check { display:none; position:absolute; top:4px; right:5px; font-size:12px; }
+.emoji-btn.correcto .check, .emoji-btn.incorrecto .check { display:block; }
+
+/* ─── TIPO COMPLETAR ─── */
+.frase-completar {
+  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  background:var(--lila-cl); border-radius:var(--radio-sm);
+  padding:14px 16px; margin-bottom:14px; min-height:52px;
+}
+.frase-word { font-size:16px; font-weight:700; color:var(--texto); }
+.drop-slot {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:88px; height:34px; border:2.5px dashed var(--lila);
+  border-radius:8px; background:var(--white); padding:0 8px;
+  font-size:14px; font-weight:800; color:var(--lila);
+  cursor:pointer; transition:all 0.2s;
+}
+.drop-slot.filled { border-style:solid; border-color:#7a44c4; color:var(--texto); }
+.drop-slot.correcto  { border-color:var(--verde); background:#d6f5e3; color:#2e7d52; }
+.drop-slot.incorrecto{ border-color:var(--rojo);  background:#ffe0e4; color:#b02035; }
+.palabras-pool { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.palabra-chip {
+  background:var(--rosa-cl); border:2px solid var(--rosa);
+  border-radius:50px; padding:6px 16px; font-size:14px;
+  font-weight:800; color:#a8205a; cursor:pointer;
+  transition:all 0.2s; user-select:none;
+}
+.palabra-chip:hover:not(.usada) { transform:scale(1.06); background:var(--rosa); color:#fff; }
+.palabra-chip.usada { opacity:0.35; pointer-events:none; }
+
+/* ─── TIPO PARES ─── */
+.pares-container { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.pares-col { display:flex; flex-direction:column; gap:8px; }
+.pares-col-title {
+  font-size:11px; font-weight:800; color:var(--gris);
+  text-transform:uppercase; letter-spacing:1px;
+  text-align:center; margin-bottom:2px;
+}
+.par-item {
+  background:var(--bg); border:2px solid var(--lila-cl);
+  border-radius:var(--radio-sm); padding:10px 12px;
+  font-size:13px; font-weight:800; cursor:pointer;
+  transition:all 0.2s; text-align:center; color:var(--texto);
+}
+.par-item:hover:not(.matched):not(.wrong) { transform:scale(1.04); border-color:var(--lila); }
+.par-item.sel-a { border-color:var(--rosa); background:var(--rosa-cl); }
+.par-item.sel-b { border-color:var(--lila); background:var(--lila-cl); }
+.par-item.matched { border-color:var(--verde); background:#d6f5e3; pointer-events:none; }
+.par-item.wrong { border-color:var(--rojo); background:#ffe0e4; animation:shake .4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);} }
+
+/* ─── TIPO SECUENCIA ─── */
+.seq-target {
+  display:flex; flex-wrap:wrap; gap:8px; min-height:50px;
+  background:var(--lila-cl); border-radius:var(--radio-sm);
+  padding:12px; margin-bottom:10px;
+  border:2px dashed var(--lila);
+}
+.seq-slot {
+  background:var(--white); border:2px solid var(--lila);
+  border-radius:8px; padding:7px 14px; font-size:13px;
+  font-weight:800; color:var(--texto); cursor:pointer;
+  transition:all 0.2s;
+}
+.seq-slot:hover { background:var(--lila-cl); }
+.seq-slot.correcto  { border-color:var(--verde); background:#d6f5e3; color:#2e7d52; }
+.seq-slot.incorrecto{ border-color:var(--rojo);  background:#ffe0e4; color:#b02035; }
+.seq-pool { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.seq-chip {
+  background:var(--ciel-cl); border:2px solid var(--ciel);
+  border-radius:50px; padding:6px 16px; font-size:14px;
+  font-weight:800; color:#1a5fa8; cursor:pointer; transition:all 0.2s;
+}
+.seq-chip:hover:not(.usada) { transform:scale(1.06); background:var(--ciel); color:#fff; }
+.seq-chip.usada { opacity:0.35; pointer-events:none; }
+
+/* ─── Feedback ─── */
+.feedback-box {
+  display:none; border-radius:var(--radio-sm);
+  padding:16px 18px; margin-bottom:16px;
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.feedback-box.correcto-fb  { background:#d6f5e3; border:2px solid var(--verde); }
+.feedback-box.incorrecto-fb{ background:#ffe0e4; border:2px solid var(--rojo); }
+.feedback-box.parcial-fb   { background:var(--amar-cl); border:2px solid var(--amarillo); }
+[data-theme="dark"] .feedback-box.correcto-fb  { background:#0a2010; }
+[data-theme="dark"] .feedback-box.incorrecto-fb{ background:#2e0a0a; }
+[data-theme="dark"] .feedback-box.parcial-fb   { background:#2a2000; }
+
+.feedback-titulo { font-size:16px; font-weight:800; margin-bottom:4px; }
+.feedback-box.correcto-fb  .feedback-titulo { color:#2e7d52; }
+.feedback-box.incorrecto-fb .feedback-titulo { color:#b02035; }
+.feedback-box.parcial-fb   .feedback-titulo { color:#8a5a00; }
+.feedback-pts { font-size:13px; font-weight:700; margin-bottom:6px; color:var(--gris); }
+.feedback-resp-correcta { font-size:13px; font-weight:700; margin-bottom:6px; color:var(--texto); }
+.feedback-explicacion { font-size:14px; color:var(--texto); line-height:1.6; }
+.feedback-sabias { font-size:13px; font-style:italic; color:var(--gris); margin-top:6px; }
+
+/* Motivacional */
+.motivacional {
+  font-size:19px; text-align:center; font-weight:900;
+  color:var(--texto); margin-bottom:8px; display:none;
+  animation:bounce .4s ease;
+}
+@keyframes bounce {
+  0%   { transform:scale(.8); }
+  60%  { transform:scale(1.12); }
+  100% { transform:scale(1); }
+}
+
+.game-controls { text-align:center; }
+
+/* ══════════════════════════════
+   PANTALLA 3 – FINAL
+══════════════════════════════ */
+#final { text-align:center; }
+.final-hero { font-size:72px; margin-bottom:8px; }
+.final-titulo {
+  font-size:clamp(26px,6vw,36px); font-weight:900;
+  color:var(--texto); margin-bottom:6px;
+}
+.final-puntaje {
+  font-size:52px; font-weight:900;
+  background:linear-gradient(135deg,var(--rosa) 0%,var(--lila) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; margin:14px 0 6px;
+}
+.final-desc { font-size:16px; color:var(--gris); margin-bottom:16px; }
+
+/* Desglose puntaje */
+.score-breakdown {
+  background:linear-gradient(135deg,var(--lila-cl),var(--ciel-cl));
+  border-radius:var(--radio-sm); padding:16px 18px;
+  margin-bottom:18px; text-align:left;
+}
+.score-breakdown h3 {
+  font-size:13px; font-weight:800; color:var(--texto);
+  text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px;
+}
+.sb-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 0; border-bottom:1px solid rgba(201,168,247,.2);
+  font-size:14px; color:var(--texto);
+}
+.sb-row:last-child { border-bottom:none; font-weight:900; font-size:15px; }
+.sb-pts { font-weight:800; color:#7a44c4; }
+
+.final-motivacion {
+  background:linear-gradient(135deg,var(--rosa-cl) 0%,var(--lila-cl) 100%);
+  border-radius:var(--radio-sm); padding:16px 20px;
+  font-size:16px; font-weight:700; color:var(--texto);
+  margin-bottom:20px; line-height:1.5;
+}
+
+/* Certificado */
+.cert-section { margin-bottom:20px; text-align:left; }
+.cert-section label {
+  display:block; font-size:13px; font-weight:800;
+  color:var(--gris); margin-bottom:8px;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.cert-inputs { display:flex; gap:10px; margin-bottom:12px; }
+.cert-inputs input {
+  flex:1; padding:10px 14px; border:2px solid var(--lila);
+  border-radius:var(--radio-sm); font-family:var(--fuente);
+  font-size:14px; font-weight:700; background:var(--bg);
+  color:var(--texto); outline:none; transition:border 0.2s;
+}
+.cert-inputs input:focus { border-color:#7a44c4; }
+[data-theme="dark"] .cert-inputs input { background:var(--lila-cl); }
+
+/* Certificado visual */
+#certificado-visual {
+  display:none;
+  background:linear-gradient(135deg,var(--rosa-cl),var(--lila-cl),var(--ciel-cl));
+  border:3px solid var(--lila); border-radius:var(--radio);
+  padding:28px 24px; margin-bottom:18px;
+  position:relative; overflow:hidden; text-align:center;
+}
+[data-theme="dark"] #certificado-visual {
+  background:linear-gradient(135deg,#2e1020,#1a0e38,#0a1828);
+}
+.cert-deco { position:absolute; font-size:3rem; opacity:0.07; }
+.cert-deco-1 { top:8px; left:8px; }
+.cert-deco-2 { bottom:8px; right:8px; }
+.cert-logo { font-size:2.5rem; margin-bottom:6px; }
+.cert-titulo-label {
+  font-size:10px; font-weight:800; color:var(--gris);
+  text-transform:uppercase; letter-spacing:2px; margin-bottom:4px;
+}
+.cert-nombre-display {
+  font-size:1.6rem; font-weight:900;
+  background:linear-gradient(135deg,var(--rosa),var(--lila));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; margin-bottom:8px;
+}
+.cert-desc-text { font-size:13px; color:var(--gris); margin-bottom:10px; line-height:1.5; }
+.cert-score-big { font-size:1.8rem; font-weight:900; color:#7a44c4; }
+.cert-stars { font-size:1.4rem; margin:6px 0; }
+.cert-fecha { font-size:11px; color:var(--gris); margin-top:6px; }
+.cert-sello { font-size:11px; font-weight:800; color:var(--lila); margin-top:8px; letter-spacing:.5px; }
+
+/* Créditos */
+.creditos { display:flex; justify-content:center; gap:16px; margin-bottom:20px; }
+.credito-chip {
+  padding:8px 20px; border-radius:50px;
+  font-size:13px; font-weight:800; letter-spacing:.4px;
+}
+.chip-usm { background:var(--lila-cl); color:#7a44c4; border:1.5px solid var(--lila); }
+.chip-dif { background:var(--ciel-cl);  color:#2470a8; border:1.5px solid var(--ciel); }
+
+/* ─── Confetti ─── */
+#confetti-container { position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden; }
+.confetti-piece {
+  position:absolute; top:-30px; font-size:22px;
+  animation:caer linear forwards; pointer-events:none;
+}
+@keyframes caer {
+  0%   { transform:translateY(0) rotate(0deg); opacity:1; }
+  100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+}
+
+/* ─── Overlay tiempo ─── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.65); z-index:9998;
+  align-items:center; justify-content:center;
+}
+.overlay.activo { display:flex; }
+.overlay-card {
+  background:var(--white); border-radius:var(--radio);
+  padding:36px 28px; text-align:center; max-width:380px;
+  box-shadow:var(--sombra);
+}
+.overlay-card h2 { font-size:1.6rem; font-weight:900; color:var(--texto); margin-bottom:10px; }
+.overlay-card p  { color:var(--gris); margin-bottom:20px; font-size:15px; }
+
+/* ─── Panel revisión de respuestas ─── */
+#overlay-revision {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.72); z-index:9998;
+  align-items:flex-start; justify-content:center;
+  overflow-y:auto; padding:20px 12px;
+}
+#overlay-revision.activo { display:flex; }
+.revision-card {
+  background:var(--white); border-radius:var(--radio);
+  padding:28px 22px; width:100%; max-width:620px;
+  box-shadow:var(--sombra); margin:auto;
+}
+.revision-card h2 {
+  font-size:1.3rem; font-weight:900; color:var(--texto);
+  margin-bottom:18px; text-align:center;
+}
+.rev-item {
+  border-radius:var(--radio-sm); padding:14px 16px;
+  margin-bottom:12px; border-left:5px solid var(--gris);
+}
+.rev-item.rev-ok      { background:#d6f5e3; border-color:var(--verde); }
+.rev-item.rev-parcial { background:var(--amar-cl); border-color:var(--amarillo); }
+.rev-item.rev-mal     { background:#ffe0e4; border-color:var(--rojo); }
+[data-theme="dark"] .rev-item.rev-ok      { background:#0a2010; }
+[data-theme="dark"] .rev-item.rev-parcial { background:#2a2000; }
+[data-theme="dark"] .rev-item.rev-mal     { background:#2e0a0a; }
+.rev-num {
+  font-size:11px; font-weight:800; color:var(--gris);
+  text-transform:uppercase; letter-spacing:.8px; margin-bottom:4px;
+}
+.rev-pregunta { font-size:14px; font-weight:800; color:var(--texto); margin-bottom:4px; }
+.rev-resultado { font-size:13px; font-weight:700; margin-bottom:3px; }
+.rev-item.rev-ok      .rev-resultado { color:#2e7d52; }
+.rev-item.rev-parcial .rev-resultado { color:#8a5a00; }
+.rev-item.rev-mal     .rev-resultado { color:#b02035; }
+.rev-explicacion { font-size:13px; color:var(--texto); line-height:1.5; }
+.rev-pts { font-size:12px; color:var(--gris); margin-top:3px; }
+
+/* ─── Créditos con links ─── */
+.credito-link {
+  text-decoration:none; display:inline-block;
+  transition:transform .15s, box-shadow .15s;
+}
+.credito-link:hover .credito-chip { transform:translateY(-2px) scale(1.05); box-shadow:0 6px 18px rgba(180,140,220,.3); }
+
+/* ─── Responsive ─── */
+@media(max-width:400px){
+  .card { padding:20px 14px; }
+  .emoji-grid { grid-template-columns:repeat(4,1fr); gap:7px; }
+  .emoji-btn { font-size:22px; padding:10px 3px; }
+  .pares-container { grid-template-columns:1fr; }
+  .cert-inputs { flex-direction:column; }
+  .nombre-row { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<div id="confetti-container"></div>
+
+<!-- Overlay revisión de respuestas -->
+<div class="overlay" id="overlay-revision" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 12px;">
+  <div class="revision-card">
+    <h2>📋 Revisión de respuestas</h2>
+    <div id="revision-contenido"></div>
+    <button class="btn btn-primary" onclick="cerrarRevision()" style="margin-top:8px;">✅ Cerrar revisión</button>
+  </div>
+</div>
+
+<!-- Overlay tiempo agotado -->
+<div class="overlay" id="overlay-tiempo">
+  <div class="overlay-card">
+    <h2>⏰ ¡Tiempo agotado!</h2>
+    <p>El tiempo se terminó, pero lo hiciste increíble. ¡Cada segundo aprendiste algo nuevo!</p>
+    <button class="btn btn-primary" onclick="irAFinal()" style="font-size:16px;padding:13px;">Ver mi resultado 🏆</button>
+  </div>
+</div>
+
+<!-- Toggle dark mode -->
+<button class="dark-toggle" onclick="toggleDark()">🌙 Oscuro</button>
+
+<div id="app">
+
+  <!-- ════ PANTALLA 1: INICIO ════ -->
+  <div id="inicio" class="screen card active" style="text-align:center;position:relative;overflow:hidden;">
+    <div class="logo-row">
+      <div class="logo-placeholder logo-usm"><span>🎓</span>USM</div>
+      <div class="logo-placeholder logo-dif"><span>📡</span>DIFTEL</div>
+    </div>
+
+    <p class="badge-creado">Creado por USM & DIFTEL</p>
+    <h1 class="titulo-principal">Mujeres en<br><span class="titulo-accent">Tecnología 💜</span></h1>
+    <p class="subtitulo">Más Mujeres en STEM</p>
+
+    <span class="hero-emoji">👩‍💻</span>
+
+    <div class="instrucciones">
+      <h3>¿Cómo jugar?</h3>
+      <ol>
+        <li>Responde <strong>4 tipos de preguntas</strong> sobre tecnología</li>
+        <li>Selecciona emojis, completa frases, conecta pares y ordena secuencias</li>
+        <li>Tienes <strong>15 minutos</strong> en total ⏱️</li>
+        <li>¡Responde rápido para ganar puntos extra! ⚡</li>
+        <li>Al final obtendrás tu <strong>certificado</strong> 🏅</li>
+      </ol>
+    </div>
+
+    <div class="nombre-section">
+      <label>👩‍💻 ¿Cuál es tu nombre?</label>
+      <div class="nombre-row">
+        <input type="text" id="input-nombre" placeholder="Nombre..." maxlength="25"/>
+        <input type="text" id="input-apellido" placeholder="Apellido..." maxlength="25"/>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="iniciarJuego()">✨ ¡Comenzar el juego!</button>
+  </div>
+
+  <!-- ════ PANTALLA 2: JUEGO ════ -->
+  <div id="juego" class="screen card">
+    <div class="game-header">
+      <div class="ronda-badge">Ronda <span id="ronda-actual">1</span>/<span id="total-rondas">12</span></div>
+      <div class="timer-badge" id="timer-badge">⏱️ 15:00</div>
+      <div class="puntaje-badge"><span>⭐</span><span id="puntaje-texto">0</span> pts</div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="barra-progreso" style="width:0%"></div>
+    </div>
+
+    <div class="badges-row" id="badges-row"></div>
+
+    <div class="frase-box">
+      <p class="frase-label" id="frase-label">Pregunta</p>
+      <p class="frase-texto" id="frase-display"></p>
+    </div>
+
+    <p class="mini-instruccion" id="mini-instruccion"></p>
+
+    <div id="question-body"></div>
+
+    <p class="motivacional" id="motivacional-msg"></p>
+
+    <div class="feedback-box" id="feedback-box">
+      <div class="feedback-titulo" id="feedback-titulo"></div>
+      <div class="feedback-pts" id="feedback-pts"></div>
+      <div class="feedback-resp-correcta" id="feedback-resp-correcta"></div>
+      <div class="feedback-explicacion" id="feedback-explicacion"></div>
+      <div class="feedback-sabias" id="feedback-sabias"></div>
+    </div>
+
+    <div class="game-controls">
+      <button class="btn btn-secondary" id="btn-verificar" onclick="verificar()">🔍 Verificar</button>
+      <button class="btn btn-outline" id="btn-siguiente" onclick="siguiente()" style="display:none;margin-top:10px;">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ════ PANTALLA 3: FINAL ════ -->
+  <div id="final" class="screen card">
+    <div class="final-hero" id="final-emoji">🏆</div>
+    <h2 class="final-titulo">¡Lo lograste!</h2>
+    <div class="final-puntaje" id="puntaje-final">0 pts</div>
+    <p class="final-desc" id="final-desc">puntos obtenidos</p>
+
+    <div class="score-breakdown">
+      <h3>📊 Desglose de puntaje</h3>
+      <div id="sb-rows"></div>
+    </div>
+
+    <div class="final-motivacion" id="final-motivacion"></div>
+
+    <!-- Certificado -->
+    <div class="cert-section">
+      <label>🏅 Genera tu certificado de Mujer Líder en Tecnología</label>
+      <div class="cert-inputs">
+        <input type="text" id="cert-nombre" placeholder="Nombre"/>
+        <input type="text" id="cert-apellido" placeholder="Apellido"/>
+      </div>
+      <button class="btn btn-gold" onclick="generarCertificado()" style="width:100%;font-size:16px;padding:13px;">
+        🎓 Generar certificado
+      </button>
+    </div>
+
+    <div id="certificado-visual">
+      <div class="cert-deco cert-deco-1">💻</div>
+      <div class="cert-deco cert-deco-2">🚀</div>
+      <div class="cert-logo">🏅</div>
+      <div class="cert-titulo-label">Certificado de Reconocimiento</div>
+      <div style="font-size:12px;color:var(--gris);margin-bottom:8px;">Más Mujeres en STEM · Área Tecnología · USM & DIFTEL</div>
+      <div class="cert-nombre-display" id="cert-nombre-display"></div>
+      <div class="cert-desc-text">Ha demostrado conocimientos en Telemática, Informática,<br/>Electrónica y Tecnología con un puntaje de:</div>
+      <div class="cert-score-big" id="cert-score-display"></div>
+      <div class="cert-stars" id="cert-stars"></div>
+      <div class="cert-fecha" id="cert-fecha"></div>
+      <div class="cert-sello">🌟 Mujer Líder en Tecnología 🌟</div>
+    </div>
+
+    <div class="creditos">
+      <a href="https://www.instagram.com/admisionusm/" target="_blank" rel="noopener" class="credito-link">
+        <span class="credito-chip chip-usm">🎓 Admisión USM · @admisionusm</span>
+      </a>
+      <a href="https://www.instagram.com/diftelusm/" target="_blank" rel="noopener" class="credito-link">
+        <span class="credito-chip chip-dif">📡 DIFTEL · @diftelusm</span>
+      </a>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="btn btn-outline" onclick="abrirRevision()" style="flex:1;font-size:15px;padding:13px;">📋 Revisar respuestas</button>
+      <button class="btn btn-primary" onclick="reiniciar()" style="flex:1;font-size:15px;padding:13px;">🔄 Jugar otra vez</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+// ══════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS — 20 preguntas, enfoque Telemática
+//  Distractores mejorados: temáticamente plausibles
+// ══════════════════════════════════════════════════
+const PREGUNTAS = [
+
+  // ── EMOJI (8 preguntas) ────────────────────────
+  {
+    tipo:"emoji", area:"Telemática", dificultad:"facil",
+    frase:"Internet conecta computadores en todo el mundo",
+    correctos:["🌍","💻","🔗","📡"],
+    distractores:["📺","🖨️","🔋","📠"],   // tecnología pero no de red
+    explicacion:"Internet es una red global que conecta millones de dispositivos para compartir información.",
+    sabias:"¿Sabías que en 2024 hay más de 5.400 millones de usuarios de internet en el mundo? ¡Eso es el 67% de la humanidad!"
+  },
+  {
+    tipo:"emoji", area:"Telemática", dificultad:"facil",
+    frase:"El WiFi conecta dispositivos sin cables usando ondas de radio",
+    correctos:["📶","📡","🌐","📱"],
+    distractores:["🔌","🖥️","💾","🖱️"],   // tecnología con cable / sin red
+    explicacion:"El WiFi usa ondas de radio para transmitir datos sin necesidad de cables físicos.",
+    sabias:"¿Sabías que el WiFi fue inventado en 1997 y hoy opera en frecuencias de 2.4 GHz y 5 GHz?"
+  },
+  {
+    tipo:"emoji", area:"Telemática", dificultad:"intermedio",
+    frase:"Los datos viajan empaquetados por las redes digitales",
+    correctos:["📦","🌐","🔄","📡"],
+    distractores:["📀","💿","🖨️","🔋"],   // almacenamiento / hardware sin red
+    explicacion:"La información se divide en paquetes de datos que viajan por distintas rutas y se reensamblan en destino.",
+    sabias:"¿Sabías que un solo video de YouTube puede dividirse en miles de paquetes que viajan por rutas distintas y llegan en milisegundos?"
+  },
+  {
+    tipo:"emoji", area:"Informática", dificultad:"facil",
+    frase:"Programar es darle instrucciones precisas a una máquina",
+    correctos:["💻","⌨️","🧠","📜"],
+    distractores:["🖨️","📠","📺","🔌"],   // tecnología pero no de programación
+    explicacion:"Programar consiste en escribir instrucciones precisas que el computador puede ejecutar paso a paso.",
+    sabias:"¿Sabías que Ada Lovelace, en 1843, escribió el primer algoritmo de la historia para una máquina que aún no existía?"
+  },
+  {
+    tipo:"emoji", area:"Telemática", dificultad:"intermedio",
+    frase:"La ciberseguridad protege la información en la red",
+    correctos:["🔒","🛡️","💻","📂"],
+    distractores:["🔑","🗝️","🚪","🔐"],   // seguridad física, no digital
+    explicacion:"La ciberseguridad protege sistemas, redes y datos de ataques, accesos no autorizados y daños.",
+    sabias:"¿Sabías que cada día se producen más de 2.200 ciberataques en el mundo? ¡Las expertas en ciberseguridad son muy demandadas!"
+  },
+  {
+    tipo:"emoji", area:"Telemática", dificultad:"facil",
+    frase:"Un servidor almacena y entrega información a otros computadores",
+    correctos:["🖥️","📤","📥","🌐"],
+    distractores:["💾","📀","🖨️","📠"],   // almacenamiento local, no servidor
+    explicacion:"Un servidor es un computador potente que responde a solicitudes de otros dispositivos en la red.",
+    sabias:"¿Sabías que Google tiene más de 1 millón de servidores distribuidos en centros de datos alrededor del mundo?"
+  },
+  {
+    tipo:"emoji", area:"Electrónica", dificultad:"facil",
+    frase:"Un circuito eléctrico necesita estos elementos para funcionar",
+    correctos:["🔋","💡","🔌","⚡"],
+    distractores:["📡","🌐","💻","📶"],   // tecnología digital, no circuito
+    explicacion:"Un circuito eléctrico básico necesita una fuente de energía (batería), conductores (cables), una carga (bombilla) y flujo de corriente eléctrica.",
+    sabias:"¿Sabías que el primer circuito eléctrico fue creado por Alessandro Volta en 1800 con su pila voltaica?"
+  },
+  {
+    tipo:"emoji", area:"Informática", dificultad:"intermedio",
+    frase:"La inteligencia artificial aprende de datos para tomar decisiones",
+    correctos:["🤖","🧠","📊","💻"],
+    distractores:["🔬","🧪","⚗️","🔭"],   // ciencia pero no IA
+    explicacion:"La IA usa algoritmos de aprendizaje automático que analizan grandes cantidades de datos para reconocer patrones y tomar decisiones.",
+    sabias:"¿Sabías que ChatGPT fue entrenado con más de 570 GB de texto? ¡Las ingenieras en IA diseñan estos sistemas!"
+  },
+
+  // ── COMPLETAR (5 preguntas) ────────────────────
+  {
+    tipo:"completar", area:"Telemática", dificultad:"facil",
+    frase:["El protocolo", "___", "es el lenguaje universal de", "___", "que permite la comunicación entre dispositivos"],
+    blancos:[1,3],
+    respuesta:["TCP/IP","internet"],
+    pool:["TCP/IP","internet","Bluetooth","WiFi","USB","satélite"],
+    explicacion:"El protocolo TCP/IP es el conjunto de reglas que permite que todos los dispositivos del mundo se comuniquen en internet.",
+    sabias:"¿Sabías que TCP/IP fue diseñado en los años 70 por Vint Cerf y Bob Kahn, conocidos como los 'padres de internet'?"
+  },
+  {
+    tipo:"completar", area:"Telemática", dificultad:"intermedio",
+    frase:["Un", "___", "es el dispositivo que dirige los paquetes de datos entre", "___", "distintas en internet"],
+    blancos:[1,3],
+    respuesta:["router","redes"],
+    pool:["router","redes","switch","hosts","servidor","antena"],
+    explicacion:"El router recibe paquetes de datos y los dirige hacia su destino correcto, conectando distintas redes entre sí.",
+    sabias:"¿Sabías que el router de tu casa toma decisiones de enrutamiento millones de veces por segundo?"
+  },
+  {
+    tipo:"completar", area:"Informática", dificultad:"facil",
+    frase:["Un", "___", "es una secuencia de pasos ordenados para resolver un", "___"],
+    blancos:[1,3],
+    respuesta:["algoritmo","problema"],
+    pool:["algoritmo","problema","programa","proceso","dato","módulo"],
+    explicacion:"Un algoritmo es una secuencia finita de instrucciones bien definidas para resolver un problema. Es la base de toda la programación.",
+    sabias:"¿Sabías que la palabra 'algoritmo' viene del nombre del matemático persa Al-Juarismi, quien vivió en el siglo IX?"
+  },
+  {
+    tipo:"completar", area:"Electrónica", dificultad:"intermedio",
+    frase:["Los", "___", "detectan cambios físicos del entorno y los convierten en señales", "___"],
+    blancos:[1,3],
+    respuesta:["sensores","eléctricas"],
+    pool:["sensores","eléctricas","circuitos","digitales","transistores","analógicas"],
+    explicacion:"Los sensores captan variables físicas (temperatura, luz, movimiento) y las transforman en señales eléctricas que los sistemas pueden procesar.",
+    sabias:"¿Sabías que tu celular tiene más de 10 sensores distintos: acelerómetro, giroscopio, sensor de luz, proximidad y más?"
+  },
+  {
+    tipo:"completar", area:"Telemática", dificultad:"intermedio",
+    frase:["Una dirección", "___", "identifica de forma única a cada dispositivo conectado a", "___"],
+    blancos:[1,3],
+    respuesta:["IP","internet"],
+    pool:["IP","internet","MAC","la red","URL","el servidor"],
+    explicacion:"La dirección IP (Internet Protocol) es un número único que identifica cada dispositivo en internet, como la dirección de tu casa pero para datos.",
+    sabias:"¿Sabías que con IPv6 hay suficientes direcciones IP para asignar 340 sextillones de dispositivos? ¡Más que átomos en la Tierra!"
+  },
+
+  // ── PARES (4 preguntas) ────────────────────────
+  {
+    tipo:"pares", area:"Telemática", dificultad:"intermedio",
+    frase:"Conecta cada protocolo con su función principal:",
+    pares:[
+      {a:"HTTP/HTTPS", b:"Navegar páginas web"},
+      {a:"FTP",        b:"Transferir archivos"},
+      {a:"SMTP",       b:"Enviar correos"},
+      {a:"DNS",        b:"Traducir dominios a IP"}
+    ],
+    explicacion:"HTTP/HTTPS permite ver páginas web de forma segura. FTP transfiere archivos. SMTP envía correos. DNS traduce 'google.com' a una dirección IP numérica.",
+    sabias:"¿Sabías que cuando escribes 'www.google.com', el DNS hace una consulta en milisegundos para encontrar la IP real del servidor?"
+  },
+  {
+    tipo:"pares", area:"General", dificultad:"intermedio",
+    frase:"Conecta cada área tecnológica con su campo de acción:",
+    pares:[
+      {a:"Telemática",  b:"Redes y comunicaciones"},
+      {a:"Informática", b:"Software y algoritmos"},
+      {a:"Electrónica", b:"Circuitos y sensores"},
+      {a:"Eléctrica",   b:"Generación de energía"}
+    ],
+    explicacion:"Telemática gestiona redes. Informática crea software. Electrónica diseña circuitos. Eléctrica genera y distribuye energía.",
+    sabias:"¿Sabías que todas estas áreas trabajan juntas en proyectos de ciudades inteligentes (Smart Cities)?"
+  },
+  {
+    tipo:"pares", area:"Informática", dificultad:"intermedio",
+    frase:"Conecta cada concepto de programación con su descripción:",
+    pares:[
+      {a:"Variable",  b:"Guarda un dato en memoria"},
+      {a:"Función",   b:"Bloque de código reutilizable"},
+      {a:"Bucle",     b:"Repite instrucciones"},
+      {a:"Condición", b:"Decide qué camino seguir"}
+    ],
+    explicacion:"Variable guarda datos. Función agrupa código reutilizable. Bucle repite instrucciones. Condición (if/else) decide qué ejecutar según una situación.",
+    sabias:"¿Sabías que Python, uno de los lenguajes más usados en IA, fue creado por Guido van Rossum en 1991 y su nombre viene del show de comedia 'Monty Python'?"
+  },
+  {
+    tipo:"pares", area:"Telemática", dificultad:"intermedio",
+    frase:"Conecta cada tipo de red con su alcance:",
+    pares:[
+      {a:"LAN",  b:"Red local (casa u oficina)"},
+      {a:"WAN",  b:"Red de área amplia (países)"},
+      {a:"WiFi", b:"Red inalámbrica local"},
+      {a:"4G/5G",b:"Red móvil celular"}
+    ],
+    explicacion:"LAN conecta dispositivos en un área pequeña. WAN conecta redes a gran distancia (internet es la WAN más grande). WiFi es LAN inalámbrica. 4G/5G es la red de tu celular.",
+    sabias:"¿Sabías que el 5G puede ser hasta 100 veces más rápido que el 4G? ¡Las ingenieras en telemática diseñan estas redes!"
+  },
+
+  // ── SECUENCIA DIFÍCIL: TELEMÁTICA ─────────────
+  {
+    tipo:"secuencia", area:"Telemática", dificultad:"dificil",
+    frase:"🔴 DIFÍCIL: Ordena el camino que recorre un mensaje de WhatsApp:",
+    secuencia:["Tu celular","WiFi / 4G","Router","Internet","Servidor WhatsApp","Celular destino"],
+    explicacion:"Tu CELULAR envía el mensaje → por WiFi/4G → pasa por el ROUTER de tu red → viaja por INTERNET → llega al SERVIDOR de WhatsApp → y finalmente al CELULAR del destinatario. ¡Todo en menos de 1 segundo!",
+    sabias:"¿Sabías que WhatsApp procesa más de 100.000 millones de mensajes al día? ¡Las ingenieras en telemática hacen posible esa escala!"
+  },
+
+  // ── SECUENCIA DIFÍCIL: ELECTRÓNICA ────────────
+  {
+    tipo:"secuencia", area:"Electrónica", dificultad:"dificil",
+    frase:"🔴 DIFÍCIL: Ordena cómo funciona un sensor de temperatura digital:",
+    secuencia:["Temperatura ambiente","Sensor NTC","Señal analógica","Convertidor ADC","Señal digital","Microcontrolador"],
+    explicacion:"La TEMPERATURA actúa sobre el SENSOR NTC → genera una SEÑAL ANALÓGICA (voltaje variable) → el CONVERTIDOR ADC la transforma → en SEÑAL DIGITAL (0s y 1s) → que el MICROCONTROLADOR procesa y muestra en pantalla.",
+    sabias:"¿Sabías que el termómetro digital de tu casa usa exactamente este proceso? ¡Las ingenieras en electrónica diseñan estos sistemas para hospitales e industrias!"
+  },
+
+  // ── SECUENCIA DIFÍCIL: ELÉCTRICA ──────────────
+  {
+    tipo:"secuencia", area:"Eléctrica", dificultad:"dificil",
+    frase:"🔴 DIFÍCIL: Ordena el recorrido de la energía eléctrica desde la central hasta tu casa:",
+    secuencia:["Central eléctrica","Transformador elevador","Línea de alta tensión","Subestación","Transformador reductor","Tu hogar"],
+    explicacion:"Se genera en la CENTRAL → el TRANSFORMADOR ELEVADOR sube el voltaje → viaja por LÍNEAS DE ALTA TENSIÓN → llega a una SUBESTACIÓN → el TRANSFORMADOR REDUCTOR baja el voltaje a 220V → y llega a TU HOGAR.",
+    sabias:"¿Sabías que la electricidad viaja a casi la velocidad de la luz por los cables? ¡Las ingenieras eléctricas diseñan estos sistemas para que nunca te quedes sin luz!"
+  }
+];
+
+// ══════════════════════════════════════════════════
+//  MENSAJES
+// ══════════════════════════════════════════════════
+const MOTIVACIONALES_OK  = ["¡Eres seca! 🔥","¡Muy bien! 💜","¡Genial! 🌟","¡Excelente! 🎉","¡Increíble! ✨","¡Lo sabías! 🧠","¡Eres una crack! 🏆"];
+const MOTIVACIONALES_MAL = ["¡Casi! Sigue intentando 💪","¡No te rindas! 🌈","¡La próxima la tienes! ⭐","¡Aprender es parte del juego! 🎮","¡Tú puedes! 🦋"];
+const MOTIVACIONALES_PARCIAL = ["¡Muy cerca! Sigue así 🌟","¡Buen intento! Cada vez mejor 💜","¡Casi perfecta! 🎯","¡Vas por buen camino! 🚀"];
+const MOTIVACIONALES_FINAL = ["¡Eres una futura líder tecnológica! 👩‍💻🚀","¡El futuro de la tecnología está en tus manos! 💡","¡Cada ronda te hace más experta! 🧠✨","¡La ciencia y la tecnología te necesitan! 🌍💜","¡Sigue explorando el mundo STEM! 🔬💻"];
+const CONFETTI_EMOJIS = ["🌸","⭐","💜","✨","🎉","🌺","💫","🦋","🌈","💎"];
+
+// ══════════════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════════════
+let estado = {
+  preguntas:[], indice:0, puntaje:0,
+  timerInterval:null, tiempoRestante:900,
+  historial:[], nombreJugadora:"", apellidoJugadora:"",
+  tiempoInicioPregunta:0, verificado:false,
+  // por tipo
+  emojiSel:[], completarResp:[], paresSelA:null, paresMatcheados:0, seqResp:[]
+};
+
+// ══════════════════════════════════════════════════
+//  DARK MODE
+// ══════════════════════════════════════════════════
+function toggleDark(){
+  const html = document.documentElement;
+  const dark = html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme", dark?"light":"dark");
+  document.querySelector(".dark-toggle").textContent = dark?"🌙 Oscuro":"☀️ Claro";
+}
+
+// ══════════════════════════════════════════════════
+//  PARTÍCULAS FLOTANTES FEMENINAS (estrellitas y brillos)
+// ══════════════════════════════════════════════════
+function crearParticulas(){
+  // Paleta: colores vivos pero femeninos — rosa, lila, celeste, dorado, malva, menta
+  const paleta = [
+    { color:"#f472b6", glow:"rgba(244,114,182,VAL)" },  // rosa fuerte
+    { color:"#a855f7", glow:"rgba(168,85,247,VAL)"  },  // lila fuerte
+    { color:"#38bdf8", glow:"rgba(56,189,248,VAL)"  },  // celeste
+    { color:"#fbbf24", glow:"rgba(251,191,36,VAL)"  },  // dorado
+    { color:"#e879f9", glow:"rgba(232,121,249,VAL)" },  // malva
+    { color:"#34d399", glow:"rgba(52,211,153,VAL)"  },  // menta
+    { color:"#f9a8d4", glow:"rgba(249,168,212,VAL)" },  // rosa pastel
+    { color:"#c084fc", glow:"rgba(192,132,252,VAL)" },  // lila pastel
+  ];
+
+  // Configuración de cada tipo
+  const tipos = [
+    // [clase, tamaño-min, tamaño-max, opacidad-glow-cercano, opacidad-glow-lejano]
+    { cls:"cruz",  sMin:10, sMax:22, g1:0.9, g2:0.4 },
+    { cls:"orbe",  sMin:14, sMax:30, g1:1.0, g2:0.5 },
+    { cls:"rombo", sMin:10, sMax:20, g1:0.85,g2:0.35 },
+    { cls:"cruz pulso", sMin:12, sMax:26, g1:1.0, g2:0.5 },
+    { cls:"orbe pulso", sMin:18, sMax:36, g1:1.0, g2:0.6 },
+  ];
+
+  const total = 28; // más destellos para llenar la pantalla de PC
+
+  for(let i = 0; i < total; i++){
+    const d   = document.createElement("div");
+    const p   = paleta[i % paleta.length];
+    const t   = tipos[i % tipos.length];
+    const sz  = t.sMin + Math.random() * (t.sMax - t.sMin);
+    const dur = 8 + Math.random() * 10;          // 8–18s
+    const delay = -(Math.random() * 16);          // negativo → ya en vuelo
+    const isPulso = t.cls.includes("pulso");
+    const pDur = 1.0 + Math.random() * 1.5;
+
+    // Box-shadow multicapa: núcleo brillante + halo suave + halo lejano
+    const g1 = p.glow.replace("VAL", t.g1.toString());
+    const g2 = p.glow.replace("VAL", t.g2.toString());
+    const g3 = p.glow.replace("VAL", "0.15");
+    const shadow = `0 0 ${sz*0.8}px ${sz*0.3}px ${g1},
+                    0 0 ${sz*2}px   ${sz*0.8}px ${g2},
+                    0 0 ${sz*4}px   ${sz*1.5}px ${g3}`;
+
+    const isRombo = t.cls.includes("rombo");
+
+    d.className = "destello " + t.cls;
+    d.style.cssText = `
+      left:   ${Math.random() * 100}vw;
+      width:  ${sz}px;
+      height: ${sz}px;
+      background: ${p.color};
+      box-shadow: ${shadow};
+      animation-duration: ${dur}s${isPulso ? `, ${pDur}s` : ""};
+      animation-delay:    ${delay}s${isPulso ? `, ${-(Math.random()*pDur)}s` : ""};
+      ${isRombo ? `transform: translateY(102vh) rotate(45deg);` : ""}
+    `;
+    document.body.appendChild(d);
+  }
+}
+crearParticulas();
+
+// ══════════════════════════════════════════════════
+//  AUDIO
+// ══════════════════════════════════════════════════
+let audioCtx;
+function getAudio(){ if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function tono(f,d,t='sine',g=0.18){
+  try{
+    const c=getAudio(),o=c.createOscillator(),gn=c.createGain();
+    o.connect(gn);gn.connect(c.destination);
+    o.type=t;o.frequency.value=f;
+    gn.gain.setValueAtTime(g,c.currentTime);
+    gn.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+    o.start();o.stop(c.currentTime+d);
+  }catch(e){}
+}
+function sonidoCorrecto(){ tono(523,.1);setTimeout(()=>tono(659,.1),110);setTimeout(()=>tono(784,.2),220); }
+function sonidoIncorrecto(){ tono(220,.15,'sawtooth',.12);setTimeout(()=>tono(196,.2,'sawtooth',.1),160); }
+function sonidoParcial(){ tono(440,.12);setTimeout(()=>tono(494,.15),130); }
+
+// ══════════════════════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════════════════════
+function lanzarConfetti(){
+  const c=document.getElementById('confetti-container'); c.innerHTML='';
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    p.textContent=CONFETTI_EMOJIS[Math.floor(Math.random()*CONFETTI_EMOJIS.length)];
+    p.style.left=Math.random()*100+'vw';
+    p.style.fontSize=(16+Math.random()*14)+'px';
+    const dur=1.5+Math.random()*1.5;
+    p.style.animationDuration=dur+'s';
+    p.style.animationDelay=(Math.random()*.6)+'s';
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),(dur+.8)*1000);
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  UTILIDADES
+// ══════════════════════════════════════════════════
+function mezclar(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function aleatorio(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function mostrarPantalla(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+// ══════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════
+function iniciarTimer(){
+  clearInterval(estado.timerInterval);
+  estado.timerInterval=setInterval(()=>{
+    estado.tiempoRestante--;
+    const m=Math.floor(estado.tiempoRestante/60);
+    const s=estado.tiempoRestante%60;
+    const el=document.getElementById('timer-badge');
+    el.textContent=`⏱️ ${m}:${s.toString().padStart(2,'0')}`;
+    el.classList.toggle('urgente',estado.tiempoRestante<=60);
+    if(estado.tiempoRestante<=0){
+      clearInterval(estado.timerInterval);
+      document.getElementById('overlay-tiempo').classList.add('activo');
+    }
+  },1000);
+}
+function irAFinal(){ document.getElementById('overlay-tiempo').classList.remove('activo'); mostrarFinal(); }
+
+// ══════════════════════════════════════════════════
+//  INICIAR JUEGO
+// ══════════════════════════════════════════════════
+function iniciarJuego(){
+  estado.nombreJugadora  = document.getElementById('input-nombre').value.trim()   || 'Jugadora';
+  estado.apellidoJugadora= document.getElementById('input-apellido').value.trim() || '';
+
+  // ── Selección garantizada: 1 difícil por área obligatoria ──
+  const dificilesTelematica = PREGUNTAS.filter(p=>p.dificultad==='dificil'&&p.area==='Telemática');
+  const dificileElectronica = PREGUNTAS.filter(p=>p.dificultad==='dificil'&&p.area==='Electrónica');
+  const dificileElectrica   = PREGUNTAS.filter(p=>p.dificultad==='dificil'&&p.area==='Eléctrica');
+
+  const elegidaTelematica = aleatorio(dificilesTelematica);
+  const elegidaElectronica= aleatorio(dificileElectronica);
+  const elegidaElectrica  = aleatorio(dificileElectrica);
+  const tresObligatorias  = [elegidaTelematica, elegidaElectronica, elegidaElectrica];
+
+  // ── Resto: preguntas no difíciles, mezcladas ──
+  const noObligatorias = PREGUNTAS.filter(p=>p.dificultad!=='dificil');
+  const resto = mezclar(noObligatorias);
+
+  // ── Intercalar las difíciles en posiciones 3, 6, 9 (aprox.) ──
+  const base = [...resto];
+  const posiciones = [2, 5, 8]; // índices donde insertar difíciles
+  const mezDificiles = mezclar(tresObligatorias);
+  posiciones.forEach((pos, i) => {
+    const insertAt = Math.min(pos, base.length);
+    base.splice(insertAt, 0, mezDificiles[i]);
+  });
+
+  estado.preguntas = base;
+  estado.indice=0; estado.puntaje=0; estado.historial=[]; estado.tiempoRestante=900;
+  document.getElementById('total-rondas').textContent=estado.preguntas.length;
+  mostrarPantalla('juego');
+  iniciarTimer();
+  cargarPregunta();
+}
+
+// ══════════════════════════════════════════════════
+//  CARGAR PREGUNTA
+// ══════════════════════════════════════════════════
+function cargarPregunta(){
+  if(estado.indice>=estado.preguntas.length){ mostrarFinal(); return; }
+  const p=estado.preguntas[estado.indice];
+  estado.verificado=false;
+  estado.emojiSel=[]; estado.completarResp=[]; estado.paresSelA=null; estado.paresMatcheados=0; estado.seqResp=[];
+  estado.tiempoInicioPregunta=Date.now();
+
+  // Header
+  document.getElementById('ronda-actual').textContent=estado.indice+1;
+  document.getElementById('puntaje-texto').textContent=estado.puntaje;
+  document.getElementById('barra-progreso').style.width=(estado.indice/estado.preguntas.length*100)+'%';
+
+  // Badges
+  const areaClass={'Telemática':'area-telematica','Informática':'area-informatica','Electrónica':'area-electronica','Eléctrica':'area-electrica','General':'area-general'}[p.area]||'area-general';
+  const difClass={'facil':'dif-facil','intermedio':'dif-intermedio','dificil':'dif-dificil'}[p.dificultad];
+  const difLabel={'facil':'🟢 Fácil','intermedio':'🟡 Intermedio','dificil':'🔴 Difícil'}[p.dificultad];
+  document.getElementById('badges-row').innerHTML=`<span class="badge-area ${areaClass}">📌 ${p.area}</span><span class="badge-dif ${difClass}">${difLabel}</span>`;
+
+  // Frase
+  document.getElementById('frase-display').textContent=p.frase;
+
+  // Ocultar feedback
+  const fb=document.getElementById('feedback-box');
+  fb.style.display='none'; fb.className='feedback-box';
+  document.getElementById('motivacional-msg').style.display='none';
+  document.getElementById('btn-verificar').style.display='inline-block';
+  document.getElementById('btn-siguiente').style.display='none';
+
+  // Renderizar body
+  const body=document.getElementById('question-body');
+  if(p.tipo==='emoji')     renderEmoji(p,body);
+  else if(p.tipo==='completar') renderCompletar(p,body);
+  else if(p.tipo==='pares')     renderPares(p,body);
+  else if(p.tipo==='secuencia') renderSecuencia(p,body);
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER: EMOJI
+// ══════════════════════════════════════════════════
+function renderEmoji(p,body){
+  document.getElementById('frase-label').textContent='Selecciona los 4 emojis que representan:';
+  document.getElementById('mini-instruccion').innerHTML='Elige <strong>4 emojis</strong> y luego presiona Verificar';
+  const todos=mezclar([...p.correctos,...p.distractores]);
+  body.innerHTML=`<div class="emoji-grid" id="emoji-grid">
+    ${todos.map(e=>`<button class="emoji-btn" data-emoji="${e}" data-ok="${p.correctos.includes(e)}" onclick="toggleEmoji(this)">
+      ${e}<span class="check"></span>
+    </button>`).join('')}
+  </div>
+  <p style="font-size:12px;color:var(--gris);text-align:center;" id="emoji-count">Seleccionados: 0/4</p>`;
+}
+function toggleEmoji(btn){
+  if(estado.verificado||btn.classList.contains('bloqueado')) return;
+  if(btn.classList.contains('seleccionado')){
+    btn.classList.remove('seleccionado');
+    estado.emojiSel=estado.emojiSel.filter(e=>e!==btn.dataset.emoji);
+  } else {
+    if(estado.emojiSel.length>=4) return;
+    btn.classList.add('seleccionado');
+    estado.emojiSel.push(btn.dataset.emoji);
+  }
+  document.getElementById('emoji-count').textContent=`Seleccionados: ${estado.emojiSel.length}/4`;
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER: COMPLETAR (drag & drop + click)
+// ══════════════════════════════════════════════════
+function renderCompletar(p,body){
+  document.getElementById('frase-label').textContent='Completa la frase:';
+  document.getElementById('mini-instruccion').innerHTML='<strong>Arrastra</strong> cada palabra al espacio correcto, o haz clic en la palabra y luego en el espacio. Haz clic en un espacio lleno para devolver la palabra.';
+  estado.completarResp=new Array(p.blancos.length).fill(null);
+  const fraseHTML=p.frase.map((w,i)=>{
+    if(p.blancos.includes(i)){
+      const idx=p.blancos.indexOf(i);
+      return `<span class="drop-slot" id="slot-${idx}"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="dropEnSlot(event,${idx})"
+        onclick="clickEnSlot(${idx})">···</span>`;
+    }
+    return `<span class="frase-word">${w}</span>`;
+  }).join(' ');
+  const pool=mezclar(p.pool);
+  body.innerHTML=`<div class="frase-completar">${fraseHTML}</div>
+    <div class="palabras-pool" id="palabras-pool">
+      ${pool.map(w=>`<span class="palabra-chip" draggable="true" data-palabra="${w}"
+        ondragstart="dragStartPalabra(event)"
+        onclick="clickPalabra('${w}',this)">${w}</span>`).join('')}
+    </div>`;
+}
+
+let _dragPalabra=null, _dragChip=null, _chipSeleccionada=null;
+
+function dragStartPalabra(e){
+  if(estado.verificado) return;
+  _dragPalabra=e.target.dataset.palabra;
+  _dragChip=e.target;
+  e.dataTransfer.effectAllowed='move';
+}
+function dropEnSlot(e,idx){
+  e.preventDefault();
+  const slot=document.getElementById(`slot-${idx}`);
+  slot.classList.remove('drag-over');
+  if(!_dragPalabra||estado.verificado) return;
+  // Si el slot ya tiene algo, devolver al pool
+  if(estado.completarResp[idx]!==null) devolverSlot(idx);
+  // Colocar
+  estado.completarResp[idx]=_dragPalabra;
+  _dragChip.classList.add('usada');
+  slot.textContent=_dragPalabra; slot.classList.add('filled');
+  _dragPalabra=null; _dragChip=null; _chipSeleccionada=null;
+  limpiarSelChip();
+}
+function clickPalabra(palabra,chip){
+  if(estado.verificado||chip.classList.contains('usada')) return;
+  // Si ya hay una chip seleccionada, deseleccionar
+  if(_chipSeleccionada===chip){ chip.classList.remove('chip-sel'); _chipSeleccionada=null; return; }
+  limpiarSelChip();
+  chip.classList.add('chip-sel'); _chipSeleccionada=chip; _dragPalabra=palabra; _dragChip=chip;
+}
+function clickEnSlot(idx){
+  if(estado.verificado) return;
+  const slot=document.getElementById(`slot-${idx}`);
+  if(slot.classList.contains('filled')){
+    // Devolver palabra al pool
+    devolverSlot(idx);
+  } else if(_chipSeleccionada){
+    // Colocar chip seleccionada
+    dropEnSlot({preventDefault:()=>{}},idx);
+  }
+}
+function devolverSlot(idx){
+  const slot=document.getElementById(`slot-${idx}`);
+  const palabra=estado.completarResp[idx];
+  estado.completarResp[idx]=null;
+  slot.textContent='···'; slot.classList.remove('filled');
+  document.querySelectorAll('.palabra-chip').forEach(c=>{
+    if(c.dataset.palabra===palabra&&c.classList.contains('usada')){ c.classList.remove('usada'); }
+  });
+}
+function limpiarSelChip(){
+  document.querySelectorAll('.palabra-chip.chip-sel').forEach(c=>c.classList.remove('chip-sel'));
+  _chipSeleccionada=null; _dragPalabra=null; _dragChip=null;
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER: PARES
+// ══════════════════════════════════════════════════
+function renderPares(p,body){
+  document.getElementById('frase-label').textContent='Conecta los pares correctos:';
+  document.getElementById('mini-instruccion').innerHTML='Haz clic en un concepto de la izquierda y luego en su par de la derecha.';
+  const mezA=mezclar(p.pares), mezB=mezclar(p.pares);
+  body.innerHTML=`<div class="pares-container">
+    <div class="pares-col">
+      <div class="pares-col-title">Conceptos</div>
+      ${mezA.map(par=>`<div class="par-item" data-val="${par.a}" data-side="a" onclick="clickPar(this)">${par.a}</div>`).join('')}
+    </div>
+    <div class="pares-col">
+      <div class="pares-col-title">Aplicaciones</div>
+      ${mezB.map(par=>`<div class="par-item" data-val="${par.b}" data-side="b" onclick="clickPar(this)">${par.b}</div>`).join('')}
+    </div>
+  </div>`;
+}
+function clickPar(el){
+  if(el.classList.contains('matched')) return;
+  const side=el.dataset.side;
+  if(side==='a'){
+    document.querySelectorAll('.par-item[data-side="a"]').forEach(e=>e.classList.remove('sel-a'));
+    el.classList.add('sel-a'); estado.paresSelA=el;
+  } else {
+    if(!estado.paresSelA) return;
+    const p=estado.preguntas[estado.indice];
+    const correcto=p.pares.find(par=>par.a===estado.paresSelA.dataset.val&&par.b===el.dataset.val);
+    if(correcto){
+      estado.paresSelA.classList.remove('sel-a'); estado.paresSelA.classList.add('matched');
+      el.classList.add('matched'); estado.paresMatcheados++; estado.paresSelA=null;
+      tono(523,.08); setTimeout(()=>tono(659,.1),90);
+    } else {
+      estado.paresSelA.classList.add('wrong'); el.classList.add('wrong');
+      setTimeout(()=>{ estado.paresSelA.classList.remove('sel-a','wrong'); el.classList.remove('wrong'); estado.paresSelA=null; },600);
+      tono(220,.15,'sawtooth',.1);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER: SECUENCIA (drag & drop + click)
+// ══════════════════════════════════════════════════
+function renderSecuencia(p,body){
+  document.getElementById('frase-label').textContent='Ordena la secuencia:';
+  document.getElementById('mini-instruccion').innerHTML='<strong>Arrastra</strong> los elementos al área superior en el orden correcto, o haz clic en ellos. Haz clic en un elemento colocado para devolverlo.';
+  const mezclada=mezclar(p.secuencia);
+  body.innerHTML=`
+    <div class="seq-target" id="seq-target"
+      ondragover="event.preventDefault();this.classList.add('drag-over-zone')"
+      ondragleave="this.classList.remove('drag-over-zone')"
+      ondrop="dropEnSecuencia(event)">
+      <span style="color:var(--gris);font-size:13px;pointer-events:none;" id="seq-placeholder">Arrastra aquí los elementos en orden →</span>
+    </div>
+    <div class="seq-pool" id="seq-pool">
+      ${mezclada.map((w,i)=>`<span class="seq-chip" draggable="true" data-palabra="${w}" data-idx="${i}"
+        ondragstart="dragStartSeq(event)"
+        onclick="clickSeq('${w}',this)">${w}</span>`).join('')}
+    </div>`;
+}
+
+let _dragSeqPalabra=null, _dragSeqChip=null;
+
+function dragStartSeq(e){
+  if(estado.verificado) return;
+  _dragSeqPalabra=e.target.dataset.palabra;
+  _dragSeqChip=e.target;
+  e.dataTransfer.effectAllowed='move';
+}
+function dropEnSecuencia(e){
+  e.preventDefault();
+  const target=document.getElementById('seq-target');
+  target.classList.remove('drag-over-zone');
+  if(!_dragSeqPalabra||estado.verificado) return;
+  if(_dragSeqChip.classList.contains('usada')){ _dragSeqPalabra=null; _dragSeqChip=null; return; }
+  colocarEnSecuencia(_dragSeqPalabra, _dragSeqChip);
+  _dragSeqPalabra=null; _dragSeqChip=null;
+}
+function clickSeq(palabra,chip){
+  if(chip.classList.contains('usada')||estado.verificado) return;
+  colocarEnSecuencia(palabra, chip);
+}
+function colocarEnSecuencia(palabra, chip){
+  chip.classList.add('usada'); estado.seqResp.push(palabra);
+  const target=document.getElementById('seq-target');
+  const ph=document.getElementById('seq-placeholder');
+  if(ph) ph.style.display='none';
+  const slot=document.createElement('span'); slot.className='seq-slot';
+  slot.textContent=palabra; slot.dataset.palabra=palabra;
+  slot.onclick=()=>{
+    if(estado.verificado) return;
+    const idx=estado.seqResp.indexOf(slot.dataset.palabra);
+    if(idx>-1) estado.seqResp.splice(idx,1);
+    slot.remove(); chip.classList.remove('usada');
+    if(document.getElementById('seq-target').querySelectorAll('.seq-slot').length===0){
+      const ph2=document.getElementById('seq-placeholder');
+      if(ph2) ph2.style.display='';
+    }
+  };
+  target.appendChild(slot);
+}
+
+// ══════════════════════════════════════════════════
+//  VERIFICAR
+// ══════════════════════════════════════════════════
+function verificar(){
+  if(estado.verificado) return;
+  const p=estado.preguntas[estado.indice];
+  const tiempoUsado=(Date.now()-estado.tiempoInicioPregunta)/1000;
+  estado.verificado=true;
+
+  let correcto=false, parcial=false, ptsBase=0;
+
+  if(p.tipo==='emoji'){
+    const selSet=new Set(estado.emojiSel);
+    if(estado.emojiSel.length<4){ estado.verificado=false; return; }
+    const aciertos=p.correctos.filter(e=>selSet.has(e)).length;
+    document.querySelectorAll('.emoji-btn').forEach(btn=>{
+      btn.classList.add('bloqueado');
+      if(p.correctos.includes(btn.dataset.emoji)){ btn.classList.add('correcto'); btn.querySelector('.check').textContent='✅'; }
+      else if(selSet.has(btn.dataset.emoji)){ btn.classList.add('incorrecto'); btn.querySelector('.check').textContent='❌'; }
+    });
+    if(aciertos===4){ correcto=true; ptsBase=50; }
+    else if(aciertos>=2){ parcial=true; ptsBase=25; }
+  }
+  else if(p.tipo==='completar'){
+    let aciertos=0;
+    p.blancos.forEach((_,idx)=>{
+      const slot=document.getElementById(`slot-${idx}`);
+      if(estado.completarResp[idx]===p.respuesta[idx]){ aciertos++; slot.classList.add('correcto'); }
+      else { slot.classList.add('incorrecto'); if(!estado.completarResp[idx]) slot.textContent='(vacío)'; }
+    });
+    if(aciertos===p.respuesta.length){ correcto=true; ptsBase=50; }
+    else if(aciertos>0){ parcial=true; ptsBase=Math.round(50*aciertos/p.respuesta.length); }
+  }
+  else if(p.tipo==='pares'){
+    const total=p.pares.length;
+    if(estado.paresMatcheados===total){ correcto=true; ptsBase=50; }
+    else if(estado.paresMatcheados>0){ parcial=true; ptsBase=Math.round(50*estado.paresMatcheados/total); }
+  }
+  else if(p.tipo==='secuencia'){
+    const resp=estado.seqResp, corr=p.secuencia;
+    let aciertos=0;
+    document.querySelectorAll('.seq-slot').forEach((s,i)=>{
+      if(resp[i]===corr[i]){ s.classList.add('correcto'); aciertos++; }
+      else s.classList.add('incorrecto');
+    });
+    if(aciertos===corr.length){ correcto=true; ptsBase=50; }
+    else if(aciertos>=Math.ceil(corr.length/2)){ parcial=true; ptsBase=Math.round(50*aciertos/corr.length); }
+  }
+
+  // Bonus rapidez
+  let ptsBonus=0;
+  if(ptsBase>0){ if(tiempoUsado<10) ptsBonus=30; else if(tiempoUsado<25) ptsBonus=20; }
+  const ptsTotal=ptsBase+ptsBonus;
+  estado.puntaje+=ptsTotal;
+  document.getElementById('puntaje-texto').textContent=estado.puntaje;
+
+  estado.historial.push({ area:p.area, dificultad:p.dificultad, tipo:p.tipo, ptsBase, ptsBonus, ptsTotal, correcto, parcial });
+
+  // Mostrar feedback
+  const fb=document.getElementById('feedback-box');
+  let clase, titulo;
+  if(correcto){ clase='correcto-fb'; titulo='¡Correcto! ✅'; sonidoCorrecto(); lanzarConfetti(); }
+  else if(parcial){ clase='parcial-fb'; titulo='🟡 ¡Casi! Respuesta parcial'; sonidoParcial(); }
+  else { clase='incorrecto-fb'; titulo='No del todo… ❌'; sonidoIncorrecto(); }
+
+  fb.className=`feedback-box ${clase}`; fb.style.display='block';
+  document.getElementById('feedback-titulo').textContent=titulo;
+  document.getElementById('feedback-pts').textContent=ptsBase>0?`+${ptsBase} pts${ptsBonus>0?` + ${ptsBonus} pts bonus por rapidez ⚡`:''} · Total: ${estado.puntaje} pts`:`Sin puntos esta vez · Total: ${estado.puntaje} pts`;
+
+  // Respuesta correcta
+  let respCorr='';
+  if(p.tipo==='completar') respCorr=`✔️ Respuesta correcta: ${p.respuesta.join(' → ')}`;
+  else if(p.tipo==='secuencia') respCorr=`✔️ Orden correcto: ${p.secuencia.join(' → ')}`;
+  else if(p.tipo==='pares') respCorr=`✔️ Pares: ${p.pares.map(par=>`${par.a} ↔ ${par.b}`).join(' | ')}`;
+  document.getElementById('feedback-resp-correcta').textContent=respCorr;
+
+  document.getElementById('feedback-explicacion').textContent=p.explicacion;
+  document.getElementById('feedback-sabias').textContent=p.sabias||'';
+
+  // Motivacional
+  const motEl=document.getElementById('motivacional-msg');
+  motEl.textContent=correcto?aleatorio(MOTIVACIONALES_OK):parcial?aleatorio(MOTIVACIONALES_PARCIAL):aleatorio(MOTIVACIONALES_MAL);
+  motEl.style.display='block';
+
+  document.getElementById('btn-verificar').style.display='none';
+  document.getElementById('btn-siguiente').style.display='inline-block';
+}
+
+// ══════════════════════════════════════════════════
+//  SIGUIENTE
+// ══════════════════════════════════════════════════
+function siguiente(){
+  estado.indice++;
+  if(estado.indice>=estado.preguntas.length) mostrarFinal();
+  else cargarPregunta();
+}
+
+// ══════════════════════════════════════════════════
+//  PANTALLA FINAL
+// ══════════════════════════════════════════════════
+function mostrarFinal(){
+  clearInterval(estado.timerInterval);
+  const total=estado.historial.length;
+  const correctas=estado.historial.filter(h=>h.correcto).length;
+  const parciales=estado.historial.filter(h=>h.parcial).length;
+  const pct=total>0?Math.round(correctas/total*100):0;
+  const ptsBase=estado.historial.reduce((s,h)=>s+h.ptsBase,0);
+  const ptsBonus=estado.historial.reduce((s,h)=>s+h.ptsBonus,0);
+
+  const emojiFinal=pct>=80?'🏆':pct>=60?'⭐':pct>=40?'💜':'🌱';
+  document.getElementById('final-emoji').textContent=emojiFinal;
+  document.getElementById('puntaje-final').textContent=estado.puntaje+' pts';
+  document.getElementById('final-desc').textContent=`${correctas}/${total} respuestas correctas · ${pct}% de acierto`;
+
+  document.getElementById('sb-rows').innerHTML=`
+    <div class="sb-row"><span>✅ Respuestas correctas</span><span class="sb-pts">${correctas}/${total}</span></div>
+    <div class="sb-row"><span>🟡 Respuestas parciales</span><span class="sb-pts">${parciales}</span></div>
+    <div class="sb-row"><span>📊 Porcentaje de acierto</span><span class="sb-pts">${pct}%</span></div>
+    <div class="sb-row"><span>🎯 Puntos por respuestas</span><span class="sb-pts">+${ptsBase} pts</span></div>
+    <div class="sb-row"><span>⚡ Bonus por rapidez</span><span class="sb-pts">+${ptsBonus} pts</span></div>
+    <div class="sb-row"><span><strong>🏆 PUNTAJE TOTAL</strong></span><span class="sb-pts"><strong>${estado.puntaje} pts</strong></span></div>`;
+
+  document.getElementById('final-motivacion').textContent=aleatorio(MOTIVACIONALES_FINAL);
+  document.getElementById('cert-nombre').value=estado.nombreJugadora;
+  document.getElementById('cert-apellido').value=estado.apellidoJugadora;
+  document.getElementById('certificado-visual').style.display='none';
+
+  mostrarPantalla('final');
+  if(pct>=60) lanzarConfetti();
+}
+
+// ══════════════════════════════════════════════════
+//  CERTIFICADO
+// ══════════════════════════════════════════════════
+function generarCertificado(){
+  const nombre=(document.getElementById('cert-nombre').value.trim()||estado.nombreJugadora);
+  const apellido=(document.getElementById('cert-apellido').value.trim()||estado.apellidoJugadora);
+  const nombreCompleto=`${nombre} ${apellido}`.trim();
+  const total=estado.historial.length;
+  const correctas=estado.historial.filter(h=>h.correcto).length;
+  const pct=total>0?Math.round(correctas/total*100):0;
+  const estrellas=pct>=80?'⭐⭐⭐⭐⭐':pct>=60?'⭐⭐⭐⭐':pct>=40?'⭐⭐⭐':'⭐⭐';
+  const fecha=new Date().toLocaleDateString('es-CL',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('cert-nombre-display').textContent=nombreCompleto;
+  document.getElementById('cert-score-display').textContent=`${estado.puntaje} puntos · ${pct}% de acierto`;
+  document.getElementById('cert-stars').textContent=estrellas;
+  document.getElementById('cert-fecha').textContent=`Emitido el ${fecha}`;
+  document.getElementById('certificado-visual').style.display='block';
+  document.getElementById('certificado-visual').scrollIntoView({behavior:'smooth'});
+  lanzarConfetti();
+}
+
+// ══════════════════════════════════════════════════
+//  REVISIÓN DE RESPUESTAS
+// ══════════════════════════════════════════════════
+function abrirRevision(){
+  const contenido = document.getElementById('revision-contenido');
+  contenido.innerHTML = estado.preguntas.map((p, i) => {
+    const h = estado.historial[i];
+    if(!h) return ''; // pregunta no jugada (tiempo agotado)
+    const clase = h.correcto ? 'rev-ok' : h.parcial ? 'rev-parcial' : 'rev-mal';
+    const icono = h.correcto ? '✅' : h.parcial ? '🟡' : '❌';
+    const resultado = h.correcto ? 'Correcto' : h.parcial ? 'Parcialmente correcto' : 'Incorrecto';
+    const difLabel = {'facil':'🟢 Fácil','intermedio':'🟡 Intermedio','dificil':'🔴 Difícil'}[p.dificultad];
+
+    let respCorrecta = '';
+    if(p.tipo==='completar') respCorrecta = `Respuesta: ${p.respuesta.join(' / ')}`;
+    else if(p.tipo==='secuencia') respCorrecta = `Orden: ${p.secuencia.join(' → ')}`;
+    else if(p.tipo==='pares') respCorrecta = p.pares.map(par=>`${par.a} ↔ ${par.b}`).join(' · ');
+    else if(p.tipo==='emoji') respCorrecta = `Emojis correctos: ${p.correctos.join(' ')}`;
+
+    return `<div class="rev-item ${clase}">
+      <div class="rev-num">Pregunta ${i+1} · ${p.area} · ${difLabel}</div>
+      <div class="rev-pregunta">${p.frase instanceof Array ? p.frase.join(' ') : p.frase}</div>
+      <div class="rev-resultado">${icono} ${resultado}</div>
+      ${respCorrecta ? `<div class="rev-explicacion" style="margin-bottom:3px;font-weight:700;">📌 ${respCorrecta}</div>` : ''}
+      <div class="rev-explicacion">${p.explicacion}</div>
+      <div class="rev-pts">+${h.ptsBase} pts base${h.ptsBonus>0?` + ${h.ptsBonus} pts bonus`:''}</div>
+    </div>`;
+  }).join('');
+
+  const overlay = document.getElementById('overlay-revision');
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'flex-start';
+  overlay.style.justifyContent = 'center';
+  overlay.style.overflowY = 'auto';
+  overlay.style.padding = '20px 12px';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.72)';
+  overlay.style.zIndex = '9998';
+}
+function cerrarRevision(){
+  document.getElementById('overlay-revision').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════
+//  REINICIAR
+// ══════════════════════════════════════════════════
+function reiniciar(){ clearInterval(estado.timerInterval); mostrarPantalla('inicio'); }
+</script>
+</body>
+</html>
