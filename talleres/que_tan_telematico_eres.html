@@ -91,21 +91,33 @@ let PREGUNTAS=[];
 const CFG={titulo:'',carrera:'',universidad:'',obligatorias:{minimo:2},niveles:{},resultados:[]};
 
 async function cargarBanco(){
-  try{
-    const r=await fetch('../preguntas.json',{cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const data=await r.json();
-    PREGUNTAS=data.preguntas||[];
-    CFG.titulo=data.titulo||'';
-    CFG.carrera=data.carrera||'';
-    CFG.universidad=data.universidad||'';
-    CFG.obligatorias=data.obligatorias||CFG.obligatorias;
-    CFG.niveles=data.niveles||CFG.niveles;
-    CFG.resultados=data.resultados||[];
-  }catch(e){
-    console.warn('No se pudo cargar preguntas.json',e);
-    PREGUNTAS=[];
+  // El banco vive junto a este archivo (talleres/preguntas.json). Según cómo se
+  // sirva la página cambia la ruta relativa, así que probamos varias candidatas:
+  // - "preguntas.json"      → archivo abierto como .../talleres/que_tan_telematico_eres.html
+  // - "../preguntas.json"   → clean URL con barra final .../talleres/que_tan_telematico_eres/
+  // - "/talleres/preguntas.json" → ruta absoluta desde la raíz del sitio
+  const candidatas=['preguntas.json','./preguntas.json','../preguntas.json','/talleres/preguntas.json'];
+  let data=null,err=null;
+  for(const url of candidatas){
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      data=await r.json();
+      break;
+    }catch(e){err=e;data=null;}
   }
+  if(!data){
+    console.warn('No se pudo cargar preguntas.json',err);
+    PREGUNTAS=[];
+    return;
+  }
+  PREGUNTAS=data.preguntas||[];
+  CFG.titulo=data.titulo||'';
+  CFG.carrera=data.carrera||'';
+  CFG.universidad=data.universidad||'';
+  CFG.obligatorias=data.obligatorias||CFG.obligatorias;
+  CFG.niveles=data.niveles||CFG.niveles;
+  CFG.resultados=data.resultados||[];
 }
 
 // Garantiza que la partida incluya al menos 2 preguntas de Historia de la carrera.
