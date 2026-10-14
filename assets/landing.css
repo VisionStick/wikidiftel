@@ -236,6 +236,10 @@ img { display: block; max-width: 100%; }
 .telematica-banner p{margin:0;color:rgba(255,255,255,.85);max-width:840px;line-height:1.7;font-size:16px;}
 .telematica-pillars{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
 .telematica-pillars span{font-size:12px;font-weight:900;letter-spacing:.03em;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.32);border-radius:999px;padding:7px 14px;}
+.telematica-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.telematica-actions .button{border-radius:999px;font-weight:900;padding:10px 18px;display:inline-flex;align-items:center;gap:8px;}
+.button-ghost-light{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.12);transition:transform .2s ease,background .2s ease,border-color .2s ease;}
+.button-ghost-light:hover{background:rgba(255,255,255,.2);transform:translateY(-1px);border-color:rgba(255,255,255,.55);}
 
 /* page hero + filtering */
 .page-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 50px; padding-block: 85px 50px; }
