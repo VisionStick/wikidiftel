@@ -122,6 +122,7 @@ drop policy if exists "Public can read active courses" on public.courses;
 drop policy if exists "Public can read active libraries" on public.course_libraries;
 drop policy if exists "Public can read approved reviews" on public.course_reviews;
 drop policy if exists "Public can submit pending reviews" on public.course_reviews;
+drop policy if exists "Public can submit approved reviews" on public.course_reviews;
 drop policy if exists "Public can read active professors" on public.professors;
 drop policy if exists "Public can read active course professors" on public.course_professors;
 
@@ -155,14 +156,9 @@ for select
 to anon
 using (status = 'approved');
 
-create policy "Public can submit pending reviews"
-on public.course_reviews
-for insert
-to anon
-with check (
-  status = 'pending'
-  and char_length(comment) between 20 and 1500
-);
+-- Los comentarios se envían por submit_course_review(), no por INSERT público.
+revoke insert, update, delete on table public.course_reviews from public, anon, authenticated;
+grant select on table public.course_reviews to anon;
 
 create policy "Public can read active professors"
 on public.professors
@@ -243,3 +239,4 @@ on conflict (slug) do update set
   color_hex = excluded.color_hex,
   sort_order = excluded.sort_order,
   is_active = true;
+

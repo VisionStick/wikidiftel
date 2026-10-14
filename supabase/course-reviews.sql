@@ -84,29 +84,11 @@ for select
 to anon
 using (status = 'approved');
 
-create policy "Public can submit approved reviews"
-on public.course_reviews
-for insert
-to anon
-with check (
-  status = 'approved'
-  and char_length(comment) between 20 and 1500
-  and (student_name is null or char_length(student_name) <= 80)
-  and (professor_name is null or char_length(professor_name) <= 120)
-  and (term_year is null or term_year between 2020 and 2035)
-  and (term_semester is null or term_semester in ('1', '2', 'Verano'))
-  and difficulty between 1 and 5
-  and workload between 1 and 5
-  and usefulness between 1 and 5
-  and (study_hours is null or study_hours between 0 and 80)
-  and likes_count = 0
-  and dislikes_count = 0
-  and exists (
-    select 1
-    from public.courses c
-    where c.id = course_id and c.is_active = true
-  )
-);
+-- La publicación anónima pasa por la RPC, que siempre crea pendientes.
+-- También se cierra el acceso directo aunque queden grants heredados.
+alter table public.course_reviews alter column status set default 'pending';
+revoke insert, update, delete on table public.course_reviews from public, anon, authenticated;
+grant select on table public.course_reviews to anon;
 
 -- Las reacciones se escriben SOLO mediante RPC. No exponemos client_token.
 revoke all on table public.course_review_reactions from anon;
@@ -191,7 +173,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   new_review_id bigint;
@@ -222,9 +204,9 @@ begin
   if term_semester_input is not null and term_semester_input not in ('1', '2', 'Verano') then
     raise exception 'Semestre cursado inválido';
   end if;
-  if difficulty_input not between 1 and 5
-     or workload_input not between 1 and 5
-     or usefulness_input not between 1 and 5 then
+  if difficulty_input is null or difficulty_input not between 1 and 5
+     or workload_input is null or workload_input not between 1 and 5
+     or usefulness_input is null or usefulness_input not between 1 and 5 then
     raise exception 'Las valoraciones deben estar entre 1 y 5';
   end if;
   if study_hours_input is not null and (study_hours_input < 0 or study_hours_input > 80) then
@@ -239,7 +221,7 @@ begin
   values (
     course_id_input, clean_student_name, clean_professor_name, term_year_input,
     term_semester_input, difficulty_input, workload_input, usefulness_input,
-    study_hours_input, clean_comment, 'approved', 0, 0
+    study_hours_input, clean_comment, 'pending', 0, 0
   )
   returning course_reviews.id, course_reviews.created_at
   into new_review_id, new_created_at;
@@ -249,7 +231,7 @@ begin
 end;
 $$;
 
-revoke all on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) from public;
+revoke all on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) from public, anon, authenticated;
 grant execute on function public.submit_course_review(bigint,text,text,int,text,int,int,int,int,text) to anon;
 
 -- Pide a PostgREST refrescar inmediatamente las RPC disponibles.
@@ -401,3 +383,4 @@ select
 from public.course_review_public_view
 order by created_at desc
 limit 20;
+

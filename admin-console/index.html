@@ -38,16 +38,18 @@
     <section class="workspace">
       <aside class="tree-panel"><div class="panel-head">Árbol de cursos</div><div id="tree" class="tree"></div></aside>
       <section class="data-panel">
+        <div class="mode-bar"><div class="mode-tabs" role="group" aria-label="Vista administrativa"><button data-admin-tab="comments" aria-pressed="true">Comentarios <span id="pendingCount"></span></button><button data-admin-tab="reports" aria-pressed="false">Reportes <span id="reportCount"></span></button></div><p id="adminNotice" role="status" aria-live="polite" hidden></p></div>
         <div class="filters">
           <input id="search" type="search" placeholder="Buscar nombre, profesor, ramo o texto…">
           <select id="professor"><option value="">Todos los profesores</option></select>
           <select id="year"><option value="">Todos los años</option></select>
-          <select id="status"><option value="">Todos los estados</option><option value="approved">Aprobado</option><option value="pending">Pendiente</option><option value="rejected">Rechazado</option></select>
+          <select id="status" aria-label="Estado del comentario"><option value="">Todos los estados</option><option value="approved">Aprobado</option><option value="pending" selected>Pendiente</option><option value="rejected">Rechazado</option></select>
+          <select id="reportStatus" aria-label="Estado del reporte" hidden><option value="open">Sin revisar</option><option value="resolved">Revisado</option><option value="dismissed">Descartado</option><option value="">Todos los reportes</option></select>
           <button id="clear">Limpiar</button>
         </div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>Nombre / alias</th><th>Profesor/a</th><th>Ramo</th><th>Año</th><th>Valoraciones</th><th>👍 / 👎</th><th>Fecha y hora</th><th>Estado</th></tr></thead>
+            <thead id="tableHead"><tr><th>Nombre / alias</th><th>Profesor/a</th><th>Ramo</th><th>Año</th><th>Valoraciones</th><th>Reportes</th><th>Fecha y hora</th><th>Estado</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
