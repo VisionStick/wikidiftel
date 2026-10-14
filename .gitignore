@@ -1,1 +1,4 @@
 .vercel
+
+# Fotos crudas sin optimizar (las publicadas en el sitio van en assets/fotos)
+/images/
